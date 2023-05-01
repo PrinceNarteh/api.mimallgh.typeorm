@@ -1,11 +1,7 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
 import { IsNumberString, IsOptional, IsString } from 'class-validator';
-import { Shop as ShopModel } from '@prisma/client';
 
-export class Shop implements Shop {
-  @IsString()
-  id: string;
-
+export class CreateShopDto {
   @IsString()
   name: string;
 
@@ -16,6 +12,7 @@ export class Shop implements Shop {
   @IsOptional()
   shopCode: string;
 
+  @IsOptional()
   @IsString()
   password: string;
 
@@ -53,19 +50,6 @@ export class Shop implements Shop {
 
   @IsString()
   closingTime: string;
-
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export class CreateShopDto extends OmitType(Shop, [
-  'id',
-  'shopCode',
-  'password',
-]) {
-  @IsOptional()
-  @IsString()
-  plainPassword: string;
 }
 
 export class UpdateShopDto extends PartialType(CreateShopDto) {}

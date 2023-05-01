@@ -19,13 +19,13 @@ export class ShopController {
   async getShops(
     @Query('take') take?: number,
     @Query('skip') skip?: number,
-    @Query('orderBy') orderBy?: 'asc' | 'desc',
+    @Query('order') order?: 'asc' | 'desc',
   ) {
     return await this.shopService.shops({
       take: Number(take) || undefined,
       skip: Number(skip) || undefined,
-      orderBy: {
-        updatedAt: orderBy,
+      order: {
+        updatedAt: order,
       },
     });
   }

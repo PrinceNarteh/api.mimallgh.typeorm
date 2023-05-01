@@ -1,24 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { customAlphabet } from 'nanoid';
+import { Shop } from 'src/entities/shop.entity';
+import { pad } from 'src/utils/pad';
+import { FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
+import { CreateShopDto } from './dto/shopDto';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
 );
 
-import { Prisma, Shop } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
-import { PrismaService } from 'src/modules/prisma/prisma.service';
-import { CreateShopDto } from './dto/shopDto';
-import { pad } from 'src/utils/pad';
-
 @Injectable()
 export class ShopService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @InjectRepository(Shop)
+    private readonly shopRepo: Repository<Shop>,
+  ) {}
 
   async shop(id: string): Promise<Shop | null> {
-    const shop = await this.prismaService.shop.findUnique({
+    const shop = await this.shopRepo.findOne({
       where: { id },
-      include: {
+      relations: {
         image: true,
         products: true,
       },
@@ -31,9 +34,9 @@ export class ShopService {
   }
 
   async findShopByShopCode(shopCode: string): Promise<Shop | null> {
-    return this.prismaService.shop.findFirst({
+    return this.shopRepo.findOne({
       where: { shopCode },
-      include: {
+      relations: {
         image: true,
         products: true,
       },
@@ -43,18 +46,16 @@ export class ShopService {
   async shops(params: {
     skip?: number;
     take?: number;
-    cursor?: Prisma.ShopWhereUniqueInput;
-    where?: Prisma.ShopWhereInput;
-    orderBy?: Prisma.ShopOrderByWithRelationInput;
+    where?: FindOptionsWhere<Shop>;
+    order?: FindOptionsOrder<Shop>;
   }): Promise<Shop[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return await this.prismaService.shop.findMany({
+    const { skip, take, where, order } = params;
+    return await this.shopRepo.find({
       skip,
       take,
-      cursor,
       where,
-      orderBy,
-      include: {
+      order,
+      relations: {
         image: true,
         products: true,
       },
@@ -62,8 +63,8 @@ export class ShopService {
   }
 
   async createShop(data: CreateShopDto) {
-    const shops = await this.prismaService.shop.findMany({
-      orderBy: {
+    const shops = await this.shopRepo.find({
+      order: {
         id: 'desc',
       },
       take: 1,
@@ -83,14 +84,16 @@ export class ShopService {
       shopCode = `CRCC${year}${index}`;
     }
 
-    return this.prismaService.shop.create({
-      data: {
-        ...data,
-        shopCode,
-        plainPassword: password,
-        password: hashPassword,
-      },
+    const shop = this.shopRepo.create({
+      ...data,
+      shopCode,
+      plainPassword: password,
+      password: hashPassword,
     });
+
+    await this.shopRepo.save(shop);
+
+    return shop;
   }
 
   async updateShop(shopId: string, data: any) {
@@ -98,10 +101,10 @@ export class ShopService {
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
-    return this.prismaService.shop.update({ where: { id: shopId }, data });
+    return this.shopRepo.update(shopId, data);
   }
 
   async deleteShop(id: string) {
-    return this.prismaService.shop.delete({ where: { id } });
+    return this.shopRepo.delete(id);
   }
 }
