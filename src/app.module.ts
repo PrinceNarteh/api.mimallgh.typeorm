@@ -6,8 +6,6 @@ import { ProductModule } from './modules/products/product.module';
 import { ShopAuthModule } from './modules/shop-auth/shop-auth.module';
 import { ShopModule } from './modules/shops/shop.module';
 import { UserModule } from './modules/users/user.module';
-import { PrismaModule } from './modules/prisma/prisma.module';
-import { PrismaService } from './modules/prisma/prisma.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
 
@@ -21,8 +19,7 @@ import { typeOrmConfig } from './config/typeorm.config';
     ShopModule,
     ShopAuthModule,
     OrdersModule,
-    PrismaModule,
   ],
-  providers: [PrismaService],
+  providers: [],
 })
 export class AppModule {}

@@ -13,7 +13,6 @@ import {
 import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { CreateProductDto } from './dto/productDto';
 import { ProductService } from './product.service';
-import { Prisma } from '@prisma/client';
 
 @Controller('products')
 export class ProductController {
@@ -23,13 +22,13 @@ export class ProductController {
   async getProducts(
     @Query('take') take?: number,
     @Query('skip') skip?: number,
-    @Query('orderBy') orderBy?: 'asc' | 'desc',
+    @Query('order') order?: 'asc' | 'desc',
   ) {
     return this.productService.products({
       take: Number(take) || undefined,
       skip: Number(skip) || undefined,
-      orderBy: {
-        updatedAt: orderBy,
+      order: {
+        updatedAt: order,
       },
     });
   }

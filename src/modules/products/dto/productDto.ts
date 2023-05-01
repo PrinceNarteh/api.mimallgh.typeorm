@@ -2,13 +2,9 @@ import { PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsEnum,
-  IsInt,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
-  Max,
-  Min,
   ValidateNested,
 } from 'class-validator';
 
