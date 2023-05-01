@@ -14,7 +14,7 @@ export class UserController {
     return this.userService.findAll({
       take: Number(take) || undefined,
       skip: Number(skip) || undefined,
-      orderBy: {
+      order: {
         updatedAt: orderBy,
       },
     });

@@ -12,7 +12,7 @@ import { typeOrmConfig } from './config/typeorm.config';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot(typeOrmConfig),
+    TypeOrmModule.forRootAsync(typeOrmConfig),
     AuthModule,
     UserModule,
     ProductModule,
