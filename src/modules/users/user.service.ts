@@ -3,17 +3,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/entities/user.entity';
+import { UserImage } from 'src/entities/userImage.entity';
+import { FindManyOptions, Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dto/userDto';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+    @InjectRepository(UserImage)
+    private readonly userImgRepo: Repository<UserImage>,
+  ) {}
 
   async user(id: string) {
-    const user = await this.prismaService.user.findUnique({ where: { id } });
+    const user = await this.userRepo.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -22,16 +28,12 @@ export class UserService {
   }
 
   async findOneByEmailOrPhoneNumber(emailOrPhoneNumber: string) {
-    const user = await this.prismaService.user.findFirst({
-      where: {
-        OR: [
-          { email: emailOrPhoneNumber },
-          { phoneNumber: emailOrPhoneNumber },
-        ],
-      },
+    const user = await this.userRepo.findOne({
+      where: [
+        { email: emailOrPhoneNumber },
+        { phoneNumber: emailOrPhoneNumber },
+      ],
     });
-
-    console.log(user);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -39,97 +41,72 @@ export class UserService {
     return user;
   }
 
-  async findAll(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithRelationInput;
-    include?: Prisma.UserInclude;
-  }): Promise<User[]> {
-    const { skip, take, cursor, where, orderBy, include } = params;
-    return await this.prismaService.user.findMany({
+  async findAll(params: FindManyOptions<User>): Promise<User[]> {
+    const { skip, take, where, order } = params;
+    return await this.userRepo.find({
       skip,
       take,
-      cursor,
       where,
-      orderBy,
-      include: {
+      order,
+      relations: {
         image: true,
-        ...include,
       },
     });
   }
 
-  async createUser(data: CreateUserDto) {
-    const emailOrPhoneNumberExist = await this.prismaService.user.findFirst({
-      where: {
-        OR: [{ email: data.email }, { phoneNumber: data.phoneNumber }],
-      },
+  async createUser(createUserDto: CreateUserDto) {
+    const emailOrPhoneNumberExist = await this.userRepo.findOne({
+      where: [
+        { email: createUserDto.email },
+        { phoneNumber: createUserDto.phoneNumber },
+      ],
     });
 
     if (emailOrPhoneNumberExist) {
       throw new BadRequestException('Email or Phone number already in used.');
     }
 
-    const { image, password } = data;
-
-    const hashPassword = await bcrypt.hash(password, 12);
-
-    console.log(hashPassword);
+    const { image, ...data } = createUserDto;
 
     if (image) {
-      const user = await this.prismaService.user.create({
-        data: {
-          ...data,
-          password: hashPassword,
-          image: {
-            create: {
-              ...data.image,
-            },
-          },
-        },
+      const userImage = this.userImgRepo.create(image);
+      await this.userImgRepo.save(userImage);
+      const user = this.userRepo.create({
+        ...data,
+        image: userImage,
       });
       const { password, ...result } = user;
       return result;
     } else {
-      const user = await this.prismaService.user.create({
-        data: {
-          ...data,
-          password: hashPassword,
-        },
-      });
+      const user = this.userRepo.create(data);
+      await this.userRepo.save(user);
       const { password, ...result } = user;
       return result;
     }
   }
 
-  async updateUser(userId: string, data: any) {
-    let user = await this.user(userId);
+  async updateUser(userId: string, updateUserDto: UpdateUserDto) {
+    let userExists = await this.user(userId);
 
-    if (!user) {
+    if (!userExists) {
       throw new BadRequestException('User not found');
     }
 
-    user = await this.prismaService.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        ...data,
-        image: {
-          delete: true,
-          create: {
-            ...data.image,
-          },
-        },
-      },
+    await this.userImgRepo.delete(userExists.image.id);
+
+    const userImg = this.userImgRepo.create(updateUserDto.image);
+
+    await this.userImgRepo.save(userImg);
+
+    const user = await this.userRepo.update(userId, {
+      ...updateUserDto,
+      image: userImg,
     });
 
     return user;
   }
 
   async deleteUser(id: string) {
-    return this.prismaService.user.delete({ where: { id } });
+    return this.userRepo.delete(id);
   }
 }

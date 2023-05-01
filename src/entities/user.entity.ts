@@ -4,9 +4,9 @@ import { Base } from './base/baseEntity';
 import { Order } from './order.entity';
 import { UserImage } from './userImage.entity';
 
-export type UserRoleType = 'admin' | 'user';
+export type UserRole = 'admin' | 'user';
 
-export type UserLevelType =
+export type UserLevel =
   | 'level_one'
   | 'level_two'
   | 'level_three'
@@ -80,6 +80,7 @@ export class User extends Base {
     type: 'enum',
     enum: ['level_one', 'level_two', 'level_three', 'super_user'],
     nullable: true,
+    default: 'level_one',
   })
   level: string;
 

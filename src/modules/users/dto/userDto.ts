@@ -1,15 +1,13 @@
 import { PartialType } from '@nestjs/swagger';
-import { Prisma, UserLevel, UserRole } from '@prisma/client';
-import { Type } from 'class-transformer';
 import {
-  IsString,
-  IsNumberString,
-  IsEmail,
-  MinLength,
   IsBoolean,
+  IsEmail,
+  IsNumberString,
   IsOptional,
-  ValidateNested,
+  IsString,
+  MinLength,
 } from 'class-validator';
+import { UserLevel, UserRole } from 'src/entities/user.entity';
 
 export class CreateUserDto {
   @IsString()
@@ -57,7 +55,10 @@ export class CreateUserDto {
   active: boolean;
 
   @IsOptional()
-  image?: any;
+  image?: {
+    public_id: string;
+    secure_url: string;
+  };
 
   @IsString()
   @IsOptional()
