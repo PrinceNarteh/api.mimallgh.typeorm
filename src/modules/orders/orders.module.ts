@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { UserModule } from 'src/modules/users/user.module';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
-import { PrismaModule } from 'src/modules/prisma/prisma.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Order } from 'src/entities/order.entity';
 
 @Module({
-  imports: [UserModule, PrismaModule],
+  imports: [UserModule, TypeOrmModule.forFeature([Order])],
   controllers: [OrdersController],
   providers: [OrdersService],
 })
