@@ -116,7 +116,7 @@ export class ProductService {
     };
 
     const updatedProduct = Object.assign(product, updatedProductData);
-    updatedProduct.save();
+    await updatedProduct.save();
 
     return updatedProduct;
   }

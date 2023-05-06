@@ -6,6 +6,7 @@ import { Shop } from 'src/entities/shop.entity';
 import { pad } from 'src/utils/pad';
 import { FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
+import { ShopImage } from 'src/entities/shopImage.entity';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -16,6 +17,8 @@ export class ShopService {
   constructor(
     @InjectRepository(Shop)
     private readonly shopRepo: Repository<Shop>,
+    @InjectRepository(ShopImage)
+    private readonly shopImgRepo: Repository<ShopImage>,
   ) {}
 
   async shop(id: string): Promise<Shop | null> {
@@ -96,15 +99,48 @@ export class ShopService {
     return shop;
   }
 
-  async updateShop(shopId: string, data: any) {
-    const shop = await this.shop(shopId);
+  async updateShop(shopId: string, updateShopDto: any) {
+    const shop = await this.shopRepo.findOne({
+      where: { id: shopId },
+    });
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
-    return this.shopRepo.update(shopId, data);
+
+    const { image, ...data } = updateShopDto;
+
+    if (image) {
+      await this.shopImgRepo.delete({
+        shopId: {
+          id: shopId,
+        },
+      });
+
+      const shopImage = this.shopImgRepo.create({
+        ...image,
+        shop,
+      });
+      await this.shopImgRepo.save(shopImage);
+      const updatedShopData = {
+        ...data,
+        image: shopImage,
+      };
+
+      const updatedShop = Object.assign(shop, updatedShopData);
+      await updatedShop.save();
+    } else {
+      const updatedShop = Object.assign(shop, updateShopDto);
+      await updatedShop.save();
+    }
+
+    return await this.shop(shopId);
   }
 
   async deleteShop(id: string) {
-    return this.shopRepo.delete(id);
+    const shop = await this.shop(id);
+    if (!shop) return null;
+    await this.shopImgRepo.delete({ shopId: { id } });
+    await this.shopRepo.delete(id);
+    return 'Shop deleted successfully';
   }
 }
