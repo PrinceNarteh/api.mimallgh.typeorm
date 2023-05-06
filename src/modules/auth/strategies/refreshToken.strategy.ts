@@ -8,8 +8,8 @@ export class RefreshJwtStrategy extends PassportStrategy(
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromBodyField('refresh'),
-      ignoreExpiration: false,
       secretOrKey: `lHRqk48b01ueKau1u3CJvH2TozcWdSaEKaBGbBZO8Pg=`,
+      ignoreExpiration: false,
     });
   }
 

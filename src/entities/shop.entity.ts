@@ -74,7 +74,6 @@ export class Shop extends Base {
 
   @BeforeInsert()
   async hashPassword() {
-    this.shopCode = await nanoid(10);
     const genPassword = await nanoid(10);
     this.password = await bcrypt.hash(genPassword, 12);
     this.plainPassword = genPassword;

@@ -10,7 +10,7 @@ import { ShopRefreshJwtStrategy } from './strategies/refreshToken.strategy';
 @Module({
   imports: [
     JwtModule.register({
-      secret: `${process.env.SHOP_JWT_SECRET}`,
+      secret: `6UNZ7rWXy9gjBo965rWKxpy9xAo7D08kBuV7kGwuFiw=`,
       signOptions: { expiresIn: '15m' },
     }),
     ShopModule,
