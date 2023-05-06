@@ -93,25 +93,32 @@ export class ProductService {
       );
     }
 
-    for (let image of product.images) {
-      await this.productImgRepo.delete(image.id);
-    }
+    await this.productImgRepo.delete({
+      productId: {
+        id: productId,
+      },
+    });
 
     const { images, ...data } = updateProductDto;
     const productImages = [];
 
-    for (let image of images) {
-      const productImage = this.productImgRepo.create(image);
-      await this.productImgRepo.save(productImage);
-      productImages.push(productImage);
+    if (images) {
+      for (let image of images) {
+        const productImage = this.productImgRepo.create(image);
+        await this.productImgRepo.save(productImage);
+        productImages.push(productImage);
+      }
     }
 
-    const instance = await this.productRepo.update(productId, {
+    const updatedProductData = {
       ...data,
       images: productImages,
-    });
+    };
 
-    return instance;
+    const updatedProduct = Object.assign(product, updatedProductData);
+    updatedProduct.save();
+
+    return updatedProduct;
   }
 
   async deleteProduct(shop: Shop, productId: string) {
@@ -130,9 +137,11 @@ export class ProductService {
       );
     }
 
-    for (let image of product.images) {
-      await this.productImgRepo.delete(image.id);
-    }
+    await this.productImgRepo.delete({
+      productId: {
+        id: productId,
+      },
+    });
 
     await this.productRepo.delete(productId);
 
