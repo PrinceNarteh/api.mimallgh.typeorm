@@ -18,6 +18,8 @@ export class ProductService {
     private readonly productRepo: Repository<Product>,
     @InjectRepository(ProductImage)
     private readonly productImgRepo: Repository<ProductImage>,
+    @InjectRepository(Shop)
+    private readonly shopRepo: Repository<Shop>,
     private readonly shopService: ShopService,
   ) {}
 
@@ -64,6 +66,8 @@ export class ProductService {
       shop,
       images: productImages,
     });
+
+    await this.productRepo.save(product);
 
     return product;
   }
