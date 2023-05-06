@@ -8,7 +8,7 @@ export class OrderItem extends Base {
   productId: string;
 
   @Column()
-  name: string;
+  productName: string;
 
   @Column()
   quantity: number;

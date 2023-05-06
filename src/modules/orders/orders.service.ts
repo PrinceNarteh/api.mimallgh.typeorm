@@ -130,9 +130,11 @@ export class OrdersService {
       throw new NotFoundException('Order Not Found');
     }
 
-    for (let item of order.items) {
-      await this.orderItemRepo.delete(item.id);
-    }
+    await this.orderItemRepo.delete({
+      order: {
+        id: orderId,
+      },
+    });
 
     const { items, ...data } = updateOrderDto;
     const orderItems = [];
@@ -143,10 +145,13 @@ export class OrdersService {
       orderItems.push(orderItem);
     }
 
-    await this.orderRepo.update(orderId, {
+    const updatedOrderData = {
       ...data,
       items: orderItems,
-    });
+    };
+
+    const updatedOrder = Object.assign(order, updatedOrderData);
+    await updatedOrder.save();
 
     return order;
   }
