@@ -33,6 +33,27 @@ export class ProductController {
     });
   }
 
+  @Get(':shopId/shop')
+  async getProductsByShop(
+    @Param() shopId: string,
+    @Query('take') take?: number,
+    @Query('skip') skip?: number,
+    @Query('order') order?: 'asc' | 'desc',
+  ) {
+    return this.productService.productsByShop({
+      where: {
+        shop: {
+          id: shopId,
+        },
+      },
+      take: Number(take) || undefined,
+      skip: Number(skip) || undefined,
+      order: {
+        updatedAt: order,
+      },
+    });
+  }
+
   @Get(':productId')
   async getProduct(@Param('productId') productId: string) {
     return this.productService.product(productId);

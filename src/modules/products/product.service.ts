@@ -43,6 +43,22 @@ export class ProductService {
       take,
       where,
       order,
+      relations: {
+        images: true,
+      },
+    });
+  }
+
+  async productsByShop(params: FindManyOptions<Product>): Promise<Product[]> {
+    const { skip, take, where, order } = params;
+    return await this.productRepo.find({
+      skip,
+      take,
+      where,
+      order,
+      relations: {
+        images: true,
+      },
     });
   }
 
