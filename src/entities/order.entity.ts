@@ -3,6 +3,7 @@ import { OrderItem } from './OrderItem.entity';
 import { Base } from './base/baseEntity';
 import { User } from './user.entity';
 import { customAlphabet } from 'nanoid/async';
+import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -13,7 +14,12 @@ export class Order extends Base {
   @Column()
   orderId: string;
 
-  @Column()
+  @Column('decimal', {
+    precision: 10,
+    scale: 2,
+    default: 0,
+    transformer: new ColumnNumericTransformer(),
+  })
   amount: number;
 
   @ManyToOne(() => User, (user) => user.orders)

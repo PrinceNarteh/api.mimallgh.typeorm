@@ -57,7 +57,10 @@ export class ShopService {
       skip,
       take,
       where,
-      order,
+      order: {
+        shopCode: 'ASC',
+        ...order,
+      },
       relations: {
         image: true,
         products: true,

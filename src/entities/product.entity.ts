@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Base } from './base/baseEntity';
 import { Shop } from './shop.entity';
 import { ProductImage } from './productImage.entity';
+import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 
 export enum CategoryType {
   food = 'food',
@@ -24,15 +25,19 @@ export class Product extends Base {
   })
   description: string;
 
-  @Column({
+  @Column('decimal', {
+    precision: 10,
+    scale: 2,
     default: 0,
-    type: 'numeric',
+    transformer: new ColumnNumericTransformer(),
   })
   price: number;
 
-  @Column({
+  @Column('decimal', {
+    precision: 10,
+    scale: 2,
     default: 0,
-    type: 'numeric',
+    transformer: new ColumnNumericTransformer(),
   })
   discountPercentage: number;
 

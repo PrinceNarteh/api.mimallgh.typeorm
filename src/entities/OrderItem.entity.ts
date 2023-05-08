@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Base } from './base/baseEntity';
 import { Order } from './order.entity';
+import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 
 @Entity()
 export class OrderItem extends Base {
@@ -8,12 +9,17 @@ export class OrderItem extends Base {
   productId: string;
 
   @Column()
-  productName: string;
+  name: string;
 
   @Column()
   quantity: number;
 
-  @Column()
+  @Column('decimal', {
+    precision: 10,
+    scale: 2,
+    default: 0,
+    transformer: new ColumnNumericTransformer(),
+  })
   price: number;
 
   @Column()
