@@ -12,6 +12,7 @@ import { Shop } from 'src/entities/shop.entity';
 import { FindManyOptions, ILike } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
 import { ShopService } from './shop.service';
+import { FindManyReturnType } from 'src/types/findManyOptions';
 
 @Controller('shops')
 export class ShopController {
@@ -23,7 +24,7 @@ export class ShopController {
     @Query('perPage') perPage?: number,
     @Query('order') order?: 'asc' | 'desc',
     @Query('search') search?: string,
-  ) {
+  ): Promise<FindManyReturnType<Shop>> {
     page = page || 1;
     perPage = perPage || 10;
     order = order || 'asc';
@@ -55,7 +56,7 @@ export class ShopController {
   }
 
   @Post()
-  async createShop(@Body() data: CreateShopDto) {
+  async createShop(@Body() data: CreateShopDto): Promise<Shop> {
     return this.shopService.createShop(data);
   }
 
@@ -63,7 +64,7 @@ export class ShopController {
   async updateShop(
     @Param('shopId') shopId: string,
     @Body() data: Partial<CreateShopDto>,
-  ) {
+  ): Promise<Shop> {
     return this.shopService.updateShop(shopId, data);
   }
 

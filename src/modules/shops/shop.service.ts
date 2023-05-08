@@ -75,7 +75,7 @@ export class ShopService {
     };
   }
 
-  async createShop(data: CreateShopDto) {
+  async createShop(data: CreateShopDto): Promise<Shop> {
     const shops = await this.shopRepo.find({
       order: {
         shopCode: 'desc',
@@ -109,7 +109,7 @@ export class ShopService {
     return shop;
   }
 
-  async updateShop(shopId: string, updateShopDto: any) {
+  async updateShop(shopId: string, updateShopDto: any): Promise<Shop> {
     const shop = await this.shopRepo.findOne({
       where: { id: shopId },
     });
