@@ -68,7 +68,7 @@ export class ShopService {
   async createShop(data: CreateShopDto) {
     const shops = await this.shopRepo.find({
       order: {
-        id: 'desc',
+        shopCode: 'desc',
       },
       take: 1,
     });
