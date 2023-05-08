@@ -58,7 +58,7 @@ export class ProductService {
     params: FindManyOptions<Product>,
   ): Promise<Product[]> {
     const { skip, take, order } = params;
-    console.log(shopId);
+
     return await this.productRepo.find({
       where: {
         shop: {
@@ -70,6 +70,7 @@ export class ProductService {
       order,
       relations: {
         images: true,
+        shop: true,
       },
     });
   }
@@ -91,8 +92,8 @@ export class ProductService {
 
     const product = this.productRepo.create({
       ...data,
-      shop,
       images: productImages,
+      shop,
     });
 
     await this.productRepo.save(product);

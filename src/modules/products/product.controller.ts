@@ -51,7 +51,7 @@ export class ProductController {
 
   @Get(':shopId/shop')
   async getProductsByShop(
-    @Param() shopId: string,
+    @Param('shopId') shopId: string,
     @Query('take') take?: number,
     @Query('skip') skip?: number,
     @Query('order') order?: 'asc' | 'desc',

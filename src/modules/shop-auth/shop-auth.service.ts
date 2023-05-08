@@ -28,7 +28,7 @@ export class ShopAuthService {
     };
 
     return {
-      ...shop,
+      ...payload,
       accessToken: this.jwtService.sign(payload),
       refreshToken: this.jwtService.sign(payload, { expiresIn: '7d' }),
     };

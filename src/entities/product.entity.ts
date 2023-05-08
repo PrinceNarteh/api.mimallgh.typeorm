@@ -62,5 +62,6 @@ export class Product extends Base {
   images: ProductImage[];
 
   @ManyToOne(() => Shop, (shop) => shop.products)
+  @JoinColumn({ name: 'shop_id' })
   shop: Shop;
 }
