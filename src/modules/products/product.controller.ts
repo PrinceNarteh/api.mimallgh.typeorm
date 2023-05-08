@@ -13,8 +13,7 @@ import {
 import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { CreateProductDto } from './dto/productDto';
 import { ProductService } from './product.service';
-import { FindManyOptions, ILike } from 'typeorm';
-import { Product } from 'src/entities/product.entity';
+import { createFindOptions } from 'src/utils/findManyOptions';
 
 @Controller('products')
 export class ProductController {
@@ -27,42 +26,30 @@ export class ProductController {
     @Query('order') order?: 'asc' | 'desc',
     @Query('search') search?: string,
   ) {
-    page = page || 1;
-    perPage = perPage || 10;
-    order = order || 'asc';
-
-    const findOptions: FindManyOptions<Product> = {
-      take: perPage,
-      skip: (page - 1) * perPage,
-      order: {
-        id: order,
-      },
-    };
-
-    if (search) {
-      findOptions.where = [
-        { title: ILike(`%${search}%`) },
-        { description: ILike(`%${search}%`) },
-      ];
-    }
-
+    const findOptions = createFindOptions({
+      page,
+      perPage,
+      search,
+      order,
+    });
     return this.productService.products(findOptions);
   }
 
   @Get(':shopId/shop')
   async getProductsByShop(
     @Param('shopId') shopId: string,
-    @Query('take') take?: number,
-    @Query('skip') skip?: number,
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number,
     @Query('order') order?: 'asc' | 'desc',
+    @Query('search') search?: string,
   ) {
-    return this.productService.productsByShop(shopId, {
-      take: Number(take) || undefined,
-      skip: Number(skip) || undefined,
-      order: {
-        updatedAt: order,
-      },
+    const findOptions = createFindOptions({
+      order,
+      page,
+      perPage,
+      search,
     });
+    return this.productService.productsByShop(shopId, findOptions);
   }
 
   @Get(':productId')
