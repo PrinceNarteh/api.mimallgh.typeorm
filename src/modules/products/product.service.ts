@@ -12,6 +12,7 @@ import { ShopService } from 'src/modules/shops/shop.service';
 import {
   FindManyReturnType,
   IFindManyOptions,
+  returnValue,
 } from 'src/types/findManyOptions';
 import { Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './dto/productDto';
@@ -77,24 +78,20 @@ export class ProductService {
 
     const sortedProducts = uniqBy(products, 'id');
 
-    return {
+    return returnValue({
       total,
-      page: Number(currentPage),
-      perPage: Number(perPage),
-      totalPages: Math.ceil(total / perPage),
+      currentPage,
+      perPage,
       data: sortedProducts,
-    };
+    });
   }
 
   async productsByShop(
     shopId: string,
     params: IFindManyOptions<Product>,
-  ): Promise<{
-    page: number;
-    perPage: number;
-    total: number;
-    data: Product[];
-  }> {
+  ): Promise<FindManyReturnType<Product>> {
+    console.log(shopId);
+    console.log(params);
     const {
       currentPage,
       perPage,
@@ -125,12 +122,12 @@ export class ProductService {
 
     const sortedProducts = uniqBy(products, 'id');
 
-    return {
+    return returnValue({
       total,
-      page: Number(currentPage),
-      perPage: Number(take),
+      currentPage,
+      perPage,
       data: sortedProducts,
-    };
+    });
   }
 
   async createProduct(shopId: string, createProductDto: CreateProductDto) {

@@ -13,3 +13,23 @@ export interface IFindManyOptions<T> {
   perPage: number;
   findOptions: FindManyOptions<T>;
 }
+
+export const returnValue = <T>({
+  total,
+  currentPage,
+  perPage,
+  data,
+}: {
+  total: number;
+  currentPage: number;
+  perPage: number;
+  data: T[];
+}): FindManyReturnType<T> => {
+  return {
+    total,
+    page: Number(currentPage),
+    perPage: Number(perPage),
+    totalPages: Math.ceil(total / perPage),
+    data,
+  };
+};
