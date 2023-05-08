@@ -7,6 +7,10 @@ import { pad } from 'src/utils/pad';
 import { FindManyOptions, Repository } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
 import { ShopImage } from 'src/entities/shopImage.entity';
+import {
+  FindManyReturnType,
+  IFindManyOptions,
+} from 'src/types/findManyOptions';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -47,11 +51,13 @@ export class ShopService {
   }
 
   async shops(
-    params: FindManyOptions<Shop> & {
-      currentPage: number;
-    },
-  ): Promise<{ total: number; page: number; perPage: number; data: Shop[] }> {
-    const { skip, take, where, order, currentPage } = params;
+    params: IFindManyOptions<Shop>,
+  ): Promise<FindManyReturnType<Shop>> {
+    const {
+      perPage,
+      currentPage,
+      findOptions: { order, skip, take, where },
+    } = params;
 
     const [shops, total] = await this.shopRepo.findAndCount({
       skip,
@@ -69,8 +75,9 @@ export class ShopService {
 
     return {
       total,
-      page: currentPage,
-      perPage: take,
+      page: Number(currentPage),
+      perPage: Number(take),
+      totalPages: Math.ceil(total / perPage),
       data: shops,
     };
   }

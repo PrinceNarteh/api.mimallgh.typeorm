@@ -4,6 +4,7 @@ export interface FindManyReturnType<T> {
   total: number;
   page: Number;
   perPage: number;
+  totalPages: number;
   data: T[];
 }
 

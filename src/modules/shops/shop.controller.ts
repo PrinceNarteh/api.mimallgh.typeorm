@@ -45,7 +45,7 @@ export class ShopController {
       ];
     }
 
-    const options = { findOptions, currentPage: perPage };
+    const options = { findOptions, perPage, currentPage: perPage };
 
     return await this.shopService.shops(options);
   }

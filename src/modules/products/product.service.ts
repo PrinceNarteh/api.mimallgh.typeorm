@@ -79,8 +79,9 @@ export class ProductService {
 
     return {
       total,
-      page: currentPage,
-      perPage,
+      page: Number(currentPage),
+      perPage: Number(perPage),
+      totalPages: Math.ceil(total / perPage),
       data: sortedProducts,
     };
   }
@@ -126,8 +127,8 @@ export class ProductService {
 
     return {
       total,
-      page: currentPage,
-      perPage: take,
+      page: Number(currentPage),
+      perPage: Number(take),
       data: sortedProducts,
     };
   }
