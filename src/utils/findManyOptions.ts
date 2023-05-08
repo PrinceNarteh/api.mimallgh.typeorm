@@ -30,5 +30,8 @@ export const createFindOptions = ({
     ];
   }
 
-  return findOptions;
+  return {
+    currentPage: page,
+    findOptions,
+  };
 };
