@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { customAlphabet } from 'nanoid';
 import { Shop } from 'src/entities/shop.entity';
 import { pad } from 'src/utils/pad';
-import { FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
 import { ShopImage } from 'src/entities/shopImage.entity';
 
@@ -46,14 +46,14 @@ export class ShopService {
     });
   }
 
-  async shops(params: {
-    skip?: number;
-    take?: number;
-    where?: FindOptionsWhere<Shop>;
-    order?: FindOptionsOrder<Shop>;
-  }): Promise<Shop[]> {
-    const { skip, take, where, order } = params;
-    return await this.shopRepo.find({
+  async shops(
+    params: FindManyOptions<Shop> & {
+      currentPage: number;
+    },
+  ): Promise<{ total: number; page: number; perPage: number; data: Shop[] }> {
+    const { skip, take, where, order, currentPage } = params;
+
+    const [shops, total] = await this.shopRepo.findAndCount({
       skip,
       take,
       where,
@@ -66,6 +66,13 @@ export class ShopService {
         products: true,
       },
     });
+
+    return {
+      total,
+      page: currentPage,
+      perPage: take,
+      data: shops,
+    };
   }
 
   async createShop(data: CreateShopDto) {

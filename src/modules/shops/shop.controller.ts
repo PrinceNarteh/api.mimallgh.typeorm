@@ -8,6 +8,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { Shop } from 'src/entities/shop.entity';
+import { FindManyOptions, ILike } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
 import { ShopService } from './shop.service';
 
@@ -17,17 +19,34 @@ export class ShopController {
 
   @Get()
   async getShops(
-    @Query('take') take?: number,
-    @Query('skip') skip?: number,
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number,
     @Query('order') order?: 'asc' | 'desc',
+    @Query('search') search?: string,
   ) {
-    return await this.shopService.shops({
-      take: Number(take) || undefined,
-      skip: Number(skip) || undefined,
+    page = page || 1;
+    perPage = perPage || 10;
+    order = order || 'asc';
+
+    const findOptions: FindManyOptions<Shop> = {
+      take: perPage,
+      skip: (page - 1) * perPage,
       order: {
-        updatedAt: order,
+        id: order,
       },
-    });
+    };
+
+    if (search) {
+      findOptions.where = [
+        { name: ILike(`%${search}%`) },
+        { shopCode: ILike(`%${search}%`) },
+        { description: ILike(`%${search}%`) },
+      ];
+    }
+
+    const options = { findOptions, currentPage: perPage };
+
+    return await this.shopService.shops(options);
   }
 
   @Get(':shopId')
