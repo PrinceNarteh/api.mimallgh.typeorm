@@ -41,9 +41,14 @@ export class UserService {
     return user;
   }
 
-  async findAll(params: FindManyOptions<User>): Promise<User[]> {
-    const { skip, take, where, order } = params;
-    return await this.userRepo.find({
+  async getUsers(
+    params: FindManyOptions<User> & {
+      currentPage: number;
+    },
+  ): Promise<{ total: number; perPage: number; page: number; data: User[] }> {
+    const { skip, take, where, order, currentPage } = params;
+
+    const [users, total] = await this.userRepo.findAndCount({
       skip,
       take,
       where,
@@ -52,6 +57,13 @@ export class UserService {
         image: true,
       },
     });
+
+    return {
+      total,
+      perPage: take,
+      page: currentPage,
+      data: users,
+    };
   }
 
   async createUser(createUserDto: CreateUserDto) {

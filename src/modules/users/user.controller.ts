@@ -1,5 +1,7 @@
 import { Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { UserService } from './user.service';
+import { User } from 'src/entities/user.entity';
+import { FindManyOptions, ILike } from 'typeorm';
 
 @Controller('users')
 export class UserController {
@@ -7,17 +9,35 @@ export class UserController {
 
   @Get()
   async getUsers(
-    @Query('take') take?: number,
-    @Query('skip') skip?: number,
-    @Query('orderBy') orderBy?: 'asc' | 'desc',
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number,
+    @Query('order') order?: 'asc' | 'desc',
+    @Query('search') search?: string,
   ) {
-    return this.userService.findAll({
-      take: Number(take) || undefined,
-      skip: Number(skip) || undefined,
+    page = page || 1;
+    perPage = perPage || 10;
+    order = order || 'asc';
+
+    const findOptions: FindManyOptions<User> = {
+      take: perPage,
+      skip: (page - 1) * perPage,
       order: {
-        updatedAt: orderBy,
+        id: order,
       },
-    });
+    };
+
+    if (search) {
+      findOptions.where = [
+        { firstName: ILike(`%${search}%`) },
+        { lastName: ILike(`%${search}%`) },
+        { email: ILike(`%${search}%`) },
+        { phoneNumber: ILike(`%${search}%`) },
+      ];
+    }
+
+    const options = { findOptions, currentPage: perPage };
+
+    return this.userService.getUsers(options);
   }
 
   @Get(':userId')
