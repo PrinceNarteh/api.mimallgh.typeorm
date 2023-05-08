@@ -9,7 +9,11 @@ import { Product } from 'src/entities/product.entity';
 import { ProductImage } from 'src/entities/productImage.entity';
 import { Shop } from 'src/entities/shop.entity';
 import { ShopService } from 'src/modules/shops/shop.service';
-import { FindManyOptions, Repository } from 'typeorm';
+import {
+  FindManyReturnType,
+  IFindManyOptions,
+} from 'src/types/findManyOptions';
+import { Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './dto/productDto';
 
 @Injectable()
@@ -20,7 +24,6 @@ export class ProductService {
     @InjectRepository(ProductImage)
     private readonly productImgRepo: Repository<ProductImage>,
     @InjectRepository(Shop)
-    private readonly shopRepo: Repository<Shop>,
     private readonly shopService: ShopService,
   ) {}
 
@@ -46,16 +49,13 @@ export class ProductService {
   }
 
   async products(
-    params: FindManyOptions<Product> & {
-      currentPage: Number;
-    },
-  ): Promise<{
-    total: number;
-    page: Number;
-    perPage: number;
-    data: Product[];
-  }> {
-    const { skip, take, where, order, currentPage } = params;
+    params: IFindManyOptions<Product>,
+  ): Promise<FindManyReturnType<Product>> {
+    const {
+      currentPage,
+      perPage,
+      findOptions: { take, skip, where, order },
+    } = params;
 
     const [products, total] = await this.productRepo.findAndCount({
       skip,
@@ -80,23 +80,25 @@ export class ProductService {
     return {
       total,
       page: currentPage,
-      perPage: take,
+      perPage,
       data: sortedProducts,
     };
   }
 
   async productsByShop(
     shopId: string,
-    params: FindManyOptions<Product> & {
-      currentPage: number;
-    },
+    params: IFindManyOptions<Product>,
   ): Promise<{
     page: number;
     perPage: number;
     total: number;
     data: Product[];
   }> {
-    const { skip, take, order, currentPage } = params;
+    const {
+      currentPage,
+      perPage,
+      findOptions: { skip, order, take },
+    } = params;
 
     const [products, total] = await this.productRepo.findAndCount({
       where: {
@@ -120,11 +122,13 @@ export class ProductService {
       },
     });
 
+    const sortedProducts = uniqBy(products, 'id');
+
     return {
       total,
       page: currentPage,
       perPage: take,
-      data: products,
+      data: sortedProducts,
     };
   }
 

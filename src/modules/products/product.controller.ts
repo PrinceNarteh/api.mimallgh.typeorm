@@ -32,6 +32,7 @@ export class ProductController {
       search,
       order,
     });
+
     return this.productService.products(findOptions);
   }
 
