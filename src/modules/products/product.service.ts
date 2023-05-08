@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProductImage } from 'src/entities/productImage.entity';
 import { ShopService } from 'src/modules/shops/shop.service';
 import { Shop } from 'src/entities/shop.entity';
+import { uniqBy, isEqual } from 'lodash';
 
 @Injectable()
 export class ProductService {
@@ -38,7 +39,8 @@ export class ProductService {
 
   async products(params: FindManyOptions<Product>): Promise<Product[]> {
     const { skip, take, where, order } = params;
-    return await this.productRepo.find({
+
+    const products = await this.productRepo.find({
       skip,
       take,
       where,
@@ -47,14 +49,24 @@ export class ProductService {
         images: true,
       },
     });
+
+    return uniqBy(products, 'id');
   }
 
-  async productsByShop(params: FindManyOptions<Product>): Promise<Product[]> {
-    const { skip, take, where, order } = params;
+  async productsByShop(
+    shopId: string,
+    params: FindManyOptions<Product>,
+  ): Promise<Product[]> {
+    const { skip, take, order } = params;
+    console.log(shopId);
     return await this.productRepo.find({
+      where: {
+        shop: {
+          id: shopId,
+        },
+      },
       skip,
       take,
-      where,
       order,
       relations: {
         images: true,
