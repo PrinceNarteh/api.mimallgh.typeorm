@@ -11,6 +11,8 @@ import {
   IFindManyOptions,
   returnValue,
 } from 'src/types/findManyOptions';
+import { chain } from 'lodash';
+import { format } from 'date-fns';
 
 @Injectable()
 export class OrdersService {
@@ -22,9 +24,7 @@ export class OrdersService {
     private readonly userService: UserService,
   ) {}
 
-  async getAllOrders(
-    params: IFindManyOptions<Order>,
-  ): Promise<FindManyReturnType<Order>> {
+  async getAllOrders(params: IFindManyOptions<Order>) {
     const {
       currentPage,
       perPage,
@@ -40,8 +40,29 @@ export class OrdersService {
       },
     });
 
+    let res = chain(orders)
+      .map((item) => {
+        return {
+          ...item,
+          createdAt: format(new Date(item.createdAt), 'do LLL yyyy'),
+        };
+      })
+      .groupBy('createdAt')
+      .map((value, i) => ({
+        date: i,
+        items: chain(value)
+          .groupBy('Order.orderId')
+          .map((val, idx) => ({
+            orderId: idx,
+            // user: `${val[0].user.firstName} ${val[0].user.lastName}`,
+            orderItems: val,
+          }))
+          .value(),
+      }))
+      .value();
+
     return returnValue({
-      data: orders,
+      data: res,
       perPage,
       currentPage,
       total,
@@ -80,10 +101,7 @@ export class OrdersService {
     });
   }
 
-  async getOrdersByShop(
-    shopId: string,
-    params: IFindManyOptions<Order>,
-  ): Promise<FindManyReturnType<OrderItem>> {
+  async getOrdersByShop(shopId: string, params: IFindManyOptions<Order>) {
     const {
       currentPage,
       perPage,
@@ -102,24 +120,52 @@ export class OrdersService {
       },
     });
 
+    const res = chain(orders)
+      .map((item) => {
+        return {
+          ...item,
+          createdAt: format(new Date(item.createdAt), 'do LLL yyyy'),
+        };
+      })
+      .groupBy('createdAt')
+      .map((value, i) => ({
+        date: i,
+        items: chain(value)
+          .groupBy('order.orderId')
+          .map((val, idx) => ({
+            orderId: idx,
+            // user: `${val[0].order.user.firstName} ${val[0].order.user.lastName}`,
+            orderItems: val,
+          }))
+          .value(),
+      }))
+      .value();
+
     return returnValue({
       currentPage,
       perPage,
       total,
-      data: orders,
+      data: res,
     });
   }
 
-  async getOrderByShop(userId: string, orderId: string): Promise<OrderItem[]> {
-    console.log('Called');
+  async getOrderByShop(shopId: string, orderId: string): Promise<OrderItem[]> {
     return await this.orderItemRepo.find({
       where: {
-        shopId: userId,
+        shopId,
         order: {
           id: orderId,
         },
       },
-      relations: ['user'],
+      relations: {
+        order: true,
+      },
+      select: {
+        order: {
+          id: true,
+          orderId: true,
+        },
+      },
     });
   }
 
