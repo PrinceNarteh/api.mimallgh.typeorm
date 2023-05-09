@@ -22,6 +22,21 @@ export class AuthService {
     return null;
   }
 
+  async validateAdmin(emailOrPhoneNumber: string, password: string) {
+    const user = await this.userService.findOneByEmailOrPhoneNumber(
+      emailOrPhoneNumber,
+    );
+    if (
+      user &&
+      user.role === 'admin' &&
+      (await bcrypt.compare(password, user.password))
+    ) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
   async login(user: User) {
     let payload = {
       id: user.id,

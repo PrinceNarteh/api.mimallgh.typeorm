@@ -7,10 +7,17 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt-strategy';
 import { LocalStrategy } from './strategies/local-strategy';
 import { RefreshJwtStrategy } from './strategies/refreshToken.strategy';
+import { AdminLocalStrategy } from './strategies/admin-local-strategy';
 
 @Module({
   imports: [JwtModule.register(jwtConfig), UserModule],
-  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshJwtStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    AdminLocalStrategy,
+    JwtStrategy,
+    RefreshJwtStrategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}
