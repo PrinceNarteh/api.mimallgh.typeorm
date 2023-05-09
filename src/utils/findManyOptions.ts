@@ -31,8 +31,8 @@ export const createFindOptions = ({
   }
 
   return {
-    currentPage: page,
-    perPage,
+    currentPage: Number(page),
+    perPage: Number(perPage),
     findOptions,
   };
 };

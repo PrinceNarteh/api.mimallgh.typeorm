@@ -1,4 +1,5 @@
 import { FindManyOptions } from 'typeorm';
+import { uniqBy } from 'lodash';
 
 export interface FindManyReturnType<T> {
   total: number;
@@ -25,11 +26,13 @@ export const returnValue = <T>({
   perPage: number;
   data: T[];
 }): FindManyReturnType<T> => {
+  const sortedData = uniqBy(data, 'id');
+
   return {
     total,
     page: Number(currentPage),
     perPage: Number(perPage),
     totalPages: Math.ceil(total / perPage),
-    data,
+    data: sortedData,
   };
 };

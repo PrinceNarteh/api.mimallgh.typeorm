@@ -13,7 +13,7 @@ const categories = [
 ];
 
 const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InFmemVvdjg1dDh3c21seDliZWF2a2RvMiIsIm5hbWUiOiJQcmluYXJ0IElUIFNvbHV0aW9uIiwic2hvcENvZGUiOiJDUkNDMjMwMDAwMDMiLCJpYXQiOjE2ODM1NTIwMjIsImV4cCI6MTY4MzU1MjkyMn0.KxAx-T8pmqbLCXuWUzPsE1-JzW_KwAzlKt8knw2bsA8';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InFmemVvdjg1dDh3c21seDliZWF2a2RvMiIsIm5hbWUiOiJQcmluYXJ0IElUIFNvbHV0aW9uIiwic2hvcENvZGUiOiJDUkNDMjMwMDAwMDMiLCJpYXQiOjE2ODM2MDQ3NTYsImV4cCI6MTY4MzYwNTY1Nn0._IdJ22vkgQ3bwOgi7mHU-EqIAW7Acdra7R1Tw7X8T7g';
 
 const createProduct = async (category: string) => ({
   title: faker.commerce.productName(),
@@ -52,12 +52,11 @@ async function createProducts() {
 
       console.log(product);
 
-      const res = await axios.post('http://localhost:4000/products', product, {
+      await axios.post('http://localhost:4000/products', product, {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
-      console.log(res.data);
     }
   }
 

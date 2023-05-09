@@ -10,7 +10,9 @@ import { ShopImage } from 'src/entities/shopImage.entity';
 import {
   FindManyReturnType,
   IFindManyOptions,
+  returnValue,
 } from 'src/types/findManyOptions';
+import { uniqBy } from 'lodash';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -73,13 +75,14 @@ export class ShopService {
       },
     });
 
-    return {
+    const sortedShops = uniqBy(shops, 'id');
+
+    return returnValue({
+      perPage,
+      currentPage,
       total,
-      page: Number(currentPage),
-      perPage: Number(take),
-      totalPages: Math.ceil(total / perPage),
-      data: shops,
-    };
+      data: sortedShops,
+    });
   }
 
   async createShop(data: CreateShopDto): Promise<Shop> {

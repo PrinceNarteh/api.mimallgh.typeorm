@@ -24,7 +24,6 @@ export class ProductService {
     private readonly productRepo: Repository<Product>,
     @InjectRepository(ProductImage)
     private readonly productImgRepo: Repository<ProductImage>,
-    @InjectRepository(Shop)
     private readonly shopService: ShopService,
   ) {}
 
@@ -52,15 +51,16 @@ export class ProductService {
   async products(
     params: IFindManyOptions<Product>,
   ): Promise<FindManyReturnType<Product>> {
+    console.log(params);
     const {
       currentPage,
       perPage,
-      findOptions: { take, skip, where, order },
+      findOptions: { skip, where, order },
     } = params;
 
     const [products, total] = await this.productRepo.findAndCount({
       skip,
-      take,
+      take: perPage,
       where,
       order,
       relations: {
@@ -76,13 +76,11 @@ export class ProductService {
       },
     });
 
-    const sortedProducts = uniqBy(products, 'id');
-
     return returnValue({
       total,
       currentPage,
       perPage,
-      data: sortedProducts,
+      data: products,
     });
   }
 
@@ -90,8 +88,6 @@ export class ProductService {
     shopId: string,
     params: IFindManyOptions<Product>,
   ): Promise<FindManyReturnType<Product>> {
-    console.log(shopId);
-    console.log(params);
     const {
       currentPage,
       perPage,
@@ -120,13 +116,11 @@ export class ProductService {
       },
     });
 
-    const sortedProducts = uniqBy(products, 'id');
-
     return returnValue({
       total,
       currentPage,
       perPage,
-      data: sortedProducts,
+      data: products,
     });
   }
 
@@ -148,7 +142,9 @@ export class ProductService {
     const product = this.productRepo.create({
       ...data,
       images: productImages,
-      shop,
+      shop: {
+        id: shopId,
+      },
     });
 
     await this.productRepo.save(product);
