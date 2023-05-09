@@ -84,7 +84,7 @@ export class User extends Base {
   })
   level: string;
 
-  @OneToMany(() => Order, (order) => order.userId)
+  @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
 
   @BeforeInsert()

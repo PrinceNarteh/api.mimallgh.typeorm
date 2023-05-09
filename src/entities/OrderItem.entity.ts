@@ -5,11 +5,15 @@ import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 
 @Entity()
 export class OrderItem extends Base {
-  @Column()
+  @Column({
+    name: 'product_id',
+  })
   productId: string;
 
-  @Column()
-  name: string;
+  @Column({
+    name: 'product_name',
+  })
+  productName: string;
 
   @Column()
   quantity: number;
@@ -22,10 +26,14 @@ export class OrderItem extends Base {
   })
   price: number;
 
-  @Column()
+  @Column({
+    name: 'shop_name',
+  })
   shopName: string;
 
-  @Column()
+  @Column({
+    name: 'shop_id',
+  })
   shopId: string;
 
   @ManyToOne(() => Order, (order) => order.items)

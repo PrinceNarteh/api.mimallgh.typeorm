@@ -11,7 +11,9 @@ const nanoid = customAlphabet(
 
 @Entity()
 export class Order extends Base {
-  @Column()
+  @Column({
+    name: 'order_id',
+  })
   orderId: string;
 
   @Column('decimal', {
@@ -22,8 +24,10 @@ export class Order extends Base {
   })
   amount: number;
 
-  @ManyToOne(() => User, (user) => user.orders)
-  userId: User;
+  @ManyToOne(() => User, (user) => user.orders, {
+    onDelete: 'CASCADE',
+  })
+  user: User;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
     onDelete: 'CASCADE',

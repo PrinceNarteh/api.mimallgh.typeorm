@@ -35,6 +35,9 @@ export class OrdersService {
       order,
       skip,
       take: perPage,
+      relations: {
+        items: true,
+      },
     });
 
     return returnValue({
@@ -57,7 +60,7 @@ export class OrdersService {
 
     const [orders, total] = await this.orderRepo.findAndCount({
       where: {
-        userId: {
+        user: {
           id: userId,
         },
       },
@@ -137,31 +140,27 @@ export class OrdersService {
       throw new NotFoundException('User Not Found');
     }
 
-    console.log(createOrderDto);
+    const { items, ...result } = createOrderDto;
+    let orderItems = [];
 
-    // const { items, ...result } = createOrderDto;
-    // let orderItems = [];
+    for (let item of items) {
+      console.log(item);
+      const res = this.orderItemRepo.create(item);
+      await this.orderItemRepo.save(res);
+      orderItems.push(res);
+    }
 
-    // for (let item of items) {
-    //   console.log(item);
-    //   const res = this.orderItemRepo.create(item);
-    //   await this.orderItemRepo.save(res);
-    //   orderItems.push(res);
-    // }
+    const order = this.orderRepo.create({
+      ...result,
+      user: {
+        id: user.id,
+      },
+      items: orderItems,
+    });
 
-    // const order = this.orderRepo.create({
-    //   ...result,
-    //   userId: {
-    //     id: user.id,
-    //   },
-    //   items: orderItems,
-    // });
+    await this.orderRepo.save(order);
 
-    // await this.orderRepo.save(order);
-
-    // return order;
-
-    return 'Done';
+    return order;
   }
 
   async updateOrder(
