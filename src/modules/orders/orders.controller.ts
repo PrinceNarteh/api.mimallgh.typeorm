@@ -13,6 +13,7 @@ import { JwtGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/orderDto';
+import { createFindOptions } from 'src/utils/findManyOptions';
 
 @Controller('orders')
 export class OrdersController {
@@ -20,17 +21,13 @@ export class OrdersController {
 
   @Get()
   async getOrders(
-    @Query('take') take?: number,
-    @Query('skip') skip?: number,
+    @Query('perPage') perPage?: number,
+    @Query('page') page?: number,
     @Query('order') order?: 'asc' | 'desc',
+    @Query('search') search?: string,
   ) {
-    return this.orderService.getAllOrders({
-      take: Number(take) || undefined,
-      skip: Number(skip) || undefined,
-      order: {
-        updatedAt: order,
-      },
-    });
+    const findManyOptions = createFindOptions({ order, page, perPage, search });
+    return this.orderService.getAllOrders(findManyOptions);
   }
 
   @Get(':orderId')
@@ -41,34 +38,26 @@ export class OrdersController {
   @Get(':userId/user')
   async getOrdersByUser(
     @Param() orderId: string,
-    @Query('take') take?: number,
-    @Query('skip') skip?: number,
-    @Query('orderBy') orderBy?: 'asc' | 'desc',
+    @Query('perPage') perPage?: number,
+    @Query('page') page?: number,
+    @Query('order') order?: 'asc' | 'desc',
+    @Query('search') search?: string,
   ) {
-    return this.orderService.getOrdersByUser(orderId, {
-      take: Number(take) || undefined,
-      skip: Number(skip) || undefined,
-      order: {
-        updatedAt: orderBy,
-      },
-    });
+    const findManyOptions = createFindOptions({ order, page, perPage, search });
+    return this.orderService.getOrdersByUser(orderId, findManyOptions);
   }
 
   @UseGuards(ShopJwtGuard)
   @Get(':shopId/shop')
   async getOrdersByShop(
     @Param('shopId') shopId: string,
-    @Query('take') take?: number,
-    @Query('skip') skip?: number,
+    @Query('perPage') perPage?: number,
+    @Query('page') page?: number,
     @Query('order') order?: 'asc' | 'desc',
+    @Query('search') search?: string,
   ) {
-    return this.orderService.getOrdersByShop(shopId, {
-      take: Number(take) || undefined,
-      skip: Number(skip) || undefined,
-      order: {
-        updatedAt: order,
-      },
-    });
+    const findManyOptions = createFindOptions({ order, page, perPage, search });
+    return this.orderService.getOrdersByShop(shopId, findManyOptions);
   }
 
   @UseGuards(ShopJwtGuard)

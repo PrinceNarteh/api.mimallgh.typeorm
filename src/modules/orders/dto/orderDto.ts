@@ -1,9 +1,17 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
-import { IsInt, IsPositive, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsDefined,
+  IsInt,
+  IsArray,
+  IsPositive,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 class CreateOrderItemDto {
   @IsString()
-  name: string;
+  productName: string;
 
   @IsPositive()
   quantity: number;
@@ -22,9 +30,10 @@ export class CreateOrderDto {
   @IsInt()
   amount: number;
 
-  @ValidateNested({
-    each: true,
-  })
+  @IsDefined()
+  @IsArray()
+  @ValidateNested()
+  @Type(() => CreateOrderItemDto)
   items: CreateOrderItemDto[];
 }
 

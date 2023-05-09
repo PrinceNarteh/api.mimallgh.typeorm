@@ -6,6 +6,11 @@ import { Repository, FindManyOptions } from 'typeorm';
 import { OrderItem } from 'src/entities/OrderItem.entity';
 import { User } from 'src/entities/user.entity';
 import { CreateOrderDto, UpdateOrderDto } from './dto/orderDto';
+import {
+  FindManyReturnType,
+  IFindManyOptions,
+  returnValue,
+} from 'src/types/findManyOptions';
 
 @Injectable()
 export class OrdersService {
@@ -17,51 +22,88 @@ export class OrdersService {
     private readonly userService: UserService,
   ) {}
 
-  async getAllOrders(params: FindManyOptions<Order>): Promise<Order[]> {
-    const { skip, take, where, order } = params;
-    return await this.orderRepo.find({
-      skip,
-      take,
-      where,
+  async getAllOrders(
+    params: IFindManyOptions<Order>,
+  ): Promise<FindManyReturnType<Order>> {
+    const {
+      currentPage,
+      perPage,
+      findOptions: { order, skip },
+    } = params;
+
+    const [orders, total] = await this.orderRepo.findAndCount({
       order,
-      relations: {
-        items: true,
-      },
+      skip,
+      take: perPage,
+    });
+
+    return returnValue({
+      data: orders,
+      perPage,
+      currentPage,
+      total,
     });
   }
 
   async getOrdersByUser(
     userId: string,
-    params: FindManyOptions<Order>,
-  ): Promise<Order[]> {
-    const { skip, take, order } = params;
-    return await this.orderRepo.find({
+    params: IFindManyOptions<Order>,
+  ): Promise<FindManyReturnType<Order>> {
+    const {
+      currentPage,
+      perPage,
+      findOptions: { order, skip },
+    } = params;
+
+    const [orders, total] = await this.orderRepo.findAndCount({
       where: {
         userId: {
           id: userId,
         },
       },
       skip,
-      take,
+      take: perPage,
       order,
       relations: {
         items: true,
       },
     });
+
+    return returnValue({
+      currentPage,
+      perPage,
+      total,
+      data: orders,
+    });
   }
 
   async getOrdersByShop(
-    userId: string,
-    params: FindManyOptions<Order>,
-  ): Promise<OrderItem[]> {
-    const { skip, take, order } = params;
-    return await this.orderItemRepo.find({
+    shopId: string,
+    params: IFindManyOptions<Order>,
+  ): Promise<FindManyReturnType<OrderItem>> {
+    const {
+      currentPage,
+      perPage,
+      findOptions: { order, skip },
+    } = params;
+
+    const [orders, total] = await this.orderItemRepo.findAndCount({
       where: {
-        shopId: userId,
+        shopId,
       },
       skip,
-      take,
+      take: perPage,
       order,
+      relations: {
+        order: true,
+      },
+    });
+
+    return returnValue({
+      currentPage,
+      perPage,
+      total,
+      data: orders,
     });
   }
 
@@ -95,24 +137,31 @@ export class OrdersService {
       throw new NotFoundException('User Not Found');
     }
 
-    const { items, ...result } = createOrderDto;
-    let orderItems = [];
+    console.log(createOrderDto);
 
-    for (let item of items) {
-      const res = this.orderItemRepo.create(item);
-      await this.orderItemRepo.save(res);
-      orderItems.push(res);
-    }
+    // const { items, ...result } = createOrderDto;
+    // let orderItems = [];
 
-    const order = this.orderRepo.create({
-      ...result,
-      userId: userExists,
-      items: orderItems,
-    });
+    // for (let item of items) {
+    //   console.log(item);
+    //   const res = this.orderItemRepo.create(item);
+    //   await this.orderItemRepo.save(res);
+    //   orderItems.push(res);
+    // }
 
-    await this.orderRepo.save(order);
+    // const order = this.orderRepo.create({
+    //   ...result,
+    //   userId: {
+    //     id: user.id,
+    //   },
+    //   items: orderItems,
+    // });
 
-    return order;
+    // await this.orderRepo.save(order);
+
+    // return order;
+
+    return 'Done';
   }
 
   async updateOrder(
