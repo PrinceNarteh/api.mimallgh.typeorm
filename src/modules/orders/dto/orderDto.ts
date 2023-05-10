@@ -13,6 +13,9 @@ class CreateOrderItemDto {
   @IsString()
   productName: string;
 
+  @IsString()
+  productId: string;
+
   @IsPositive()
   quantity: number;
 

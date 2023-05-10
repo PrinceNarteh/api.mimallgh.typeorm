@@ -51,7 +51,6 @@ export class ProductService {
   async products(
     params: IFindManyOptions<Product>,
   ): Promise<FindManyReturnType<Product>> {
-    console.log(params);
     const {
       currentPage,
       perPage,

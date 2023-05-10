@@ -13,12 +13,16 @@ export class UserController {
     @Query('perPage') perPage?: number,
     @Query('order') order?: 'asc' | 'desc',
     @Query('search') search?: string,
+    @Query('role') role?: string,
   ) {
     page = page || 1;
     perPage = perPage || 10;
     order = order || 'asc';
 
     const findOptions: FindManyOptions<User> = {
+      where: {
+        role,
+      },
       take: perPage,
       skip: (page - 1) * perPage,
       order: {
@@ -35,7 +39,7 @@ export class UserController {
       ];
     }
 
-    const options = { findOptions, currentPage: perPage };
+    const options = { findOptions, currentPage: page, perPage };
 
     return this.userService.getUsers(options);
   }

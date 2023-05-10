@@ -8,6 +8,10 @@ import { User } from 'src/entities/user.entity';
 import { UserImage } from 'src/entities/userImage.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dto/userDto';
+import {
+  FindManyReturnType,
+  IFindManyOptions,
+} from 'src/types/findManyOptions';
 
 @Injectable()
 export class UserService {
@@ -42,15 +46,17 @@ export class UserService {
   }
 
   async getUsers(
-    params: FindManyOptions<User> & {
-      currentPage: number;
-    },
-  ): Promise<{ total: number; perPage: number; page: number; data: User[] }> {
-    const { skip, take, where, order, currentPage } = params;
+    params: IFindManyOptions<User>,
+  ): Promise<FindManyReturnType<User>> {
+    const {
+      currentPage,
+      perPage,
+      findOptions: { order, skip, where },
+    } = params;
 
     const [users, total] = await this.userRepo.findAndCount({
       skip,
-      take,
+      take: perPage,
       where,
       order,
       relations: {
@@ -60,9 +66,10 @@ export class UserService {
 
     return {
       total,
-      perPage: take,
+      perPage,
       page: currentPage,
       data: users,
+      totalPages: Math.ceil(total / perPage),
     };
   }
 

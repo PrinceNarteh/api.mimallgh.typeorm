@@ -116,7 +116,20 @@ export class OrdersService {
       take: perPage,
       order,
       relations: {
-        order: true,
+        order: {
+          user: true,
+        },
+      },
+      select: {
+        order: {
+          id: true,
+          orderId: true,
+          user: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
     });
 
@@ -125,28 +138,29 @@ export class OrdersService {
         return {
           ...item,
           createdAt: format(new Date(item.createdAt), 'do LLL yyyy'),
+          updatedAt: format(new Date(item.updatedAt), 'do LLL yyyy'),
         };
       })
       .groupBy('createdAt')
       .map((value, i) => ({
         date: i,
-        items: chain(value)
+        user: `${value[0].order.user.firstName} ${value[0].order.user.lastName}`,
+        orders: chain(value)
           .groupBy('order.orderId')
           .map((val, idx) => ({
             orderId: idx,
-            // user: `${val[0].order.user.firstName} ${val[0].order.user.lastName}`,
             orderItems: val,
           }))
           .value(),
       }))
       .value();
 
-    return returnValue({
+    return {
       currentPage,
       perPage,
       total,
       data: res,
-    });
+    };
   }
 
   async getOrderByShop(shopId: string, orderId: string): Promise<OrderItem[]> {
@@ -190,7 +204,6 @@ export class OrdersService {
     let orderItems = [];
 
     for (let item of items) {
-      console.log(item);
       const res = this.orderItemRepo.create(item);
       await this.orderItemRepo.save(res);
       orderItems.push(res);
