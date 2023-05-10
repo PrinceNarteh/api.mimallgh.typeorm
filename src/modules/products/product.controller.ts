@@ -36,6 +36,23 @@ export class ProductController {
     return this.productService.products(findOptions);
   }
 
+  @Get('category')
+  async getCategorizedProducts(
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number,
+    @Query('order') order?: 'asc' | 'desc',
+    @Query('search') search?: string,
+  ) {
+    const findOptions = createFindOptions({
+      page,
+      perPage,
+      search,
+      order,
+    });
+
+    return this.productService.categorizedProducts(findOptions);
+  }
+
   @Get(':shopId/shop')
   async getProductsByShop(
     @Param('shopId') shopId: string,

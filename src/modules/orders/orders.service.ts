@@ -51,22 +51,25 @@ export class OrdersService {
       .map((value, i) => ({
         date: i,
         items: chain(value)
-          .groupBy('Order.orderId')
-          .map((val, idx) => ({
-            orderId: idx,
-            // user: `${val[0].user.firstName} ${val[0].user.lastName}`,
-            orderItems: val,
-          }))
+          .groupBy('orderId')
+          .map((val, idx) => {
+            return {
+              orderId: idx,
+              orders: val,
+            };
+          })
           .value(),
       }))
       .value();
 
-    return returnValue({
-      data: res,
-      perPage,
-      currentPage,
+    console.log(res);
+
+    return {
       total,
-    });
+      perPage,
+      page: currentPage,
+      data: res,
+    };
   }
 
   async getOrdersByUser(

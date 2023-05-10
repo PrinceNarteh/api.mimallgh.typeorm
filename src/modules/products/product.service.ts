@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { uniqBy } from 'lodash';
+import { chain, uniqBy } from 'lodash';
 import { Product } from 'src/entities/product.entity';
 import { ProductImage } from 'src/entities/productImage.entity';
 import { Shop } from 'src/entities/shop.entity';
@@ -48,9 +48,7 @@ export class ProductService {
     return product;
   }
 
-  async products(
-    params: IFindManyOptions<Product>,
-  ): Promise<FindManyReturnType<Product>> {
+  async products(params: IFindManyOptions<Product>) {
     const {
       currentPage,
       perPage,
@@ -75,12 +73,59 @@ export class ProductService {
       },
     });
 
-    return returnValue({
+    const res = chain(products)
+      .uniqBy('id')
+      .groupBy('category')
+      .map((value, key) => ({
+        category: key,
+        data: value,
+      }))
+      .value();
+
+    return {
       total,
+      page: Number(currentPage),
+      perPage: Number(perPage),
+      totalPages: Math.ceil(total / perPage),
+      data: res,
+    };
+  }
+
+  async categorizedProducts(params: IFindManyOptions<Product>) {
+    const {
       currentPage,
       perPage,
-      data: products,
+      findOptions: { skip, where, order },
+    } = params;
+
+    const [products, total] = await this.productRepo.findAndCount({
+      skip,
+      where,
+      order,
+      relations: {
+        images: true,
+        shop: true,
+      },
+      select: {
+        shop: {
+          id: true,
+          shopCode: true,
+          name: true,
+        },
+      },
     });
+
+    const res = chain(products)
+      .uniqBy('id')
+      .groupBy('category')
+      .map((value, key) => ({
+        category: key,
+        data: value,
+      }))
+      .sortBy('category')
+      .value();
+
+    return res;
   }
 
   async productsByShop(
@@ -141,9 +186,7 @@ export class ProductService {
     const product = this.productRepo.create({
       ...data,
       images: productImages,
-      shop: {
-        id: shopId,
-      },
+      shop,
     });
 
     await this.productRepo.save(product);
