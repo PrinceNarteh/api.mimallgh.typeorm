@@ -82,6 +82,8 @@ export class ProductService {
       }))
       .value();
 
+    console.log(res);
+
     return {
       total,
       page: Number(currentPage),

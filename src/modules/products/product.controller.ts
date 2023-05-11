@@ -25,6 +25,7 @@ export class ProductController {
     @Query('perPage') perPage?: number,
     @Query('order') order?: 'asc' | 'desc',
     @Query('search') search?: string,
+    @Query('category') category?: string,
   ) {
     const findOptions = createFindOptions({
       page,
@@ -32,6 +33,12 @@ export class ProductController {
       search,
       order,
     });
+
+    if (category) {
+      findOptions.findOptions.where = {
+        category,
+      };
+    }
 
     return this.productService.products(findOptions);
   }

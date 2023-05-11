@@ -13,6 +13,7 @@ import {
 import { pad } from 'src/utils/pad';
 import { Repository } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
+import { chain } from 'lodash';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -27,19 +28,42 @@ export class ShopService {
     private readonly shopImgRepo: Repository<ShopImage>,
   ) {}
 
-  async shop(id: string): Promise<Shop | null> {
-    const shop = await this.shopRepo.findOne({
+  async shop(id: string) {
+    const returnShop = await this.shopRepo.findOne({
       where: { id },
       relations: {
         image: true,
-        products: true,
+        products: {
+          images: true,
+          shop: true,
+        },
       },
     });
 
-    if (!shop) {
+    if (!returnShop) {
       throw new NotFoundException('Shop Not Found');
     }
-    return shop;
+
+    let { products, ...result } = returnShop;
+
+    let res = chain(products)
+      .uniqBy('id')
+      .groupBy('category')
+      .map((value, key) => ({
+        category: key,
+        data: value,
+      }))
+      .sortBy('category')
+      .value();
+
+    let returnValue = {
+      ...result,
+      products: res,
+    };
+
+    console.log(products);
+
+    return returnValue;
   }
 
   async findShopByShopCode(shopCode: string): Promise<Shop | null> {
@@ -153,7 +177,9 @@ export class ShopService {
       await updatedShop.save();
     }
 
-    return await this.shop(shopId);
+    return await this.shopRepo.findOne({
+      where: { id: shopId },
+    });
   }
 
   async deleteShop(id: string) {
