@@ -1,8 +1,16 @@
 import * as bcrypt from 'bcrypt';
-import { BeforeInsert, Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { Base } from './base/baseEntity';
 import { Order } from './order.entity';
 import { UserImage } from './userImage.entity';
+import { Review } from './review.entity';
 
 export type UserRole = 'admin' | 'user';
 
@@ -84,8 +92,15 @@ export class User extends Base {
   })
   level: string;
 
-  @OneToMany(() => Order, (order) => order.user)
+  @OneToMany(() => Order, (order) => order.user, {
+    onDelete: 'CASCADE',
+  })
   orders: Order[];
+
+  @ManyToOne(() => Review, (review) => review.user, {
+    onDelete: 'CASCADE',
+  })
+  reviews: Review[];
 
   @BeforeInsert()
   async hashPassword() {

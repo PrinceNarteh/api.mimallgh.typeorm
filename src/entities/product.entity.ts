@@ -3,6 +3,7 @@ import { Base } from './base/baseEntity';
 import { Shop } from './shop.entity';
 import { ProductImage } from './productImage.entity';
 import { ColumnNumericTransformer } from './base/columnNumericTransformer';
+import { Review } from './review.entity';
 
 export enum CategoryType {
   food = 'food',
@@ -60,6 +61,11 @@ export class Product extends Base {
   //   nullable: true,
   // })
   // rating: number[];
+
+  @OneToMany(() => Review, (review) => review.product, {
+    onDelete: 'CASCADE',
+  })
+  reviews: Review[];
 
   @OneToMany(() => ProductImage, (productImage) => productImage.productId, {
     onDelete: 'CASCADE',
