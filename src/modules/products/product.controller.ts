@@ -14,6 +14,7 @@ import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { CreateProductDto } from './dto/productDto';
 import { ProductService } from './product.service';
 import { createFindOptions } from 'src/utils/findManyOptions';
+import { ILike } from 'typeorm';
 
 @Controller('products')
 export class ProductController {
@@ -26,6 +27,7 @@ export class ProductController {
     @Query('order') order?: 'asc' | 'desc',
     @Query('search') search?: string,
     @Query('category') category?: string,
+    @Query('location') location?: string,
   ) {
     const findOptions = createFindOptions({
       page,
@@ -37,6 +39,30 @@ export class ProductController {
     if (category) {
       findOptions.findOptions.where = {
         category,
+      };
+    }
+
+    if (location) {
+      findOptions.findOptions.where = {
+        shop: {
+          location,
+        },
+      };
+    }
+
+    if (search) {
+      findOptions.findOptions.where = [
+        { title: ILike(`%${search}%`) },
+        { description: ILike(`%${search}%`) },
+      ];
+    }
+
+    if (category && location) {
+      findOptions.findOptions.where = {
+        category,
+        shop: {
+          location,
+        },
       };
     }
 

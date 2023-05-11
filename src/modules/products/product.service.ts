@@ -49,6 +49,7 @@ export class ProductService {
   }
 
   async products(params: IFindManyOptions<Product>) {
+    console.log(params.findOptions);
     const {
       currentPage,
       perPage,
@@ -73,7 +74,9 @@ export class ProductService {
       },
     });
 
-    const res = chain(products)
+    const sortedData = uniqBy(products, 'id');
+
+    const res = chain(sortedData)
       .uniqBy('id')
       .groupBy('category')
       .map((value, key) => ({

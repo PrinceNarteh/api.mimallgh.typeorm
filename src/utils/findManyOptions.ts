@@ -23,13 +23,6 @@ export const createFindOptions = ({
     },
   };
 
-  if (search) {
-    findOptions.where = [
-      { title: ILike(`%${search}%`) },
-      { description: ILike(`%${search}%`) },
-    ];
-  }
-
   return {
     currentPage: Number(page),
     perPage: Number(perPage),
