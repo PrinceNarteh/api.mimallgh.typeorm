@@ -80,5 +80,26 @@ export class ReviewsService {
     return this.getReview(reviewId);
   }
 
-  
+  async deleteReview({
+    reviewId,
+    userId,
+    productId,
+  }: {
+    reviewId: string;
+    userId: string;
+    productId: string;
+    updateReviewDto: Partial<CreateReviewDto>;
+  }) {
+    const user = await this.userService.user(userId);
+    await this.productService.product(productId);
+    const review = await this.getReview(reviewId);
+
+    if (user.id !== review.user.id) {
+      throw new ForbiddenException('You are not allowed to edit review');
+    }
+
+    await this.reviewRepo.delete(reviewId);
+
+    return 'Review deleted successfully';
+  }
 }
