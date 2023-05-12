@@ -13,7 +13,7 @@ const categories = [
 ];
 
 const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InFmemVvdjg1dDh3c21seDliZWF2a2RvMiIsIm5hbWUiOiJQcmluYXJ0IElUIFNvbHV0aW9uIiwic2hvcENvZGUiOiJDUkNDMjMwMDAwMDMiLCJpYXQiOjE2ODM3Nzc1ODksImV4cCI6MTY4Mzc3ODQ4OX0.UHk_XlPkbpHFU0hfVX9atYBtCH4kBe2NBiOCLf2YqYQ';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InFmemVvdjg1dDh3c21seDliZWF2a2RvMiIsIm5hbWUiOiJQcmluYXJ0IElUIFNvbHV0aW9uIiwic2hvcENvZGUiOiJDUkNDMjMwMDAwMDMiLCJpYXQiOjE2ODM4NTMzOTcsImV4cCI6MTY4Mzg1NDI5N30.XNbAtXhFyhnzIvxf3p7Sy9MI7DFmXC8tRlccUSwNvUY';
 
 const createProduct = async (category: string) => ({
   title: faker.commerce.productName(),
@@ -46,7 +46,7 @@ const createProduct = async (category: string) => ({
 async function createProducts() {
   console.log('Started Creating Products');
 
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 20; i++) {
     for (let category of categories) {
       const product = await createProduct(category);
 

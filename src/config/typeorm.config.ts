@@ -9,6 +9,6 @@ export const typeOrmConfig: TypeOrmModuleAsyncOptions = {
     database: process.env.DB_DATABASE,
     port: parseInt(process.env.DB_PORT),
     entities: [__dirname + '../../**/*.entity.{js,ts}'],
-    synchronize: false,
+    synchronize: true,
   }),
 };

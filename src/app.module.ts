@@ -8,6 +8,7 @@ import { ShopModule } from './modules/shops/shop.module';
 import { UserModule } from './modules/users/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
+import { ReviewsModule } from './modules/reviews/reviews.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { typeOrmConfig } from './config/typeorm.config';
     ShopModule,
     ShopAuthModule,
     OrdersModule,
+    ReviewsModule,
   ],
   providers: [],
 })
