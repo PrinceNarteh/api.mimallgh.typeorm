@@ -62,8 +62,6 @@ export class OrdersService {
       }))
       .value();
 
-    console.log(res);
-
     return {
       total,
       perPage,

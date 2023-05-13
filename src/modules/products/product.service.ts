@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { chain, uniqBy, filter } from 'lodash';
+import { chain, uniqBy, filter, sampleSize } from 'lodash';
 import { Product } from 'src/entities/product.entity';
 import { ProductImage } from 'src/entities/productImage.entity';
 import { Shop } from 'src/entities/shop.entity';
@@ -28,18 +28,22 @@ export class ProductService {
   ) {}
 
   async getAllProducts(queries: { [key: string]: string }) {
+    console.log(queries);
     const keys = Object.keys(queries);
     const take = Number(queries.perPage) || 10;
     const page = Number(queries.page) || 1;
 
     let findManyOptions: FindManyOptions<Product> = {
-      take,
-      skip: (page - 1) * take,
       relations: {
         shop: true,
         images: true,
       },
       select: {
+        id: true,
+        title: true,
+        images: true,
+        category: true,
+        price: true,
         shop: {
           id: true,
           name: true,
@@ -47,6 +51,10 @@ export class ProductService {
         },
       },
     };
+
+    if (keys.includes('page')) {
+      findManyOptions.skip = (page - 1) * take;
+    }
 
     if (keys.includes('category')) {
       findManyOptions.where = {
@@ -62,6 +70,13 @@ export class ProductService {
       };
     }
 
+    if (keys.includes('category') && keys.includes('location')) {
+      findManyOptions.where = {
+        ...findManyOptions.where,
+        category: queries.category,
+      };
+    }
+
     if (keys.includes('search')) {
       findManyOptions.where = [
         { title: ILike(`%${queries.search}%`) },
@@ -73,8 +88,6 @@ export class ProductService {
       findManyOptions,
     );
 
-    console.log(products);
-
     let sortedData = uniqBy(products, 'id');
 
     if (keys.includes('category') && keys.includes('search')) {
@@ -83,7 +96,7 @@ export class ProductService {
     }
 
     if (keys.includes(`${keys.find((val) => /categori[sz]ed/.test(val))}`)) {
-      const res = chain(sortedData)
+      let res = chain(sortedData)
         .uniqBy('id')
         .groupBy('category')
         .map((value, key) => ({
@@ -92,6 +105,15 @@ export class ProductService {
         }))
         .sortBy('category')
         .value();
+
+      res = chain(res)
+        .map((item) => ({
+          category: item.category,
+          data: sampleSize(item.data, take),
+        }))
+        .value();
+
+      console.log(res);
 
       return {
         total: total,

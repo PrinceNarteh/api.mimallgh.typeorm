@@ -61,8 +61,6 @@ export class ShopService {
       products: res,
     };
 
-    console.log(products);
-
     return returnValue;
   }
 

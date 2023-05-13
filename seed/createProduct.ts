@@ -13,7 +13,7 @@ const categories = [
 ];
 
 const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InFmemVvdjg1dDh3c21seDliZWF2a2RvMiIsIm5hbWUiOiJQcmluYXJ0IElUIFNvbHV0aW9uIiwic2hvcENvZGUiOiJDUkNDMjMwMDAwMDMiLCJpYXQiOjE2ODM4NTMzOTcsImV4cCI6MTY4Mzg1NDI5N30.XNbAtXhFyhnzIvxf3p7Sy9MI7DFmXC8tRlccUSwNvUY';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNvbWVtd3poZG45NTk3d2U2c21ubWIwNCIsIm5hbWUiOiJQcmluYXJ0IElUIFNvbHV0aW9uIiwic2hvcENvZGUiOiJDUkNDMjMwMDAwMDMiLCJpYXQiOjE2ODM5Nzc4NzQsImV4cCI6MTY4Mzk3ODc3NH0.cA8DNdXq_EI3vv9PnWn3flHGh8OUGulZaxZaRO2-HEA';
 
 const createProduct = async (category: string) => ({
   title: faker.commerce.productName(),
