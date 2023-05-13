@@ -73,9 +73,11 @@ export class ProductService {
       findManyOptions,
     );
 
+    console.log(products);
+
     let sortedData = uniqBy(products, 'id');
 
-    if (keys.includes('category')) {
+    if (keys.includes('category') && keys.includes('search')) {
       sortedData = filter(sortedData, { category: queries.category });
       total = sortedData.length;
     }

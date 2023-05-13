@@ -21,59 +21,9 @@ import { Product } from 'src/entities/product.entity';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get('all')
+  @Get()
   async getAllProducts(@Query() query?: { [key: string]: string }) {
     return this.productService.getAllProducts(query);
-  }
-
-  @Get()
-  async getProducts(
-    @Query('page') page?: number,
-    @Query('perPage') perPage?: number,
-    @Query('order') order?: 'asc' | 'desc',
-    @Query('search') search?: string,
-    @Query('category') category?: string,
-    @Query('location') location?: string,
-    @Query('userId') userId?: string,
-  ) {
-    const findOptions = createFindOptions({
-      page,
-      perPage,
-      search,
-      order,
-    });
-
-    if (category) {
-      findOptions.findOptions.where = {
-        category,
-      };
-    }
-
-    if (location) {
-      findOptions.findOptions.where = {
-        shop: {
-          location,
-        },
-      };
-    }
-
-    if (search) {
-      findOptions.findOptions.where = [
-        { title: ILike(`%${search}%`) },
-        { description: ILike(`%${search}%`) },
-      ];
-    }
-
-    if (category && location) {
-      findOptions.findOptions.where = {
-        category,
-        shop: {
-          location,
-        },
-      };
-    }
-
-    return this.productService.products(findOptions);
   }
 
   @Get('category')
