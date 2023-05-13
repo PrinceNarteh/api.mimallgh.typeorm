@@ -14,11 +14,17 @@ import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { CreateProductDto } from './dto/productDto';
 import { ProductService } from './product.service';
 import { createFindOptions } from 'src/utils/findManyOptions';
-import { ILike } from 'typeorm';
+import { ILike, FindManyOptions, FindOptionsOrderValue } from 'typeorm';
+import { Product } from 'src/entities/product.entity';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
+
+  @Get('all')
+  async getAllProducts(@Query() query?: { [key: string]: string }) {
+    return this.productService.getAllProducts(query);
+  }
 
   @Get()
   async getProducts(
@@ -28,6 +34,7 @@ export class ProductController {
     @Query('search') search?: string,
     @Query('category') category?: string,
     @Query('location') location?: string,
+    @Query('userId') userId?: string,
   ) {
     const findOptions = createFindOptions({
       page,

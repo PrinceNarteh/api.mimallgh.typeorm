@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { chain, uniqBy } from 'lodash';
+import { chain, uniqBy, filter } from 'lodash';
 import { Product } from 'src/entities/product.entity';
 import { ProductImage } from 'src/entities/productImage.entity';
 import { Shop } from 'src/entities/shop.entity';
@@ -14,7 +14,7 @@ import {
   IFindManyOptions,
   returnValue,
 } from 'src/types/findManyOptions';
-import { Repository } from 'typeorm';
+import { FindManyOptions, ILike, Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './dto/productDto';
 
 @Injectable()
@@ -26,6 +26,88 @@ export class ProductService {
     private readonly productImgRepo: Repository<ProductImage>,
     private readonly shopService: ShopService,
   ) {}
+
+  async getAllProducts(queries: { [key: string]: string }) {
+    const keys = Object.keys(queries);
+    const take = Number(queries.perPage) || 10;
+    const page = Number(queries.page) || 1;
+
+    let findManyOptions: FindManyOptions<Product> = {
+      take,
+      skip: (page - 1) * take,
+      relations: {
+        shop: true,
+        images: true,
+      },
+      select: {
+        shop: {
+          id: true,
+          name: true,
+          location: true,
+        },
+      },
+    };
+
+    if (keys.includes('category')) {
+      findManyOptions.where = {
+        category: queries.category,
+      };
+    }
+
+    if (keys.includes('location')) {
+      findManyOptions.where = {
+        shop: {
+          location: queries.location,
+        },
+      };
+    }
+
+    if (keys.includes('search')) {
+      findManyOptions.where = [
+        { title: ILike(`%${queries.search}%`) },
+        { description: ILike(`%${queries.search}%`) },
+      ];
+    }
+
+    let [products, total] = await this.productRepo.findAndCount(
+      findManyOptions,
+    );
+
+    let sortedData = uniqBy(products, 'id');
+
+    if (keys.includes('category')) {
+      sortedData = filter(sortedData, { category: queries.category });
+      total = sortedData.length;
+    }
+
+    if (keys.includes(`${keys.find((val) => /categori[sz]ed/.test(val))}`)) {
+      const res = chain(sortedData)
+        .uniqBy('id')
+        .groupBy('category')
+        .map((value, key) => ({
+          category: key,
+          data: value,
+        }))
+        .sortBy('category')
+        .value();
+
+      return {
+        total: total,
+        page: Number(page),
+        perPage: Number(take),
+        totalPages: Math.ceil(sortedData.length / take),
+        data: res,
+      };
+    }
+
+    return {
+      total,
+      page: Number(page),
+      perPage: Number(take),
+      totalPages: Math.ceil(total / take),
+      data: sortedData,
+    };
+  }
 
   async product(id: string): Promise<Product | null> {
     const product = await this.productRepo.findOne({
@@ -46,54 +128,6 @@ export class ProductService {
       throw new NotFoundException('Product not found');
     }
     return product;
-  }
-
-  async products(params: IFindManyOptions<Product>) {
-    console.log(params.findOptions);
-    const {
-      currentPage,
-      perPage,
-      findOptions: { skip, where, order },
-    } = params;
-
-    const [products, total] = await this.productRepo.findAndCount({
-      skip,
-      take: perPage,
-      where,
-      order,
-      relations: {
-        images: true,
-        shop: true,
-      },
-      select: {
-        shop: {
-          id: true,
-          shopCode: true,
-          name: true,
-        },
-      },
-    });
-
-    const sortedData = uniqBy(products, 'id');
-
-    const res = chain(sortedData)
-      .uniqBy('id')
-      .groupBy('category')
-      .map((value, key) => ({
-        category: key,
-        data: value,
-      }))
-      .value();
-
-    console.log(res);
-
-    return {
-      total,
-      page: Number(currentPage),
-      perPage: Number(perPage),
-      totalPages: Math.ceil(total / perPage),
-      data: res,
-    };
   }
 
   async categorizedProducts(params: IFindManyOptions<Product>) {
