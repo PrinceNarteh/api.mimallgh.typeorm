@@ -112,7 +112,7 @@ let prinartITSolution = {
 };
 
 const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImR4ejlsZGh3aGVwMWlpajhlaXlxNzFqdyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjg0MTY0MDU5LCJleHAiOjE2ODQxNjQ5NTl9.pPPe3i8f46_JqH244gQ6vVjg2g3T1LVMConDKpDoNmg';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImR4ejlsZGh3aGVwMWlpajhlaXlxNzFqdyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjg0MTcwOTQzLCJleHAiOjE2ODQxNzE4NDN9.S3iVHk4p5ZrfS663bLpStLOogDPzcYGowlIpO-pO1Tw';
 
 const createOrder = async () => ({
   amount: parseFloat(faker.commerce.price(100, 9999)),
@@ -172,7 +172,7 @@ async function createProducts() {
       },
     });
 
-    if (res.status === 200) {
+    if (res.status === 201) {
       console.log(res.data);
     } else {
       console.log(res.data.message);

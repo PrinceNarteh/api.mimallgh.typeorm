@@ -181,12 +181,33 @@ export class OrdersService {
         },
       },
       relations: {
-        order: true,
+        order: {
+          user: {
+            image: true,
+          },
+        },
+        product: {
+          images: true,
+        },
+        shop: true,
       },
       select: {
         order: {
           id: true,
           orderId: true,
+          user: {
+            firstName: true,
+            lastName: true,
+            email: true,
+            phoneNumber: true,
+            image: {
+              secure_url: true,
+            },
+          },
+        },
+        product: {
+          title: true,
+          images: true,
         },
       },
     });
