@@ -14,7 +14,7 @@ import {
   IFindManyOptions,
   returnValue,
 } from 'src/types/findManyOptions';
-import { FindManyOptions, ILike, Repository } from 'typeorm';
+import { Brackets, FindManyOptions, ILike, Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './dto/productDto';
 
 @Injectable()
@@ -28,67 +28,73 @@ export class ProductService {
   ) {}
 
   async getAllProducts(queries: { [key: string]: string }) {
-    console.log(queries);
     const keys = Object.keys(queries);
-    const take = Number(queries.perPage) || 10;
     const page = Number(queries.page) || 1;
+    let perPage = Number(queries.perPage) || 10;
 
-    let findManyOptions: FindManyOptions<Product> = {
-      relations: {
-        shop: true,
-        images: true,
-      },
-      select: {
-        id: true,
-        title: true,
-        images: true,
-        category: true,
-        price: true,
-        shop: {
-          id: true,
-          name: true,
-          location: true,
-        },
-      },
-    };
+    let query = this.productRepo
+      .createQueryBuilder('product')
+      .leftJoin('product.shop', 'shop')
+      .leftJoin('product.images', 'image');
 
-    if (keys.includes('page')) {
-      findManyOptions.skip = (page - 1) * take;
-    }
-
-    if (keys.includes('category')) {
-      findManyOptions.where = {
+    if (keys.includes('category'))
+      query = query.andWhere(`product.category = :category`, {
         category: queries.category,
-      };
-    }
+      });
 
     if (keys.includes('location')) {
-      findManyOptions.where = {
-        shop: {
-          location: queries.location,
-        },
-      };
+      query = query.andWhere('shop.location = :location', {
+        location: queries.location,
+      });
     }
 
-    if (keys.includes('category') && keys.includes('location')) {
-      findManyOptions.where = {
-        ...findManyOptions.where,
-        category: queries.category,
-      };
+    if (keys.includes('shopId')) {
+      query = query.andWhere('shop.id = :shopId', {
+        shopId: queries.shopId,
+      });
     }
 
     if (keys.includes('search')) {
-      findManyOptions.where = [
-        { title: ILike(`%${queries.search}%`) },
-        { description: ILike(`%${queries.search}%`) },
-      ];
+      query = query.andWhere(
+        new Brackets((qb) => {
+          qb.where('product.title LIKE :title', {
+            title: `%${queries.search}%`,
+          }).orWhere('product.description LIKE :description', {
+            description: `%${queries.search}%`,
+          });
+        }),
+      );
     }
 
-    let [products, total] = await this.productRepo.findAndCount(
-      findManyOptions,
-    );
+    let categorizedPerPage = keys.includes(
+      `${keys.find((val) => /categori[sz]ed/.test(val))}`,
+    )
+      ? perPage * 8
+      : perPage;
+
+    let [products, total] = await query
+      .skip((page - 1) * perPage)
+      .take(categorizedPerPage)
+      .select([
+        'product.id',
+        'product.title',
+        'product.price',
+        'product.category',
+        'product.stock',
+        'product.description',
+        'image.id',
+        'image.public_id',
+        'image.secure_url',
+        'shop.id',
+        'shop.name',
+        'shop.location',
+      ])
+      .getManyAndCount();
 
     let sortedData = uniqBy(products, 'id');
+
+    console.log(queries);
+    console.log({ products, total });
 
     if (keys.includes('category') && keys.includes('search')) {
       sortedData = filter(sortedData, { category: queries.category });
@@ -109,17 +115,15 @@ export class ProductService {
       res = chain(res)
         .map((item) => ({
           category: item.category,
-          data: sampleSize(item.data, take),
+          data: sampleSize(item.data, perPage),
         }))
         .value();
-
-      console.log(res);
 
       return {
         total: total,
         page: Number(page),
-        perPage: Number(take),
-        totalPages: Math.ceil(sortedData.length / take),
+        perPage: Number(perPage),
+        totalPages: Math.ceil(sortedData.length / perPage),
         data: res,
       };
     }
@@ -127,8 +131,8 @@ export class ProductService {
     return {
       total,
       page: Number(page),
-      perPage: Number(take),
-      totalPages: Math.ceil(total / take),
+      perPage: Number(perPage),
+      totalPages: Math.ceil(total / perPage),
       data: sortedData,
     };
   }
