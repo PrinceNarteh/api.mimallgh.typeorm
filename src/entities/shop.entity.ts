@@ -12,6 +12,7 @@ import { ShopImage } from './shopImage.entity';
 import { User } from './user.entity';
 import { customAlphabet } from 'nanoid/async';
 import * as bcrypt from 'bcrypt';
+import { OrderItem } from './OrderItem.entity';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -71,6 +72,11 @@ export class Shop extends Base {
     onDelete: 'CASCADE',
   })
   products: Product[];
+
+  @OneToMany(() => OrderItem, (product) => product.shop, {
+    onDelete: 'CASCADE',
+  })
+  orders: OrderItem[];
 
   @BeforeInsert()
   async hashPassword() {
