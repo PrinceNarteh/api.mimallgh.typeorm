@@ -2,19 +2,11 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { Base } from './base/baseEntity';
 import { Order } from './order.entity';
 import { ColumnNumericTransformer } from './base/columnNumericTransformer';
+import { Product } from './product.entity';
+import { Shop } from './shop.entity';
 
 @Entity()
 export class OrderItem extends Base {
-  @Column({
-    name: 'product_id',
-  })
-  productId: string;
-
-  @Column({
-    name: 'product_name',
-  })
-  productName: string;
-
   @Column()
   quantity: number;
 
@@ -26,15 +18,11 @@ export class OrderItem extends Base {
   })
   price: number;
 
-  @Column({
-    name: 'shop_name',
-  })
-  shopName: string;
+  @ManyToOne(() => Product)
+  product: Product;
 
-  @Column({
-    name: 'shop_id',
-  })
-  shopId: string;
+  @ManyToOne(() => Product)
+  shop: Shop;
 
   @ManyToOne(() => Order, (order) => order.items)
   order: Order;

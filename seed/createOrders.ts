@@ -17,10 +17,10 @@ let prinartITSolution = {
 };
 
 const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImR4ejlsZGh3aGVwMWlpajhlaXlxNzFqdyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjg0MTQyNDMzLCJleHAiOjE2ODQxNDMzMzN9.BJ2w8s-t9MQw0lgBjgSBmSCOOJRUXRkWriyr6Hfw1sk';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImR4ejlsZGh3aGVwMWlpajhlaXlxNzFqdyIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjg0MTQzOTYxLCJleHAiOjE2ODQxNDQ4NjF9.el-out-O3Ig3QxWknBvKN6gm8ASLR4QWTDYGLdKa-XE';
 
 const createOrder = async () => ({
-  amount: faker.commerce.price(100, 9999),
+  amount: parseFloat(faker.commerce.price(100, 9999)),
   items: [
     {
       productName: faker.commerce.productName(),
@@ -70,18 +70,14 @@ async function createProducts() {
 
   for (let i = 1; i <= 5; i++) {
     const order = await createOrder();
-
     console.log(order);
-    try {
-      const res = await axios.post('http://localhost:4000/orders', order, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(res.data);
-    } catch (error) {
-      console.log(error.message);
-    }
+
+    const res = await axios.post('http://localhost:4000/orders', order, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(res.data.message);
   }
 
   console.log('Done Creating Orders');

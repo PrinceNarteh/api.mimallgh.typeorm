@@ -1,21 +1,15 @@
-import { OmitType, PartialType } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsDefined,
   IsInt,
-  IsArray,
   IsPositive,
   IsString,
   ValidateNested,
 } from 'class-validator';
 
 class CreateOrderItemDto {
-  @IsString()
-  productName: string;
-
-  @IsString()
-  productId: string;
-
   @IsPositive()
   quantity: number;
 
@@ -23,7 +17,7 @@ class CreateOrderItemDto {
   price: number;
 
   @IsString()
-  shopName: string;
+  productId: string;
 
   @IsString()
   shopId: string;

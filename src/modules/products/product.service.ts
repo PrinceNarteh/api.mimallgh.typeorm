@@ -93,9 +93,6 @@ export class ProductService {
 
     let sortedData = uniqBy(products, 'id');
 
-    console.log(queries);
-    console.log({ products, total });
-
     if (keys.includes('category') && keys.includes('search')) {
       sortedData = filter(sortedData, { category: queries.category });
       total = sortedData.length;

@@ -17,7 +17,7 @@ export class Order extends Base {
   orderId: string;
 
   @Column('decimal', {
-    precision: 10,
+    precision: 10, 
     scale: 2,
     default: 0,
     transformer: new ColumnNumericTransformer(),

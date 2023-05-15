@@ -13,6 +13,8 @@ import {
 } from 'src/types/findManyOptions';
 import { chain } from 'lodash';
 import { format } from 'date-fns';
+import { ProductService } from '../products/product.service';
+import { ShopService } from '../shops/shop.service';
 
 @Injectable()
 export class OrdersService {
@@ -21,6 +23,8 @@ export class OrdersService {
     private readonly orderRepo: Repository<Order>,
     @InjectRepository(OrderItem)
     private readonly orderItemRepo: Repository<OrderItem>,
+    private readonly productService: ProductService,
+    private readonly shopService: ShopService,
     private readonly userService: UserService,
   ) {}
 
@@ -111,7 +115,9 @@ export class OrdersService {
 
     const [orders, total] = await this.orderItemRepo.findAndCount({
       where: {
-        shopId,
+        shop: {
+          id: shopId,
+        },
       },
       skip,
       take: perPage,
@@ -167,7 +173,9 @@ export class OrdersService {
   async getOrderByShop(shopId: string, orderId: string): Promise<OrderItem[]> {
     return await this.orderItemRepo.find({
       where: {
-        shopId,
+        shop: {
+          id: shopId,
+        },
         order: {
           id: orderId,
         },
@@ -196,25 +204,26 @@ export class OrdersService {
   }
 
   async createOrder(user: User, createOrderDto: CreateOrderDto) {
-    let userExists = await this.userService.user(user.id);
-    if (!userExists) {
-      throw new NotFoundException('User Not Found');
-    }
+    await this.userService.user(user.id);
 
     const { items, ...result } = createOrderDto;
     let orderItems = [];
 
     for (let item of items) {
-      const res = this.orderItemRepo.create(item);
+      let product = await this.productService.product(item.productId);
+      let shop = await this.shopService.shop(item.shopId);
+      const res = this.orderItemRepo.create({
+        ...item,
+        product,
+        shop,
+      });
       await this.orderItemRepo.save(res);
       orderItems.push(res);
     }
 
     const order = this.orderRepo.create({
       ...result,
-      user: {
-        id: user.id,
-      },
+      user,
       items: orderItems,
     });
 
