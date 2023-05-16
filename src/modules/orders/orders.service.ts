@@ -130,6 +130,7 @@ export class OrdersService {
       select: {
         order: {
           id: true,
+          amount: true,
           orderId: true,
           user: {
             id: true,
@@ -225,7 +226,7 @@ export class OrdersService {
   }
 
   async createOrder(user: User, createOrderDto: CreateOrderDto) {
-    await this.userService.user(user.id);
+    const userExists = await this.userService.user(user.id);
 
     const { items, ...result } = createOrderDto;
     let orderItems = [];
@@ -244,7 +245,7 @@ export class OrdersService {
 
     const order = this.orderRepo.create({
       ...result,
-      user,
+      user: userExists,
       items: orderItems,
     });
 

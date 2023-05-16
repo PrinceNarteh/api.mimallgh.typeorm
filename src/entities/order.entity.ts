@@ -1,4 +1,11 @@
-import { BeforeInsert, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { OrderItem } from './OrderItem.entity';
 import { Base } from './base/baseEntity';
 import { User } from './user.entity';
@@ -17,7 +24,7 @@ export class Order extends Base {
   orderId: string;
 
   @Column('decimal', {
-    precision: 10, 
+    precision: 10,
     scale: 2,
     default: 0,
     transformer: new ColumnNumericTransformer(),
@@ -27,6 +34,7 @@ export class Order extends Base {
   @ManyToOne(() => User, (user) => user.orders, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
