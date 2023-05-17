@@ -233,13 +233,36 @@ export class OrdersService {
     });
   }
 
-  async getOrderById(orderId: string) {
+  async getOrderById(orderId: string): Promise<Order> {
     return await this.orderRepo.findOne({
       where: {
         id: orderId,
       },
-      relations: {
-        items: true,
+      relations: [
+        'user',
+        'items',
+        'items.shop',
+        'items.product',
+        'items.product.images',
+      ],
+      select: {
+        user: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          phoneNumber: true,
+        },
+        items: {
+          price: true,
+          quantity: true,
+          product: {
+            title: true,
+            images: true,
+          },
+          shop: {
+            name: true,
+          },
+        },
       },
     });
   }

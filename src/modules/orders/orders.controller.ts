@@ -31,7 +31,7 @@ export class OrdersController {
   }
 
   @Get(':orderId')
-  async getOrderById(@Param() orderId: string) {
+  async getOrderById(@Param('orderId') orderId: string) {
     return this.orderService.getOrderById(orderId);
   }
 
