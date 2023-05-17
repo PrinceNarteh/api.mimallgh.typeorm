@@ -41,29 +41,48 @@ export class OrdersService {
       take: perPage,
       relations: {
         items: true,
+        user: true,
+      },
+      select: {
+        user: {
+          firstName: true,
+          lastName: true,
+        },
       },
     });
 
+    let idx = 0;
     let res = chain(orders)
       .map((item) => {
         return {
           ...item,
           createdAt: format(new Date(item.createdAt), 'do LLL yyyy'),
+          updatedAt: format(new Date(item.createdAt), 'do LLL yyyy'),
         };
       })
-      .groupBy('createdAt')
       .map((value, i) => ({
-        date: i,
-        items: chain(value)
-          .groupBy('orderId')
-          .map((val, idx) => {
-            return {
-              orderId: idx,
-              orders: val,
-            };
-          })
-          .value(),
+        id: value.id,
+        items: value,
       }))
+      .groupBy('items.createdAt')
+      .map((value, i) => {
+        return {
+          date: i,
+          items: chain(value)
+            .groupBy('items.orderId')
+            .map((val, orderId) => {
+              return {
+                id: val[idx].id,
+                amount: val[idx].items.amount,
+                createdAt: val[idx].items.createdAt,
+                user: `${val[idx].items.user.firstName} ${val[idx].items.user.lastName}`,
+                orderId,
+                orders: [...val[idx].items.items],
+              };
+            })
+            .value(),
+        };
+      })
       .value();
 
     return {
