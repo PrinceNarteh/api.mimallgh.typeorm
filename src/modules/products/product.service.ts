@@ -59,9 +59,13 @@ export class ProductService {
         new Brackets((qb) => {
           qb.where('product.title LIKE :title', {
             title: `%${queries.search}%`,
-          }).orWhere('product.description LIKE :description', {
-            description: `%${queries.search}%`,
-          });
+          })
+            .orWhere('product.description LIKE :description', {
+              description: `%${queries.search}%`,
+            })
+            .orWhere('shop.name LIKE :name', {
+              name: `%${queries.search}%`,
+            });
         }),
       );
     }
