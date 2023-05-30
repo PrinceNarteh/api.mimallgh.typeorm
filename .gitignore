@@ -6,6 +6,8 @@
 api.zip
 dist.zip
 
+uploads/
+
 # Logs
 logs
 *.log

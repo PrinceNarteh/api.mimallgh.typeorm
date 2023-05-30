@@ -236,25 +236,27 @@ export class ProductService {
     });
   }
 
-  async createProduct(shopId: string, createProductDto: CreateProductDto) {
+  async createProduct(
+    shopId: string,
+    createProductDto: CreateProductDto,
+    images: Array<Express.Multer.File>,
+  ) {
     const shop = await this.shopService.shop(shopId);
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
 
-    const { images, ...data } = createProductDto;
-    const productImages = [];
-
+    const imagesArr: ProductImage[] = [];
     for (let image of images) {
-      const productImage = this.productImgRepo.create(image);
-      await this.productImgRepo.save(productImage);
-      productImages.push(productImage);
+      const res = this.productImgRepo.create({ url: image.path });
+      await this.productImgRepo.save(res);
+      imagesArr.push(res);
     }
 
     const product = this.productRepo.create({
-      ...data,
-      images: productImages,
+      ...createProductDto,
       shop,
+      images: imagesArr,
     });
 
     await this.productRepo.save(product);
@@ -289,23 +291,7 @@ export class ProductService {
       },
     });
 
-    const { images, ...data } = updateProductDto;
-    const productImages = [];
-
-    if (images) {
-      for (let image of images) {
-        const productImage = this.productImgRepo.create(image);
-        await this.productImgRepo.save(productImage);
-        productImages.push(productImage);
-      }
-    }
-
-    const updatedProductData = {
-      ...data,
-      images: productImages,
-    };
-
-    const updatedProduct = Object.assign(product, updatedProductData);
+    const updatedProduct = Object.assign(product, updateProductDto);
     await updatedProduct.save();
 
     return updatedProduct;

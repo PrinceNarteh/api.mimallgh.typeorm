@@ -68,7 +68,8 @@ export class Product extends Base {
   reviews: Review[];
 
   @OneToMany(() => ProductImage, (productImage) => productImage.productId, {
-    onDelete: 'CASCADE',
+    cascade: true,
+    eager: true,
   })
   images: ProductImage[];
 

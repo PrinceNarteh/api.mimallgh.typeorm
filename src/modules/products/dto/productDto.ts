@@ -9,11 +9,8 @@ import {
 } from 'class-validator';
 
 class ProductImageDto {
-  @IsString()
-  public_id: string;
-
-  @IsString()
-  secure_url: string;
+  @IsNotEmpty()
+  url: Express.Multer.File;
 }
 
 export class CreateProductDto {
