@@ -14,7 +14,10 @@ async function bootstrap() {
       stopAtFirstError: true,
     }),
   );
-  app.useStaticAssets(path.join(__dirname, '../uploads'));
+  app.useStaticAssets(path.join(__dirname, '..', 'uploads'), {
+    index: false,
+    prefix: '/uploads/',
+  });
   await app.listen(parseInt(process.env.PORT) || 4000);
 }
 bootstrap();

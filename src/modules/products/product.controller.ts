@@ -16,7 +16,7 @@ import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { createFindOptions } from 'src/utils/findManyOptions';
 import { CreateProductDto } from './dto/productDto';
 import { ProductService } from './product.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { createId } from '@paralleldrive/cuid2';
 import { extname } from 'path';
@@ -70,10 +70,10 @@ export class ProductController {
     return this.productService.product(productId);
   }
 
-  @UseGuards(ShopJwtGuard)
   @Post()
+  @UseGuards(ShopJwtGuard)
   @UseInterceptors(
-    FileInterceptor('images', {
+    FilesInterceptor('images', 4, {
       storage: diskStorage({
         destination: './uploads/products',
         filename: (req, file, cb) => {
@@ -87,13 +87,15 @@ export class ProductController {
   )
   async createProduct(
     @Request() req,
-    @Body(TransformDtoPipe) createProductDto: CreateProductDto,
-    @UploadedFiles() images: Array<Express.Multer.File>,
+    @Body() createProductDto: CreateProductDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
+    console.log(createProductDto);
+    console.log(files);
     return this.productService.createProduct(
       req.user.id,
       createProductDto,
-      images,
+      files,
     );
   }
 
