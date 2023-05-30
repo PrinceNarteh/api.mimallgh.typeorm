@@ -32,7 +32,6 @@ export class ShopService {
     const returnShop = await this.shopRepo.findOne({
       where: { id },
       relations: {
-        image: true,
         products: {
           images: true,
           shop: true,
@@ -68,10 +67,26 @@ export class ShopService {
     return this.shopRepo.findOne({
       where: { shopCode },
       relations: {
-        image: true,
         products: true,
       },
     });
+  }
+
+  async getAllShops(): Promise<Shop[]> {
+    const shops = await this.shopRepo.find({
+      relations: ['products'],
+    });
+    return shops;
+  }
+
+  async getSingleShop(id: string): Promise<Shop | null> {
+    const shop = await this.shopRepo.findOne({
+      where: {
+        id,
+      },
+      relations: ['products'],
+    });
+    return shop;
   }
 
   async shops(
@@ -92,7 +107,6 @@ export class ShopService {
         ...order,
       },
       relations: {
-        image: true,
         products: true,
       },
     });
@@ -107,7 +121,10 @@ export class ShopService {
     });
   }
 
-  async createShop(data: CreateShopDto): Promise<Shop> {
+  async createShop(
+    data: CreateShopDto,
+    file?: Express.Multer.File,
+  ): Promise<Shop> {
     const shops = await this.shopRepo.find({
       order: {
         shopCode: 'desc',
@@ -129,9 +146,12 @@ export class ShopService {
       shopCode = `CRCC${year}${index}`;
     }
 
+    console.log(file);
+
     const shop = this.shopRepo.create({
       ...data,
       shopCode,
+      image: file ? file.path : null,
       plainPassword: password,
       password: hashPassword,
     });

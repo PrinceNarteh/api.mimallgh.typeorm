@@ -7,6 +7,8 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Shop } from 'src/entities/shop.entity';
 import { FindManyOptions, ILike } from 'typeorm';
@@ -14,9 +16,20 @@ import { CreateShopDto } from './dto/shopDto';
 import { ShopService } from './shop.service';
 import { FindManyReturnType } from 'src/types/findManyOptions';
 
+
 @Controller('shops')
 export class ShopController {
   constructor(private readonly shopService: ShopService) {}
+
+  @Get('all')
+  async getAllShops() {
+    return this.shopService.getAllShops();
+  }
+
+  @Get('single/:shopId')
+  async getSingleShop(@Param('shopId') shopId: string) {
+    return this.shopService.getSingleShop(shopId);
+  }
 
   @Get()
   async getShops(
@@ -56,8 +69,11 @@ export class ShopController {
   }
 
   @Post()
-  async createShop(@Body() data: CreateShopDto): Promise<Shop> {
-    return this.shopService.createShop(data);
+  async createShop(
+    @Body() data: CreateShopDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ): Promise<Shop> {
+    return this.shopService.createShop(data, file);
   }
 
   @Patch(':shopId')

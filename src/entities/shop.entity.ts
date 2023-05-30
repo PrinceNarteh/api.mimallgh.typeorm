@@ -19,7 +19,6 @@ const nanoid = customAlphabet(
 );
 
 @Entity('shops')
-@Index(['name', 'location'], { unique: true })
 export class Shop extends Base {
   @Column({
     unique: true,
@@ -65,8 +64,11 @@ export class Shop extends Base {
   @Column()
   closingTime: string;
 
-  @OneToOne(() => ShopImage, (shopImage) => shopImage.shopId)
-  image: ShopImage;
+  // @OneToOne(() => ShopImage, (shopImage) => shopImage.shopId)
+  // image: ShopImage;
+
+  @Column({ nullable: true })
+  image: string;
 
   @OneToMany(() => Product, (product) => product.shop, {
     onDelete: 'CASCADE',
