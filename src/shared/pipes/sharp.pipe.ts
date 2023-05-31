@@ -19,8 +19,6 @@ export class SharpFilesInterceptorPipe
       const genName = createId();
       const filename = `${genName}.webp`;
 
-      console.log(image);
-
       await sharp(image.buffer)
         .resize(800)
         .webp({ effort: 3 })

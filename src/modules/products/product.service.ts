@@ -16,8 +16,7 @@ import {
 } from 'src/types/findManyOptions';
 import { Brackets, Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './dto/productDto';
-import * as fs from 'fs';
-import { join } from 'path';
+import { deleteFile } from 'src/utils/deleteFile';
 
 @Injectable()
 export class ProductService {
@@ -269,6 +268,7 @@ export class ProductService {
     shop: { id: string; shopCode: string },
     productId: string,
     updateProductDto: UpdateProductDto,
+    imageNames: Array<string>,
   ) {
     const product = await this.productRepo.findOne({
       where: { id: productId },
@@ -286,13 +286,21 @@ export class ProductService {
       );
     }
 
-    await this.productImgRepo.delete({
-      productId: {
-        id: productId,
-      },
-    });
+    const imagesArr: ProductImage[] = [];
+    for (let image of imageNames) {
+      const res = this.productImgRepo.create({ name: image });
+      await this.productImgRepo.save(res);
+      imagesArr.push(res);
+    }
 
-    const updatedProduct = Object.assign(product, updateProductDto);
+    const images = JSON.parse(updateProductDto.images as any);
+
+    const data = {
+      ...updateProductDto,
+      images: [...images, ...imagesArr],
+    };
+
+    const updatedProduct = Object.assign(product, data);
     await updatedProduct.save();
 
     return updatedProduct;
@@ -320,6 +328,10 @@ export class ProductService {
       },
     });
 
+    product.images.forEach((image) => {
+      deleteFile(image.name, 'products');
+    });
+
     await this.productRepo.delete(productId);
 
     return 'Product deleted successfully';
@@ -344,11 +356,8 @@ export class ProductService {
   }) {
     const img = await this.findProductImage(imageId);
     await this.productImgRepo.delete({ id: imageId });
-    const path = `${join(process.cwd(), 'uploads', 'products', img.name)}`;
 
-    console.log(path);
-
-    fs.unlink(path, (err) => {});
+    deleteFile(img.name, 'products');
 
     return await this.product(productId);
   }

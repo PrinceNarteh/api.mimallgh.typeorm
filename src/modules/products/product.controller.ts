@@ -19,9 +19,8 @@ import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { createFindOptions } from 'src/utils/findManyOptions';
 import { SharpFilesInterceptorPipe } from '../../shared/pipes/sharp.pipe';
 import { CreateProductDto } from './dto/productDto';
-import { ProductService } from './product.service';
 import { TransformDtoPipe } from './pipe/createProduct.pipe';
-import * as fs from 'fs';
+import { ProductService } from './product.service';
 
 @Controller('products')
 export class ProductController {
@@ -87,17 +86,21 @@ export class ProductController {
     );
   }
 
-  @UseGuards(ShopJwtGuard)
   @Patch(':productId')
+  @UseGuards(ShopJwtGuard)
+  @UseInterceptors(TransformDtoPipe, FilesInterceptor('newImages', 4))
   async updateProduct(
     @Request() req,
     @Param('productId') productId: string,
     @Body() updateProductDto: Partial<CreateProductDto>,
+    @UploadedFiles(new SharpFilesInterceptorPipe('products'))
+    imageNames: Array<string>,
   ) {
     return this.productService.updateProduct(
       req.user,
       productId,
       updateProductDto,
+      imageNames,
     );
   }
 
