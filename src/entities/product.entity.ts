@@ -1,9 +1,16 @@
-import { Column, Entity, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
 import { Base } from './base/baseEntity';
 import { Shop } from './shop.entity';
-import { ProductImage } from './productImage.entity';
 import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 import { Review } from './review.entity';
+import { createId } from '@paralleldrive/cuid2';
 
 export enum CategoryType {
   food = 'food',
@@ -14,6 +21,23 @@ export enum CategoryType {
   personal_services = 'personal_services',
   printing_and_stationery = 'printing_and_stationery',
   tech = 'tech',
+}
+
+@Entity('product_images')
+export class ProductImage {
+  @PrimaryColumn()
+  id: string = createId();
+
+  @Column()
+  name: string;
+
+  @ManyToOne(() => Product, (product) => product.images, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({
+    name: 'product_id',
+  })
+  productId: Product;
 }
 
 @Entity('products')

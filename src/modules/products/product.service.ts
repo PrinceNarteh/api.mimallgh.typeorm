@@ -5,8 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { chain, uniqBy, filter, sampleSize } from 'lodash';
-import { Product } from 'src/entities/product.entity';
-import { ProductImage } from 'src/entities/productImage.entity';
+import { Product, ProductImage } from 'src/entities/product.entity';
 import { Shop } from 'src/entities/shop.entity';
 import { ShopService } from 'src/modules/shops/shop.service';
 import {
@@ -238,7 +237,7 @@ export class ProductService {
   async createProduct(
     shopId: string,
     createProductDto: CreateProductDto,
-    images: Array<Express.Multer.File>,
+    imageNames: Array<string>,
   ) {
     const shop = await this.shopService.shop(shopId);
     if (!shop) {
@@ -246,8 +245,8 @@ export class ProductService {
     }
 
     const imagesArr: ProductImage[] = [];
-    for (let image of images) {
-      const res = this.productImgRepo.create({ url: image.path });
+    for (let image of imageNames) {
+      const res = this.productImgRepo.create({ name: image });
       await this.productImgRepo.save(res);
       imagesArr.push(res);
     }

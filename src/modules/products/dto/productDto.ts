@@ -10,7 +10,7 @@ import {
 
 class ProductImageDto {
   @IsNotEmpty()
-  url: Express.Multer.File;
+  name: Express.Multer.File;
 }
 
 export class CreateProductDto {

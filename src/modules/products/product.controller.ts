@@ -8,20 +8,18 @@ import {
   Post,
   Query,
   Request,
+  Res,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
-  UploadedFiles,
-  Res,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { join } from 'path';
 import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { createFindOptions } from 'src/utils/findManyOptions';
+import { SharpPipe } from '../shared/pipes/sharp.pipe';
 import { CreateProductDto } from './dto/productDto';
 import { ProductService } from './product.service';
-import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { createId } from '@paralleldrive/cuid2';
-import { extname, join } from 'path';
-import { TransformDtoPipe } from './pipe/createProduct.pipe';
 
 @Controller('products')
 export class ProductController {
@@ -73,30 +71,16 @@ export class ProductController {
 
   @Post()
   @UseGuards(ShopJwtGuard)
-  @UseInterceptors(
-    FilesInterceptor('images', 4, {
-      storage: diskStorage({
-        destination: './uploads/products',
-        filename: (req, file, cb) => {
-          const ext = extname(file.originalname);
-          const generatedName = createId();
-          const filename = `${generatedName}${ext}`;
-          cb(null, filename);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FilesInterceptor('images', 4))
   async createProduct(
     @Request() req,
     @Body() createProductDto: CreateProductDto,
-    @UploadedFiles() files: Array<Express.Multer.File>,
+    @UploadedFiles(new SharpPipe('products')) imageNames: Array<string>,
   ) {
-    console.log(createProductDto);
-    console.log(files);
     return this.productService.createProduct(
       req.user.id,
       createProductDto,
-      files,
+      imageNames,
     );
   }
 
