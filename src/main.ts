@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express/interfaces';
-import * as path from 'path';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -14,10 +14,7 @@ async function bootstrap() {
       stopAtFirstError: true,
     }),
   );
-  app.useStaticAssets(path.join(__dirname, '..', 'uploads'), {
-    index: false,
-    prefix: '/uploads/',
-  });
+  app.useStaticAssets(join(__dirname, '../uploads'));
   await app.listen(parseInt(process.env.PORT) || 4000);
 }
 bootstrap();

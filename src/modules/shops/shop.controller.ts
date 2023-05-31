@@ -7,15 +7,15 @@ import {
   Patch,
   Post,
   Query,
+  Res,
   UploadedFile,
-  UseInterceptors,
 } from '@nestjs/common';
+import { join } from 'path';
 import { Shop } from 'src/entities/shop.entity';
+import { FindManyReturnType } from 'src/types/findManyOptions';
 import { FindManyOptions, ILike } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
 import { ShopService } from './shop.service';
-import { FindManyReturnType } from 'src/types/findManyOptions';
-
 
 @Controller('shops')
 export class ShopController {
@@ -87,5 +87,10 @@ export class ShopController {
   @Delete(':shopId')
   async deleteShop(@Param('shopId') shopId: string) {
     return this.shopService.deleteShop(shopId);
+  }
+
+  @Get('shop-image/:shopImage')
+  async findShopImage(@Param('imageName') imageName: string, @Res() res) {
+    res.sendFile(join(process.cwd(), 'uploads/shops/' + imageName));
   }
 }

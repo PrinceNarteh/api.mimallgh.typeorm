@@ -11,6 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFiles,
+  Res,
 } from '@nestjs/common';
 import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { createFindOptions } from 'src/utils/findManyOptions';
@@ -19,7 +20,7 @@ import { ProductService } from './product.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { createId } from '@paralleldrive/cuid2';
-import { extname } from 'path';
+import { extname, join } from 'path';
 import { TransformDtoPipe } from './pipe/createProduct.pipe';
 
 @Controller('products')
@@ -117,5 +118,10 @@ export class ProductController {
   @Delete(':productId')
   async deleteProduct(@Request() req, @Param('productId') productId: string) {
     return this.productService.deleteProduct(req.user, productId);
+  }
+
+  @Get('/product-image/:imageName')
+  async findProductImage(@Param('imageName') imageName: string, @Res() res) {
+    res.sendFile(join(process.cwd(), 'uploads/products/' + imageName));
   }
 }
