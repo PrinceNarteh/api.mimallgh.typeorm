@@ -21,6 +21,7 @@ import { SharpFilesInterceptorPipe } from '../../shared/pipes/sharp.pipe';
 import { CreateProductDto } from './dto/productDto';
 import { ProductService } from './product.service';
 import { TransformDtoPipe } from './pipe/createProduct.pipe';
+import * as fs from 'fs';
 
 @Controller('products')
 export class ProductController {
@@ -72,10 +73,10 @@ export class ProductController {
 
   @Post()
   @UseGuards(ShopJwtGuard)
-  @UseInterceptors(FilesInterceptor('images', 4))
+  @UseInterceptors(TransformDtoPipe, FilesInterceptor('images', 4))
   async createProduct(
     @Request() req,
-    @Body(TransformDtoPipe) createProductDto: CreateProductDto,
+    @Body() createProductDto: CreateProductDto,
     @UploadedFiles(new SharpFilesInterceptorPipe('products'))
     imageNames: Array<string>,
   ) {
@@ -106,8 +107,15 @@ export class ProductController {
     return this.productService.deleteProduct(req.user, productId);
   }
 
-  @Get('/product-image/:imageName')
+  @Get('/image/:imageName')
   async findProductImage(@Param('imageName') imageName: string, @Res() res) {
     res.sendFile(join(process.cwd(), 'uploads/products/' + imageName));
+  }
+
+  @Delete('/:productId/image/:imageId')
+  async deleteProductImage(
+    @Param() param: { productId: string; imageId: string },
+  ) {
+    return this.productService.deleteProductImage(param);
   }
 }

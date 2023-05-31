@@ -89,7 +89,7 @@ export class ShopController {
     return this.shopService.deleteShop(shopId);
   }
 
-  @Get('shop-image/:shopImage')
+  @Get('/image/:shopImage')
   async findShopImage(@Param('imageName') imageName: string, @Res() res) {
     res.sendFile(join(process.cwd(), 'uploads/shops/' + imageName));
   }

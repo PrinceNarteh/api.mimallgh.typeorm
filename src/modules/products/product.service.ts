@@ -16,6 +16,8 @@ import {
 } from 'src/types/findManyOptions';
 import { Brackets, Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './dto/productDto';
+import * as fs from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class ProductService {
@@ -321,5 +323,33 @@ export class ProductService {
     await this.productRepo.delete(productId);
 
     return 'Product deleted successfully';
+  }
+
+  async findProductImage(imageId: string) {
+    const img = this.productImgRepo.findOne({ where: { id: imageId } });
+
+    if (!img) {
+      throw new NotFoundException('Product Image Not Found');
+    }
+
+    return img;
+  }
+
+  async deleteProductImage({
+    productId,
+    imageId,
+  }: {
+    productId: string;
+    imageId: string;
+  }) {
+    const img = await this.findProductImage(imageId);
+    await this.productImgRepo.delete({ id: imageId });
+    const path = `${join(process.cwd(), 'uploads', 'products', img.name)}`;
+
+    console.log(path);
+
+    fs.unlink(path, (err) => {});
+
+    return await this.product(productId);
   }
 }
