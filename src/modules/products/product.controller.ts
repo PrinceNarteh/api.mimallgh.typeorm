@@ -17,9 +17,10 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { createFindOptions } from 'src/utils/findManyOptions';
-import { SharpPipe } from '../shared/pipes/sharp.pipe';
+import { SharpFilesInterceptorPipe } from '../../shared/pipes/sharp.pipe';
 import { CreateProductDto } from './dto/productDto';
 import { ProductService } from './product.service';
+import { TransformDtoPipe } from './pipe/createProduct.pipe';
 
 @Controller('products')
 export class ProductController {
@@ -74,8 +75,9 @@ export class ProductController {
   @UseInterceptors(FilesInterceptor('images', 4))
   async createProduct(
     @Request() req,
-    @Body() createProductDto: CreateProductDto,
-    @UploadedFiles(new SharpPipe('products')) imageNames: Array<string>,
+    @Body(TransformDtoPipe) createProductDto: CreateProductDto,
+    @UploadedFiles(new SharpFilesInterceptorPipe('products'))
+    imageNames: Array<string>,
   ) {
     return this.productService.createProduct(
       req.user.id,

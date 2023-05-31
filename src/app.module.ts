@@ -11,7 +11,6 @@ import { ShopModule } from './modules/shops/shop.module';
 import { UserModule } from './modules/users/user.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { SharedModule } from './modules/shared/shared.module';
 
 @Module({
   imports: [
@@ -21,7 +20,6 @@ import { SharedModule } from './modules/shared/shared.module';
       storage: memoryStorage(),
     }),
     AuthModule,
-    SharedModule,
     UserModule,
     ProductModule,
     ShopModule,

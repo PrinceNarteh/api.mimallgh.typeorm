@@ -4,8 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { chain, uniqBy, filter, sampleSize } from 'lodash';
-import { Product, ProductImage } from 'src/entities/product.entity';
+import { chain, filter, sampleSize, uniqBy } from 'lodash';
+import { Product } from 'src/entities/product.entity';
+import { ProductImage } from 'src/entities/productImage.entity';
 import { Shop } from 'src/entities/shop.entity';
 import { ShopService } from 'src/modules/shops/shop.service';
 import {
@@ -13,7 +14,7 @@ import {
   IFindManyOptions,
   returnValue,
 } from 'src/types/findManyOptions';
-import { Brackets, FindManyOptions, ILike, Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreateProductDto, UpdateProductDto } from './dto/productDto';
 
 @Injectable()
@@ -86,7 +87,7 @@ export class ProductService {
         'product.stock',
         'product.description',
         'image.id',
-        'image.url',
+        'image.name',
         'shop.id',
         'shop.name',
         'shop.location',

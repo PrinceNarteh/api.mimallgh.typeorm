@@ -16,6 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { customAlphabet } from 'nanoid/async';
+import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -35,22 +36,11 @@ export class ShopAuthController {
   }
 
   @Post('register')
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploads/shop',
-        filename: async (req, file, cb) => {
-          const ext = extname(file.originalname);
-          const genName = await nanoid(10);
-          const filename = `${genName}${ext}`;
-          cb(null, filename);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FileInterceptor('image'))
   async registerShop(
     @Body() createShopDto: CreateShopDto,
-    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFile(new SharpFileInterceptorPipe('shops'))
+    file?: Express.Multer.File,
   ) {
     return await this.shopService.createShop(createShopDto, file);
   }
