@@ -31,14 +31,16 @@ export class Delivery extends Base {
   deliveryCharge: number;
 
   @OneToMany(() => Item, (item) => item.order, {
-    onDelete: 'CASCADE',
+    cascade: true,
+    eager: true,
   })
   items: Item[];
 
   @BeforeInsert()
   async calcAmount() {
     this.amount = this.items.reduce(
-      (amt, currentItem) => amt + currentItem.price * currentItem.quantity,
+      (amt, currentItem) =>
+        amt + currentItem.product.price * currentItem.quantity,
       0,
     );
   }
