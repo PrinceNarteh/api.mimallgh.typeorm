@@ -357,7 +357,7 @@ export class ProductService {
     const img = await this.findProductImage(imageId);
     await this.productImgRepo.delete({ id: imageId });
 
-    deleteFile(img.name, 'products');
+    if (img) deleteFile(img.name, 'products');
 
     return await this.product(productId);
   }
