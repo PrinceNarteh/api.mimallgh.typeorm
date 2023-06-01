@@ -10,6 +10,7 @@ export class DeliveryService {
     @InjectRepository(Delivery)
     private readonly deliveryRepo: Repository<Delivery>,
   ) {}
+
   async getDelivery(deliveryId: string): Promise<Delivery> {
     const delivery = await this.deliveryRepo.findOne({
       where: { id: deliveryId },

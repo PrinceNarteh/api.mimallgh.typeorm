@@ -1,38 +1,9 @@
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import { Base } from './base/baseEntity';
 import { ColumnNumericTransformer } from './base/columnNumericTransformer';
-import { Shop } from './shop.entity';
+import { Item } from './deliveryItem.entity';
 
-@Entity()
-export class OrderItem extends Base {
-  @Column()
-  quantity: number;
-
-  @Column('decimal', {
-    precision: 10,
-    scale: 2,
-    default: 0,
-    transformer: new ColumnNumericTransformer(),
-  })
-  price: number;
-
-  @ManyToOne(() => Shop)
-  @JoinColumn({ name: 'shop_id' })
-  shop: Shop;
-
-  @ManyToOne(() => Delivery, (order) => order.items)
-  @JoinColumn({ name: 'order_id' })
-  order: Delivery;
-}
-
-@Entity()
+@Entity('delivery')
 export class Delivery extends Base {
   @Column()
   fullName: string;
@@ -59,10 +30,10 @@ export class Delivery extends Base {
   })
   deliveryCharge: number;
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
+  @OneToMany(() => Item, (item) => item.order, {
     onDelete: 'CASCADE',
   })
-  items: OrderItem[];
+  items: Item[];
 
   @BeforeInsert()
   async calcAmount() {
