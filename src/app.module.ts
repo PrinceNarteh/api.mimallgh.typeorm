@@ -11,6 +11,7 @@ import { ShopModule } from './modules/shops/shop.module';
 import { UserModule } from './modules/users/user.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { DeliveryModule } from './modules/delivery/delivery.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { memoryStorage } from 'multer';
     ShopAuthModule,
     OrdersModule,
     ReviewsModule,
+    DeliveryModule,
   ],
   providers: [],
 })
