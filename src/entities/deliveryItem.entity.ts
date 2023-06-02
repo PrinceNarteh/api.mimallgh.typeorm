@@ -10,6 +10,14 @@ export class Item extends Base {
   @Column()
   quantity: number;
 
+  @Column('decimal', {
+    precision: 10,
+    scale: 2,
+    default: 0,
+    transformer: new ColumnNumericTransformer(),
+  })
+  price: number;
+
   @ManyToOne(() => Shop)
   @JoinColumn({ name: 'shop_id' })
   shop: Shop;
@@ -22,5 +30,5 @@ export class Item extends Base {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'delivery_id' })
-  order: Delivery;
+  delivery: Delivery;
 }

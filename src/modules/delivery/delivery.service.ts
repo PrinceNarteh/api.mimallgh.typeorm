@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateDeliveryDto } from './dto/deliveryDto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Delivery } from 'src/entities/delivery.entity';
+import { Repository } from 'typeorm';
+import { CreateDeliveryDto } from './dto/deliveryDto';
 
 @Injectable()
 export class DeliveryService {
@@ -11,9 +11,16 @@ export class DeliveryService {
     private readonly deliveryRepo: Repository<Delivery>,
   ) {}
 
-  async getDelivery(deliveryId: string): Promise<Delivery> {
+  async getDelivery(id: string): Promise<Delivery> {
     const delivery = await this.deliveryRepo.findOne({
-      where: { id: deliveryId },
+      where: { id },
+      select: {
+        items: {
+          product: {
+            title: true,
+          },
+        },
+      },
     });
 
     if (!delivery) {

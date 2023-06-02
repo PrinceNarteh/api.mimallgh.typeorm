@@ -7,11 +7,13 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { Product } from 'src/entities/product.entity';
+import { Shop } from 'src/entities/shop.entity';
 
 class Item {
   @IsNotEmpty()
   @IsString()
-  image: string;
+  productId: Product;
 
   @IsNotEmpty()
   @IsString()
@@ -19,23 +21,11 @@ class Item {
 
   @IsNotEmpty()
   @IsString()
-  productId: string;
-
-  @IsNotEmpty()
-  @IsString()
-  productName: string;
-
-  @IsNotEmpty()
-  @IsString()
   quantity: number;
 
   @IsNotEmpty()
   @IsString()
-  shopId: string;
-
-  @IsNotEmpty()
-  @IsString()
-  shopName: string;
+  shopId: Shop;
 }
 
 export class CreateDeliveryDto {
