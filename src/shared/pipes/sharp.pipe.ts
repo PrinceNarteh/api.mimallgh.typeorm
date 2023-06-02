@@ -58,3 +58,32 @@ export class SharpFilesInterceptorPipe
     return filenames;
   }
 }
+
+@Injectable()
+export class SharpFieldFilesInterceptorPipe
+  implements PipeTransform<Array<Express.Multer.File>, Promise<string[]>>
+{
+  _directory: string;
+  constructor(directory: string) {
+    this._directory = directory;
+  }
+
+  async transform(images: Array<Express.Multer.File>): Promise<string[]> {
+    let filenames: string[] = [];
+
+    if (images.length === 0) return;
+
+    for (let image of images) {
+      const genName = await nanoid(32);
+      const filename = `${genName}.webp`;
+
+      await sharp(image.buffer)
+        .resize(800)
+        .webp({ effort: 3 })
+        .toFile(join('uploads', this._directory, filename));
+
+      filenames.push(filename);
+    }
+    return filenames;
+  }
+}

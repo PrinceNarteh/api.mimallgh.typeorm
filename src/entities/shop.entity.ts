@@ -1,18 +1,9 @@
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  Index,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { customAlphabet } from 'nanoid/async';
+import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
+import { OrderItem } from './OrderItem.entity';
 import { Base } from './base/baseEntity';
 import { Product } from './product.entity';
-import { ShopImage } from './shopImage.entity';
-import { User } from './user.entity';
-import { customAlphabet } from 'nanoid/async';
-import * as bcrypt from 'bcrypt';
-import { OrderItem } from './OrderItem.entity';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -64,11 +55,11 @@ export class Shop extends Base {
   @Column()
   closingTime: string;
 
-  // @OneToOne(() => ShopImage, (shopImage) => shopImage.shopId)
-  // image: ShopImage;
+  @Column({ nullable: true })
+  image?: string;
 
   @Column({ nullable: true })
-  image: string;
+  banner?: string;
 
   @OneToMany(() => Product, (product) => product.shop, {
     onDelete: 'CASCADE',

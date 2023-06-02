@@ -1,5 +1,7 @@
-import { OmitType, PartialType } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsNumberString, IsOptional, IsString } from 'class-validator';
+import { Express } from 'express';
 
 export class CreateShopDto {
   @IsString()
@@ -50,6 +52,12 @@ export class CreateShopDto {
 
   @IsString()
   closingTime: string;
+
+  @Type(() => File)
+  image: File;
+
+  @Type(() => File)
+  banner: File;
 }
 
 export class UpdateShopDto extends PartialType(CreateShopDto) {}

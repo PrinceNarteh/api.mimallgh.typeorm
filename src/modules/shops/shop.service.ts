@@ -123,7 +123,8 @@ export class ShopService {
 
   async createShop(
     data: CreateShopDto,
-    file?: Express.Multer.File,
+    image?: string,
+    banner?: string,
   ): Promise<Shop> {
     const shops = await this.shopRepo.find({
       order: {
@@ -146,12 +147,11 @@ export class ShopService {
       shopCode = `CRCC${year}${index}`;
     }
 
-    console.log(file);
-
     const shop = this.shopRepo.create({
       ...data,
       shopCode,
-      image: file ? file.path : null,
+      image: image ? image : null,
+      banner: banner ? banner : null,
       plainPassword: password,
       password: hashPassword,
     });

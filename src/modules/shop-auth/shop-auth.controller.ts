@@ -10,7 +10,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateShopDto } from 'src/modules/shops/dto/shopDto';
 import { ShopService } from 'src/modules/shops/shop.service';
-import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
+import { SharpFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { ShopLocalAuthGuard } from './guards/local-auth.guard';
 import { ShopRefreshJwtGuard } from './guards/refresh-jwt-auth.guard';
 import { ShopAuthService } from './shop-auth.service';
@@ -32,10 +32,11 @@ export class ShopAuthController {
   @UseInterceptors(FileInterceptor('image'))
   async registerShop(
     @Body() createShopDto: CreateShopDto,
-    @UploadedFile(new SharpFileInterceptorPipe('shops'))
-    file?: Express.Multer.File,
+    @UploadedFile(new SharpFieldFilesInterceptorPipe('shops'))
+    image?: string,
+    banner?: string,
   ) {
-    return await this.shopService.createShop(createShopDto, file);
+    return await this.shopService.createShop(createShopDto, image, banner);
   }
 
   @UseGuards(ShopRefreshJwtGuard)

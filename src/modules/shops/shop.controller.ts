@@ -69,11 +69,8 @@ export class ShopController {
   }
 
   @Post()
-  async createShop(
-    @Body() data: CreateShopDto,
-    @UploadedFile() file?: Express.Multer.File,
-  ): Promise<Shop> {
-    return this.shopService.createShop(data, file);
+  async createShop(@Body() data: CreateShopDto): Promise<Shop> {
+    return this.shopService.createShop(data);
   }
 
   @Patch(':shopId')

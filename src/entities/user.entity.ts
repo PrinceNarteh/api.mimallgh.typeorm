@@ -1,15 +1,7 @@
 import * as bcrypt from 'bcrypt';
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Base } from './base/baseEntity';
 import { Order } from './order.entity';
-import { UserImage } from './userImage.entity';
 import { Review } from './review.entity';
 
 export type UserRole = 'admin' | 'user';
@@ -59,8 +51,11 @@ export class User extends Base {
   @Column()
   password: string;
 
-  @OneToOne(() => UserImage, (userImage) => userImage.userId)
-  image: UserImage;
+  @Column({ nullable: true })
+  image: string;
+
+  @Column({ nullable: true })
+  banner: string;
 
   @Column({
     nullable: true,
