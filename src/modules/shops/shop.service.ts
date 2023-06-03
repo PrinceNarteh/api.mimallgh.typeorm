@@ -4,7 +4,6 @@ import * as bcrypt from 'bcrypt';
 import { uniqBy } from 'lodash';
 import { customAlphabet } from 'nanoid';
 import { Shop } from 'src/entities/shop.entity';
-import { ShopImage } from 'src/entities/shopImage.entity';
 import {
   FindManyReturnType,
   IFindManyOptions,
@@ -25,8 +24,6 @@ export class ShopService {
   constructor(
     @InjectRepository(Shop)
     private readonly shopRepo: Repository<Shop>,
-    @InjectRepository(ShopImage)
-    private readonly shopImgRepo: Repository<ShopImage>,
   ) {}
 
   async shop(id: string) {

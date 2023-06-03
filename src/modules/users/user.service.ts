@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
-import { UserImage } from 'src/entities/userImage.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dto/userDto';
 import {
@@ -18,8 +17,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-    @InjectRepository(UserImage)
-    private readonly userImgRepo: Repository<UserImage>,
   ) {}
 
   async user(id: string) {
