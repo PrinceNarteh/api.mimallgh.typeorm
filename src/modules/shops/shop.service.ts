@@ -161,7 +161,12 @@ export class ShopService {
     return shop;
   }
 
-  async updateShop(shopId: string, updateShopDto: any): Promise<Shop> {
+  async updateShop(
+    shopId: string,
+    updateShopDto: any,
+    image?: string,
+    banner?: string,
+  ): Promise<Shop> {
     const shop = await this.shopRepo.findOne({
       where: { id: shopId },
     });
@@ -169,31 +174,14 @@ export class ShopService {
       throw new NotFoundException('Shop not found');
     }
 
-    const { image, ...data } = updateShopDto;
+    const updatedShopData = {
+      ...updateShopDto,
+      image: image ? image : updateShopDto.image,
+      banner: banner ? banner : updateShopDto.banner,
+    };
 
-    if (image) {
-      await this.shopImgRepo.delete({
-        shopId: {
-          id: shopId,
-        },
-      });
-
-      const shopImage = this.shopImgRepo.create({
-        ...image,
-        shop,
-      });
-      await this.shopImgRepo.save(shopImage);
-      const updatedShopData = {
-        ...data,
-        image: shopImage,
-      };
-
-      const updatedShop = Object.assign(shop, updatedShopData);
-      await updatedShop.save();
-    } else {
-      const updatedShop = Object.assign(shop, updateShopDto);
-      await updatedShop.save();
-    }
+    const updatedShop = Object.assign(shop, updatedShopData);
+    await updatedShop.save();
 
     return await this.shopRepo.findOne({
       where: { id: shopId },

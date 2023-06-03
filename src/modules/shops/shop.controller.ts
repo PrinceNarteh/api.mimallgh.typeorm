@@ -8,7 +8,8 @@ import {
   Post,
   Query,
   Res,
-  UploadedFile,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { join } from 'path';
 import { Shop } from 'src/entities/shop.entity';
@@ -16,6 +17,8 @@ import { FindManyReturnType } from 'src/types/findManyOptions';
 import { FindManyOptions, ILike } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
 import { ShopService } from './shop.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { SharpFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 
 @Controller('shops')
 export class ShopController {
@@ -74,11 +77,25 @@ export class ShopController {
   }
 
   @Patch(':shopId')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      {
+        name: 'image',
+        maxCount: 1,
+      },
+      {
+        name: 'banner',
+        maxCount: 1,
+      },
+    ]),
+  )
   async updateShop(
     @Param('shopId') shopId: string,
     @Body() data: Partial<CreateShopDto>,
+    @UploadedFiles(new SharpFieldFilesInterceptorPipe('shops'))
+    { image, banner }: { image?: string; banner?: string },
   ): Promise<Shop> {
-    return this.shopService.updateShop(shopId, data);
+    return this.shopService.updateShop(shopId, data, image, banner);
   }
 
   @Delete(':shopId')

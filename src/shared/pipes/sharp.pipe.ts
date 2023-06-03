@@ -74,15 +74,21 @@ export class SharpFieldFilesInterceptorPipe
 
     for (let img of imagesArr) {
       const image = images[img][0];
-      console.log(image);
 
       const genName = await nanoid(32);
       const filename = `${genName}.webp`;
 
-      await sharp(image.buffer)
-        .resize(800)
-        .webp({ effort: 3 })
-        .toFile(join('uploads', this._directory, filename));
+      if (img === 'banner') {
+        await sharp(image.buffer)
+          .resize(1024, 750)
+          .webp({ effort: 3 })
+          .toFile(join('uploads', this._directory, filename));
+      } else {
+        await sharp(image.buffer)
+          .resize(800)
+          .webp({ effort: 3 })
+          .toFile(join('uploads', this._directory, filename));
+      }
 
       filenames[img] = filename;
     }
