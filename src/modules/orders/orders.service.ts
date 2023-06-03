@@ -201,11 +201,7 @@ export class OrdersService {
         },
       },
       relations: {
-        order: {
-          user: {
-            image: true,
-          },
-        },
+        order: true,
         product: {
           images: true,
         },
@@ -220,9 +216,7 @@ export class OrdersService {
             lastName: true,
             email: true,
             phoneNumber: true,
-            image: {
-              secure_url: true,
-            },
+            image: true,
           },
         },
         product: {

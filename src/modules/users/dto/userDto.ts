@@ -55,10 +55,7 @@ export class CreateUserDto {
   active: boolean;
 
   @IsOptional()
-  image?: {
-    public_id: string;
-    secure_url: string;
-  };
+  image?: string;
 
   @IsString()
   @IsOptional()

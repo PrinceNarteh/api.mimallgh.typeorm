@@ -54,10 +54,10 @@ export class CreateShopDto {
   closingTime: string;
 
   @Type(() => File)
-  image: File;
+  image: Express.Multer.File;
 
   @Type(() => File)
-  banner: File;
+  banner: Express.Multer.File;
 }
 
 export class UpdateShopDto extends PartialType(CreateShopDto) {}

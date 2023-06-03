@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { UserImage } from 'src/entities/userImage.entity';
-import { FindManyOptions, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dto/userDto';
 import {
   FindManyReturnType,
@@ -59,9 +59,6 @@ export class UserService {
       take: perPage,
       where,
       order,
-      relations: {
-        image: true,
-      },
     });
 
     return {
@@ -85,23 +82,10 @@ export class UserService {
       throw new BadRequestException('Email or Phone number already in used.');
     }
 
-    const { image, ...data } = createUserDto;
-
-    if (image) {
-      const userImage = this.userImgRepo.create(image);
-      await this.userImgRepo.save(userImage);
-      const user = this.userRepo.create({
-        ...data,
-        image: userImage,
-      });
-      const { password, ...result } = user;
-      return result;
-    } else {
-      const user = this.userRepo.create(data);
-      await this.userRepo.save(user);
-      const { password, ...result } = user;
-      return result;
-    }
+    const user = this.userRepo.create(createUserDto);
+    await this.userRepo.save(user);
+    const { password, ...result } = user;
+    return result;
   }
 
   async updateUser(userId: string, updateUserDto: UpdateUserDto) {
@@ -111,15 +95,8 @@ export class UserService {
       throw new BadRequestException('User not found');
     }
 
-    await this.userImgRepo.delete(userExists.image.id);
-
-    const userImg = this.userImgRepo.create(updateUserDto.image);
-
-    await this.userImgRepo.save(userImg);
-
     const user = await this.userRepo.update(userId, {
       ...updateUserDto,
-      image: userImg,
     });
 
     return user;
