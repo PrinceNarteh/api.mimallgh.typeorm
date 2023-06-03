@@ -44,13 +44,9 @@ export class ShopAuthController {
   async registerShop(
     @Body() createShopDto: CreateShopDto,
     @UploadedFiles(new SharpFieldFilesInterceptorPipe('shops'))
-    files?: { image?: string; banner?: string },
+    { image, banner }: { image?: string; banner?: string },
   ) {
-    return await this.shopService.createShop(
-      createShopDto,
-      files.image,
-      files.banner,
-    );
+    return await this.shopService.createShop(createShopDto, image, banner);
   }
 
   @UseGuards(ShopRefreshJwtGuard)

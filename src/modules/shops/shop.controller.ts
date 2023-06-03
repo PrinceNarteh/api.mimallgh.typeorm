@@ -104,8 +104,8 @@ export class ShopController {
   }
 
   @Get('/image/:shopImage')
-  async findShopImage(@Param('imageName') imageName: string, @Res() res) {
-    res.sendFile(join(process.cwd(), 'uploads/shops/' + imageName));
+  async findShopImage(@Param('shopImage') shopImage: string, @Res() res) {
+    res.sendFile(join(process.cwd(), 'uploads/shops/' + shopImage));
   }
 
   @Delete('/banner/:shopId')

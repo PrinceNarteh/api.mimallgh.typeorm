@@ -8,12 +8,12 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
   });
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: true,
-  //     stopAtFirstError: true,
-  //   }),
-  // );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      stopAtFirstError: true,
+    }),
+  );
   app.useStaticAssets(join(__dirname, '../uploads'));
   await app.listen(parseInt(process.env.PORT) || 4000);
 }

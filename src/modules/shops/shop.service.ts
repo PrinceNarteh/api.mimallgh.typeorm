@@ -181,8 +181,10 @@ export class ShopService {
       banner: banner ? banner : updateShopDto.banner,
     };
 
-    const updatedShop = Object.assign(shop, updatedShopData);
-    await updatedShop.save();
+    await this.shopRepo.update({ id: shopId }, updatedShopData);
+
+    if (image) deleteFile(shop.image, 'shops');
+    if (banner) deleteFile(shop.banner, 'shops');
 
     return await this.shopRepo.findOne({
       where: { id: shopId },
