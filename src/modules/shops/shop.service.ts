@@ -162,8 +162,8 @@ export class ShopService {
   async updateShop(
     shopId: string,
     updateShopDto: any,
-    image?: string,
-    banner?: string,
+    newImage?: string,
+    newBanner?: string,
   ): Promise<Shop> {
     const shop = await this.shopRepo.findOne({
       where: { id: shopId },
@@ -174,14 +174,19 @@ export class ShopService {
 
     const updatedShopData = {
       ...updateShopDto,
-      image: image ? image : updateShopDto.image,
-      banner: banner ? banner : updateShopDto.banner,
+      image: newImage ? newImage : updateShopDto.image,
+      banner: newBanner ? newBanner : updateShopDto.banner,
     };
+
+    if (newImage && shop.image !== null)
+      deleteFile(updateShopDto.image, 'shops');
+    if (newBanner && shop.banner !== null)
+      deleteFile(updateShopDto.banner, 'shops');
 
     await this.shopRepo.update({ id: shopId }, updatedShopData);
 
-    if (image) deleteFile(shop.image, 'shops');
-    if (banner) deleteFile(shop.banner, 'shops');
+    console.log(shopId);
+    console.log(shop);
 
     return await this.shopRepo.findOne({
       where: { id: shopId },

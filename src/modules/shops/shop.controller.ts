@@ -11,14 +11,14 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { Shop } from 'src/entities/shop.entity';
+import { SharpUpdateFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { FindManyReturnType } from 'src/types/findManyOptions';
 import { FindManyOptions, ILike } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
 import { ShopService } from './shop.service';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { SharpFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 
 @Controller('shops')
 export class ShopController {
@@ -80,11 +80,11 @@ export class ShopController {
   @UseInterceptors(
     FileFieldsInterceptor([
       {
-        name: 'image',
+        name: 'newImage',
         maxCount: 1,
       },
       {
-        name: 'banner',
+        name: 'newBanner',
         maxCount: 1,
       },
     ]),
@@ -92,10 +92,10 @@ export class ShopController {
   async updateShop(
     @Param('shopId') shopId: string,
     @Body() data: Partial<CreateShopDto>,
-    @UploadedFiles(new SharpFieldFilesInterceptorPipe('shops'))
-    { image, banner }: { image?: string; banner?: string },
+    @UploadedFiles(new SharpUpdateFieldFilesInterceptorPipe('shops'))
+    { newImage, newBanner }: { newImage?: string; newBanner?: string },
   ): Promise<Shop> {
-    return this.shopService.updateShop(shopId, data, image, banner);
+    return this.shopService.updateShop(shopId, data, newImage, newBanner);
   }
 
   @Delete(':shopId')
@@ -110,7 +110,7 @@ export class ShopController {
 
   @Delete('/banner/:shopId')
   async deleteShopBanner(@Param('shopId') shopId: string) {
-    return this.shopService.deleteShopImage(shopId);
+    return this.shopService.deleteShopBanner(shopId);
   }
 
   @Delete('/image/:shopId')

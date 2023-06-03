@@ -96,3 +96,41 @@ export class SharpFieldFilesInterceptorPipe
     return filenames;
   }
 }
+
+@Injectable()
+export class SharpUpdateFieldFilesInterceptorPipe
+  implements PipeTransform<any, Promise<{ [key: string]: string }>>
+{
+  _directory: string;
+  constructor(directory: string) {
+    this._directory = directory;
+  }
+
+  async transform(images: any): Promise<{ [key: string]: string }> {
+    let filenames: { [key: string]: string } = {};
+    const imagesArr = Object.keys(images);
+
+    for (let img of imagesArr) {
+      const image = images[img][0];
+
+      const genName = await nanoid(32);
+      const filename = `${genName}.webp`;
+
+      if (img === 'newBanner') {
+        await sharp(image.buffer)
+          .resize(1024, 750)
+          .webp({ effort: 3 })
+          .toFile(join('uploads', this._directory, filename));
+      } else {
+        await sharp(image.buffer)
+          .resize(800)
+          .webp({ effort: 3 })
+          .toFile(join('uploads', this._directory, filename));
+      }
+
+      filenames[img] = filename;
+    }
+
+    return filenames;
+  }
+}
