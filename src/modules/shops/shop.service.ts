@@ -14,6 +14,7 @@ import { pad } from 'src/utils/pad';
 import { Repository } from 'typeorm';
 import { CreateShopDto } from './dto/shopDto';
 import { chain } from 'lodash';
+import { deleteFile } from 'src/utils/deleteFile';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -190,9 +191,27 @@ export class ShopService {
 
   async deleteShop(id: string) {
     const shop = await this.shop(id);
-    if (!shop) return null;
-    await this.shopImgRepo.delete({ shopId: { id } });
     await this.shopRepo.delete(id);
+    if (shop.image) {
+      deleteFile(shop.image, 'products');
+    }
+    if (shop.banner) {
+      deleteFile(shop.banner, 'products');
+    }
     return 'Shop deleted successfully';
+  }
+
+  async deleteShopImage(id: string) {
+    const shop = await this.shop(id);
+    deleteFile(shop.image, 'shop');
+    await this.shopRepo.update({ id }, { image: null });
+    return this.shop(id);
+  }
+
+  async deleteShopBanner(id: string) {
+    const shop = await this.shop(id);
+    deleteFile(shop.banner, 'shop');
+    await this.shopRepo.update({ id }, { banner: null });
+    return this.shop(id);
   }
 }
