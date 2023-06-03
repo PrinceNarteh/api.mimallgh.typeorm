@@ -3,11 +3,11 @@ import {
   Controller,
   Post,
   Request,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateShopDto } from 'src/modules/shops/dto/shopDto';
 import { ShopService } from 'src/modules/shops/shop.service';
 import { SharpFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
@@ -29,14 +29,28 @@ export class ShopAuthController {
   }
 
   @Post('register')
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      {
+        name: 'image',
+        maxCount: 1,
+      },
+      {
+        name: 'banner',
+        maxCount: 1,
+      },
+    ]),
+  )
   async registerShop(
     @Body() createShopDto: CreateShopDto,
-    @UploadedFile(new SharpFieldFilesInterceptorPipe('shops'))
-    image?: string,
-    banner?: string,
+    @UploadedFiles(new SharpFieldFilesInterceptorPipe('shops'))
+    files?: { image?: string; banner?: string },
   ) {
-    return await this.shopService.createShop(createShopDto, image, banner);
+    return await this.shopService.createShop(
+      createShopDto,
+      files.image,
+      files.banner,
+    );
   }
 
   @UseGuards(ShopRefreshJwtGuard)
