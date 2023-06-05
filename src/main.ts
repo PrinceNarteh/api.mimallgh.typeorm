@@ -1,8 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, ForbiddenException } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express/interfaces';
 import { join } from 'path';
+
+var whitelist = [
+  'https://mimallgh.com',
+  'https://admin.mimallgh.com',
+  'https://shop.mimallgh.com',
+];
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -14,6 +20,15 @@ async function bootstrap() {
       stopAtFirstError: true,
     }),
   );
+  app.enableCors({
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new ForbiddenException('Not allowed by CORS'));
+      }
+    },
+  });
   app.useStaticAssets(join(__dirname, '../uploads'));
   await app.listen(parseInt(process.env.PORT) || 4000);
 }

@@ -185,9 +185,6 @@ export class ShopService {
 
     await this.shopRepo.update({ id: shopId }, updatedShopData);
 
-    console.log(shopId);
-    console.log(shop);
-
     return await this.shopRepo.findOne({
       where: { id: shopId },
     });
