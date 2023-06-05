@@ -204,14 +204,14 @@ export class ShopService {
 
   async deleteShopImage(id: string) {
     const shop = await this.shop(id);
-    deleteFile(shop.image, 'shop');
+    deleteFile(shop.image, 'shops');
     await this.shopRepo.update({ id }, { image: null });
     return this.shop(id);
   }
 
   async deleteShopBanner(id: string) {
     const shop = await this.shop(id);
-    deleteFile(shop.banner, 'shop');
+    deleteFile(shop.banner, 'shops');
     await this.shopRepo.update({ id }, { banner: null });
     return this.shop(id);
   }
