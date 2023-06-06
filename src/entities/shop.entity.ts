@@ -56,10 +56,10 @@ export class Shop extends Base {
   closingTime: string;
 
   @Column({ nullable: true })
-  image?: string;
+  image?: string | null;
 
   @Column({ nullable: true })
-  banner?: string;
+  banner?: string | null;
 
   @OneToMany(() => Product, (product) => product.shop, {
     onDelete: 'CASCADE',
