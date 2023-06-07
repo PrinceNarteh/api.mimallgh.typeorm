@@ -211,11 +211,9 @@ export class ShopService {
 
   async deleteShopBanner(id: string) {
     let shop = await this.shop(id);
-    console.log(shop);
     deleteFile(shop.banner, 'shops');
     await this.shopRepo.update({ id }, { banner: null });
     shop = await this.shop(id);
-    console.log(shop);
     return shop;
   }
 }

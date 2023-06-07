@@ -94,7 +94,7 @@ export class ProductController {
     @Param('productId') productId: string,
     @Body() updateProductDto: Partial<CreateProductDto>,
     @UploadedFiles(new SharpFilesInterceptorPipe('products'))
-    imageNames: Array<string>,
+    imageNames?: Array<string>,
   ) {
     return this.productService.updateProduct(
       req.user,

@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
@@ -24,12 +24,15 @@ export class CreateProductDto {
 
   @IsNumber()
   @IsNotEmpty({ message: 'Phone number is required' })
+  @Transform(({ value }) => parseInt(value, 10))
   price: number;
 
   @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
   discountPercentage: number;
 
   @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
   stock: number;
 
   @IsString()
@@ -50,9 +53,7 @@ export class CreateProductDto {
   )
   category: string;
 
-  @ValidateNested()
-  @Type(() => ProductImageDto)
-  images: ProductImageDto[];
+  images: Express.Multer.File[];
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}

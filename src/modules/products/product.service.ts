@@ -268,7 +268,7 @@ export class ProductService {
     shop: { id: string; shopCode: string },
     productId: string,
     updateProductDto: UpdateProductDto,
-    imageNames: Array<string>,
+    imageNames?: Array<string>,
   ) {
     const product = await this.productRepo.findOne({
       where: { id: productId },
@@ -287,10 +287,13 @@ export class ProductService {
     }
 
     const imagesArr: ProductImage[] = [];
-    for (let image of imageNames) {
-      const res = this.productImgRepo.create({ name: image });
-      await this.productImgRepo.save(res);
-      imagesArr.push(res);
+
+    if (imageNames) {
+      for (let image of imageNames) {
+        const res = this.productImgRepo.create({ name: image });
+        await this.productImgRepo.save(res);
+        imagesArr.push(res);
+      }
     }
 
     const images = JSON.parse(updateProductDto.images as any);
