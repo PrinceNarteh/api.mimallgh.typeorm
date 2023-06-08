@@ -292,7 +292,10 @@ export class ProductService {
 
     await this.productRepo.save(product);
 
-    return product;
+    return {
+      shopId: shop.id,
+      ...product,
+    };
   }
 
   async updateProduct(
@@ -375,7 +378,10 @@ export class ProductService {
     const updatedProduct = Object.assign(product, data);
     await updatedProduct.save();
 
-    return updatedProduct;
+    return {
+      shopId: updatedProduct.shopId,
+      ...updatedProduct,
+    };
   }
 
   async deleteProduct(shop: Shop, productId: string) {

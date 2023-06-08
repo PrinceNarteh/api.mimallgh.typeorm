@@ -87,7 +87,7 @@ export class ProductController {
   }
 
   @Post('admin')
-  @UseGuards(ShopJwtGuard)
+  // @UseGuards(ShopJwtGuard)
   @UseInterceptors(TransformDtoPipe, FilesInterceptor('images', 4))
   async adminCreateProduct(
     @Body() createProductDto: AdminCreateProductDto,
@@ -97,7 +97,7 @@ export class ProductController {
     return this.productService.adminCreateProduct(createProductDto, imageNames);
   }
 
-  @Patch('/admin/:productId')
+  @Patch(':productId')
   @UseGuards(ShopJwtGuard)
   @UseInterceptors(TransformDtoPipe, FilesInterceptor('newImages', 4))
   async updateProduct(
@@ -114,7 +114,7 @@ export class ProductController {
   }
 
   @Patch('/admin/:productId')
-  @UseGuards(ShopJwtGuard)
+  // @UseGuards(ShopJwtGuard)
   @UseInterceptors(TransformDtoPipe, FilesInterceptor('newImages', 4))
   async adminUpdateProduct(
     @Request() req,
