@@ -15,7 +15,11 @@ import {
   returnValue,
 } from 'src/types/findManyOptions';
 import { Brackets, Repository } from 'typeorm';
-import { CreateProductDto, UpdateProductDto } from './dto/productDto';
+import {
+  AdminCreateProductDto,
+  CreateProductDto,
+  UpdateProductDto,
+} from './dto/productDto';
 import { deleteFile } from 'src/utils/deleteFile';
 
 @Injectable()
@@ -264,6 +268,33 @@ export class ProductService {
     return product;
   }
 
+  async adminCreateProduct(
+    createProductDto: Partial<AdminCreateProductDto>,
+    imageNames: Array<string>,
+  ) {
+    const shop = await this.shopService.shop(createProductDto.shopId);
+    if (!shop) {
+      throw new NotFoundException('Shop not found');
+    }
+
+    const imagesArr: ProductImage[] = [];
+    for (let image of imageNames) {
+      const res = this.productImgRepo.create({ name: image });
+      await this.productImgRepo.save(res);
+      imagesArr.push(res);
+    }
+
+    const product = this.productRepo.create({
+      ...createProductDto,
+      shop,
+      images: imagesArr,
+    });
+
+    await this.productRepo.save(product);
+
+    return product;
+  }
+
   async updateProduct(
     shop: { id: string; shopCode: string },
     productId: string,
@@ -284,6 +315,44 @@ export class ProductService {
       throw new ForbiddenException(
         'You are not permitted to perform this action',
       );
+    }
+
+    const imagesArr: ProductImage[] = [];
+
+    if (imageNames) {
+      for (let image of imageNames) {
+        const res = this.productImgRepo.create({ name: image });
+        await this.productImgRepo.save(res);
+        imagesArr.push(res);
+      }
+    }
+
+    const images = JSON.parse(updateProductDto.images as any);
+
+    const data = {
+      ...updateProductDto,
+      images: [...images, ...imagesArr],
+    };
+
+    const updatedProduct = Object.assign(product, data);
+    await updatedProduct.save();
+
+    return updatedProduct;
+  }
+
+  async adminUpdateProduct(
+    productId: string,
+    updateProductDto: Partial<AdminCreateProductDto>,
+    imageNames?: Array<string>,
+  ) {
+    const product = await this.productRepo.findOne({
+      where: { id: productId },
+      relations: {
+        shop: true,
+      },
+    });
+    if (!product) {
+      throw new NotFoundException('Product not found');
     }
 
     const imagesArr: ProductImage[] = [];

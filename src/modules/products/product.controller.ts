@@ -18,7 +18,7 @@ import { join } from 'path';
 import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { createFindOptions } from 'src/utils/findManyOptions';
 import { SharpFilesInterceptorPipe } from '../../shared/pipes/sharp.pipe';
-import { CreateProductDto } from './dto/productDto';
+import { AdminCreateProductDto, CreateProductDto } from './dto/productDto';
 import { TransformDtoPipe } from './pipe/createProduct.pipe';
 import { ProductService } from './product.service';
 
@@ -86,10 +86,37 @@ export class ProductController {
     );
   }
 
-  @Patch(':productId')
+  @Post('admin')
+  @UseGuards(ShopJwtGuard)
+  @UseInterceptors(TransformDtoPipe, FilesInterceptor('images', 4))
+  async adminCreateProduct(
+    @Body() createProductDto: AdminCreateProductDto,
+    @UploadedFiles(new SharpFilesInterceptorPipe('products'))
+    imageNames: Array<string>,
+  ) {
+    return this.productService.adminCreateProduct(createProductDto, imageNames);
+  }
+
+  @Patch('/admin/:productId')
   @UseGuards(ShopJwtGuard)
   @UseInterceptors(TransformDtoPipe, FilesInterceptor('newImages', 4))
   async updateProduct(
+    @Param('productId') productId: string,
+    @Body() updateProductDto: Partial<AdminCreateProductDto>,
+    @UploadedFiles(new SharpFilesInterceptorPipe('products'))
+    imageNames?: Array<string>,
+  ) {
+    return this.productService.adminUpdateProduct(
+      productId,
+      updateProductDto,
+      imageNames,
+    );
+  }
+
+  @Patch('/admin/:productId')
+  @UseGuards(ShopJwtGuard)
+  @UseInterceptors(TransformDtoPipe, FilesInterceptor('newImages', 4))
+  async adminUpdateProduct(
     @Request() req,
     @Param('productId') productId: string,
     @Body() updateProductDto: Partial<CreateProductDto>,
