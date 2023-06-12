@@ -76,5 +76,19 @@ export class Shop extends Base {
     const genPassword = await nanoid(10);
     this.password = await bcrypt.hash(genPassword, 12);
     this.plainPassword = genPassword;
+
+    if (this.facebookHandle) {
+      this.facebookHandle =
+        'https://wwww.facebook.com/' + this.facebookHandle.trim();
+    }
+
+    if (this.instagramHandle) {
+      this.instagramHandle =
+        'https://www.instagram.com/' + this.instagramHandle.trim();
+    }
+
+    if (this.whatsappNumber) {
+      this.whatsappNumber = 'https://wa.me/' + this.whatsappNumber.trim();
+    }
   }
 }
