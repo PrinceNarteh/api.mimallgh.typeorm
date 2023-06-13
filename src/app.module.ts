@@ -12,6 +12,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { ShopAuthModule } from './modules/shop-auth/shop-auth.module';
 import { ShopModule } from './modules/shops/shop.module';
 import { UserModule } from './modules/users/user.module';
+import { DeliveryCompaniesModule } from './modules/delivery-companies/delivery-companies.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { UserModule } from './modules/users/user.module';
     OrdersModule,
     ReviewsModule,
     DeliveryModule,
+    DeliveryCompaniesModule,
   ],
   providers: [],
 })
