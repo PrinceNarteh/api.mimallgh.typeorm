@@ -1,4 +1,4 @@
-import { Column } from 'typeorm';
+import { BeforeInsert, Column } from 'typeorm';
 import { Base } from './base/baseEntity';
 import { DeliveryCompanyImage } from './deliveryCompanyImage.entity';
 
@@ -9,15 +9,18 @@ export class DeliveryCompany extends Base {
   @Column()
   slug: string;
 
-  @Column()
+  @Column({ name: 'phone_number' })
   phoneNumber: string;
 
-  @Column()
+  @Column({ nullable: true, name: 'alternate_phone_number' })
   alternatePhoneNumber: string;
 
-  @Column()
+  @Column({ name: 'whatsapp_number' })
   whatsappNumber: string;
 
   @Column()
   images: DeliveryCompanyImage[];
+
+  @BeforeInsert()
+  async beforeInsert(): Promise<void> {}
 }

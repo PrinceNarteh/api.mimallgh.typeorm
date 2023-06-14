@@ -1,4 +1,113 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeliveryCompany } from 'src/entities/deliveryCompany.entity';
+import { Repository } from 'typeorm';
+import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
+import { DeliveryCompanyImage } from 'src/entities/deliveryCompanyImage.entity';
+import { deleteFile } from 'src/utils/deleteFile';
 
 @Injectable()
-export class DeliveryCompaniesService {}
+export class DeliveryCompaniesService {
+  constructor(
+    @InjectRepository(DeliveryCompany)
+    private readonly deliveryCompanyRepo: Repository<DeliveryCompany>,
+    @InjectRepository(DeliveryCompanyImage)
+    private readonly deliveryCompanyImgRepo: Repository<DeliveryCompanyImage>,
+  ) {}
+
+  async findAll() {
+    return this.deliveryCompanyRepo.find();
+  }
+
+  async findOne(id: string) {
+    return this.deliveryCompanyRepo.findOne({ where: { id } });
+  }
+
+  async findOneBySlug(slug: string) {
+    return this.deliveryCompanyRepo.findOne({ where: { slug } });
+  }
+
+  async create(
+    createProductDto: CreateDeliveryCompanyDto,
+    imageNames: Array<string>,
+  ) {
+    const imagesArr: DeliveryCompanyImage[] = [];
+    for (let image of imageNames) {
+      const res = this.deliveryCompanyImgRepo.create({ name: image });
+      await this.deliveryCompanyImgRepo.save(res);
+      imagesArr.push(res);
+    }
+
+    const product = this.deliveryCompanyRepo.create({
+      ...createProductDto,
+      images: imagesArr,
+    });
+
+    await this.deliveryCompanyRepo.save(product);
+
+    return product;
+  }
+
+  async update(
+    deliveryCompanyId: string,
+    updateProductDto: Partial<CreateDeliveryCompanyDto>,
+    imageNames?: Array<string>,
+  ) {
+    const deliveryCompany = await this.deliveryCompanyRepo.findOne({
+      where: { id: deliveryCompanyId },
+      relations: {
+        images: true,
+      },
+    });
+    if (!deliveryCompany) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const imagesArr: DeliveryCompanyImage[] = [];
+
+    if (imageNames) {
+      for (let image of imageNames) {
+        const res = this.deliveryCompanyImgRepo.create({ name: image });
+        await this.deliveryCompanyImgRepo.save(res);
+        imagesArr.push(res);
+      }
+    }
+
+    const images = JSON.parse(updateProductDto.images as any);
+
+    const data = {
+      ...updateProductDto,
+      images: [...images, ...imagesArr],
+    };
+
+    const updatedProduct = Object.assign(deliveryCompany, data);
+    await updatedProduct.save();
+
+    return updatedProduct;
+  }
+
+  async delete(deliveryCompanyId: string) {
+    const deliveryCompany = await this.deliveryCompanyRepo.findOne({
+      where: { id: deliveryCompanyId },
+      relations: {
+        images: true,
+      },
+    });
+
+    if (!deliveryCompany) return null;
+
+    await this.deliveryCompanyImgRepo.delete({
+      deliveryCompanyId: {
+        id: deliveryCompanyId,
+      },
+    });
+
+    deliveryCompany.images.forEach((image) => {
+      deleteFile(image.name, 'products');
+    });
+
+    await this.deliveryCompanyRepo.delete(deliveryCompanyId);
+
+    return 'Product deleted successfully';
+  }
+}

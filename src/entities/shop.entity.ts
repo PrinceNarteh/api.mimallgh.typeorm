@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { customAlphabet } from 'nanoid/async';
-import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { OrderItem } from './OrderItem.entity';
 import { Base } from './base/baseEntity';
 import { Product } from './product.entity';
@@ -49,6 +49,12 @@ export class Shop extends Base {
   @Column({ nullable: true })
   facebookHandle: string;
 
+  @Column({ nullable: true })
+  twitterHandle: string;
+
+  @Column({ nullable: true })
+  tiktokHandle: string;
+
   @Column()
   openingTime: string;
 
@@ -72,7 +78,7 @@ export class Shop extends Base {
   orders: OrderItem[];
 
   @BeforeInsert()
-  async hashPassword() {
+  async beforeInsert() {
     const genPassword = await nanoid(10);
     this.password = await bcrypt.hash(genPassword, 12);
     this.plainPassword = genPassword;
@@ -89,6 +95,39 @@ export class Shop extends Base {
 
     if (this.whatsappNumber) {
       this.whatsappNumber = 'https://wa.me/' + this.whatsappNumber.trim();
+    }
+
+    if (this.twitterHandle) {
+      this.twitterHandle = 'https://twitter.com/' + this.twitterHandle.trim();
+    }
+
+    if (this.tiktokHandle) {
+      this.tiktokHandle = 'https://www.tiktok.com/' + this.tiktokHandle.trim();
+    }
+  }
+
+  @BeforeUpdate()
+  async beforeUpdate() {
+    if (this.facebookHandle) {
+      this.facebookHandle =
+        'https://wwww.facebook.com/' + this.facebookHandle.trim();
+    }
+
+    if (this.instagramHandle) {
+      this.instagramHandle =
+        'https://www.instagram.com/' + this.instagramHandle.trim();
+    }
+
+    if (this.whatsappNumber) {
+      this.whatsappNumber = 'https://wa.me/' + this.whatsappNumber.trim();
+    }
+
+    if (this.twitterHandle) {
+      this.twitterHandle = 'https://twitter.com/' + this.twitterHandle.trim();
+    }
+
+    if (this.tiktokHandle) {
+      this.tiktokHandle = 'https://www.tiktok.com/' + this.tiktokHandle.trim();
     }
   }
 }
