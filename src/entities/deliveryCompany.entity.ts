@@ -1,7 +1,8 @@
-import { BeforeInsert, Column } from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import { Base } from './base/baseEntity';
 import { DeliveryCompanyImage } from './deliveryCompanyImage.entity';
 
+@Entity('delivery_companies')
 export class DeliveryCompany extends Base {
   @Column()
   name: string;
@@ -18,7 +19,10 @@ export class DeliveryCompany extends Base {
   @Column({ name: 'whatsapp_number' })
   whatsappNumber: string;
 
-  @Column()
+  @OneToMany(
+    () => DeliveryCompanyImage,
+    (deliveryCompanyImage) => deliveryCompanyImage.deliveryCompanyId,
+  )
   images: DeliveryCompanyImage[];
 
   @BeforeInsert()
