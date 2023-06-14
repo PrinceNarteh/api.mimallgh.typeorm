@@ -1,6 +1,7 @@
-import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { Base } from './base/baseEntity';
 import { DeliveryCompanyImage } from './deliveryCompanyImage.entity';
+import slugify from 'slugify';
 
 @Entity('delivery_companies')
 export class DeliveryCompany extends Base {
@@ -26,5 +27,8 @@ export class DeliveryCompany extends Base {
   images: DeliveryCompanyImage[];
 
   @BeforeInsert()
-  async beforeInsert(): Promise<void> {}
+  @BeforeUpdate()
+  async beforeInsert(): Promise<void> {
+    this.slug = slugify(this.name, { remove: /[*+~.()'"!:@]/g });
+  }
 }
