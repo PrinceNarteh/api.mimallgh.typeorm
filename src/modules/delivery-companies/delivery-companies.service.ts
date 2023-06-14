@@ -110,4 +110,29 @@ export class DeliveryCompaniesService {
 
     return 'Product deleted successfully';
   }
+
+  async findImage(imageId: string) {
+    const img = this.deliveryCompanyImgRepo.findOne({ where: { id: imageId } });
+
+    if (!img) {
+      throw new NotFoundException('Product Image Not Found');
+    }
+
+    return img;
+  }
+
+  async deleteImage({
+    deliveryCompanyId,
+    imageId,
+  }: {
+    deliveryCompanyId: string;
+    imageId: string;
+  }) {
+    const img = await this.findImage(imageId);
+    await this.deliveryCompanyImgRepo.delete({ id: imageId });
+
+    if (img) deleteFile(img.name, 'slides');
+
+    return await this.findOne(deliveryCompanyId);
+  }
 }
