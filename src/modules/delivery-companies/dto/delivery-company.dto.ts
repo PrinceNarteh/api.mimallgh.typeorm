@@ -1,4 +1,10 @@
-import { ArrayMinSize, IsArray, IsNotEmpty, IsString } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateDeliveryCompanyDto {
   @IsNotEmpty()
@@ -10,13 +16,12 @@ export class CreateDeliveryCompanyDto {
   phoneNumber: string;
 
   @IsString()
+  @IsOptional()
   alternatePhoneNumber: string;
 
   @IsNotEmpty()
   @IsString()
   whatsappNumber: string;
 
-  @IsArray()
-  @ArrayMinSize(1)
   images: Express.Multer.File[];
 }
