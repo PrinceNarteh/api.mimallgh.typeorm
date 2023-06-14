@@ -19,10 +19,10 @@ import { DeliveryCompaniesModule } from './modules/delivery-companies/delivery-c
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync(typeOrmConfig),
     MulterModule.register({
-      storage: memoryStorage(),
-      // storage: diskStorage({
-      //   destination: './files',
-      // }),
+      // storage: memoryStorage(),
+      storage: diskStorage({
+        destination: './files',
+      }),
     }),
     AuthModule,
     UserModule,

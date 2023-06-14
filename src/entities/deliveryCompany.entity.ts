@@ -29,6 +29,6 @@ export class DeliveryCompany extends Base {
   @BeforeInsert()
   @BeforeUpdate()
   async beforeInsert(): Promise<void> {
-    this.slug = slugify(this.name, { remove: /[*+~.()'"!:@]/g });
+    this.slug = slugify(this.name, { remove: /[*+~.()'"!:@]/g, lower: true });
   }
 }

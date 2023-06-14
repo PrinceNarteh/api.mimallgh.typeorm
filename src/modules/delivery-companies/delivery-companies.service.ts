@@ -50,7 +50,7 @@ export class DeliveryCompaniesService {
 
   async update(
     deliveryCompanyId: string,
-    updateProductDto: Partial<CreateDeliveryCompanyDto>,
+    updateDeliveryCompanyDto: Partial<CreateDeliveryCompanyDto>,
     imageNames?: Array<string>,
   ) {
     const deliveryCompany = await this.deliveryCompanyRepo.findOne({
@@ -62,8 +62,8 @@ export class DeliveryCompaniesService {
     if (!deliveryCompany) {
       throw new NotFoundException('Product not found');
     }
-
     const imagesArr: DeliveryCompanyImage[] = [];
+    let data: any;
 
     if (imageNames) {
       for (let image of imageNames) {
@@ -73,12 +73,19 @@ export class DeliveryCompaniesService {
       }
     }
 
-    const images = JSON.parse(updateProductDto.images as any);
+    if (updateDeliveryCompanyDto.images) {
+      const images = JSON.parse(updateDeliveryCompanyDto.images as any);
 
-    const data = {
-      ...updateProductDto,
-      images: [...images, ...imagesArr],
-    };
+      data = {
+        ...updateDeliveryCompanyDto,
+        images: [...images, ...imagesArr],
+      };
+    } else {
+      data = {
+        ...updateDeliveryCompanyDto,
+        images: [...deliveryCompany.images, ...imagesArr],
+      };
+    }
 
     const updatedProduct = Object.assign(deliveryCompany, data);
     await updatedProduct.save();
@@ -98,12 +105,12 @@ export class DeliveryCompaniesService {
 
     await this.deliveryCompanyImgRepo.delete({
       deliveryCompanyId: {
-        id: deliveryCompanyId,
+        id: deliveryCompanyId
       },
     });
 
     deliveryCompany.images.forEach((image) => {
-      deleteFile(image.name, 'products');
+      deleteFile(image.name, 'slides');
     });
 
     await this.deliveryCompanyRepo.delete(deliveryCompanyId);
