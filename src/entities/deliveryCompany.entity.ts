@@ -20,6 +20,9 @@ export class DeliveryCompany extends Base {
   @Column({ name: 'whatsapp_number' })
   whatsappNumber: string;
 
+  @Column({ nullable: true })
+  location: string;
+
   @OneToMany(
     () => DeliveryCompanyImage,
     (deliveryCompanyImage) => deliveryCompanyImage.deliveryCompanyId,

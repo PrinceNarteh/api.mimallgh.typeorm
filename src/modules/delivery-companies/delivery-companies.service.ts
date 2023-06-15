@@ -20,7 +20,12 @@ export class DeliveryCompaniesService {
   }
 
   async findOne(id: string) {
-    return this.deliveryCompanyRepo.findOne({ where: { id } });
+    return this.deliveryCompanyRepo.findOne({
+      where: { id },
+      relations: {
+        images: true,
+      },
+    });
   }
 
   async findOneBySlug(slug: string) {
@@ -105,7 +110,7 @@ export class DeliveryCompaniesService {
 
     await this.deliveryCompanyImgRepo.delete({
       deliveryCompanyId: {
-        id: deliveryCompanyId
+        id: deliveryCompanyId,
       },
     });
 

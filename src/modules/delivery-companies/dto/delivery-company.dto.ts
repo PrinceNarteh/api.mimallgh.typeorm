@@ -19,6 +19,10 @@ export class CreateDeliveryCompanyDto {
   @IsOptional()
   alternatePhoneNumber: string;
 
+  @IsString()
+  @IsOptional()
+  location: string;
+
   @IsNotEmpty()
   @IsString()
   whatsappNumber: string;
