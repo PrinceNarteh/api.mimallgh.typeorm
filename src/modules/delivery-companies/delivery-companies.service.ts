@@ -29,7 +29,10 @@ export class DeliveryCompaniesService {
   }
 
   async findOneBySlug(slug: string) {
-    return this.deliveryCompanyRepo.findOne({ where: { slug } });
+    return this.deliveryCompanyRepo.findOne({
+      where: { slug },
+      relations: ['images'],
+    });
   }
 
   async create(
