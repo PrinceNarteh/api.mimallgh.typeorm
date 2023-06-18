@@ -93,6 +93,6 @@ export class DeliveryCompaniesController {
   async deleteImage(
     @Param() param: { deliveryCompanyId: string; imageId: string },
   ) {
-    return this.deliveryCompaniesService.deleteImage(param);
+    return this.deliveryCompaniesService.deleteImageA(param);
   }
 }
