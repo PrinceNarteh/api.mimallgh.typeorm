@@ -16,15 +16,15 @@ export class DeliveryCompaniesService {
   ) {}
 
   async findAll() {
-    return this.deliveryCompanyRepo.find();
+    return this.deliveryCompanyRepo.find({
+      relations: ['images'],
+    });
   }
 
   async findOne(id: string) {
     return this.deliveryCompanyRepo.findOne({
       where: { id },
-      relations: {
-        images: true,
-      },
+      relations: ['images'],
     });
   }
 
@@ -104,9 +104,7 @@ export class DeliveryCompaniesService {
   async delete(deliveryCompanyId: string) {
     const deliveryCompany = await this.deliveryCompanyRepo.findOne({
       where: { id: deliveryCompanyId },
-      relations: {
-        images: true,
-      },
+      relations: ['images'],
     });
 
     if (!deliveryCompany) return null;
