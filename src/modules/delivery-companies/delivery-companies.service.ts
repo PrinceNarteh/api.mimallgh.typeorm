@@ -135,7 +135,7 @@ export class DeliveryCompaniesService {
   }
 
   async deleteImage({
-    deliveryCompanyId,
+    deliveryCompanyId, 
     imageId,
   }: {
     deliveryCompanyId: string;
