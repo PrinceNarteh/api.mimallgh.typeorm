@@ -1,7 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsNumberString, IsOptional, IsString } from 'class-validator';
-import { Express } from 'express';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateShopDto {
   @IsString()
@@ -28,14 +26,14 @@ export class CreateShopDto {
   @IsString()
   mapDirection: string;
 
-  @IsNumberString()
+  @IsString()
   phoneNumber: string;
 
-  @IsNumberString()
+  @IsString()
   @IsOptional()
   alternateNumber: string;
 
-  @IsNumberString()
+  @IsString()
   @IsOptional()
   whatsappNumber: string;
 
