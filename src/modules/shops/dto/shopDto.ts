@@ -53,10 +53,8 @@ export class CreateShopDto {
   @IsString()
   closingTime: string;
 
-  @Type(() => File)
   image: Express.Multer.File;
 
-  @Type(() => File)
   banner: Express.Multer.File;
 }
 
