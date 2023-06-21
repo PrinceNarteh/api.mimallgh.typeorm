@@ -61,10 +61,10 @@ export class Shop extends Base {
   @Column()
   closingTime: string;
 
-  @Column({ nullable: true })
+  @Column({ type: String, nullable: true })
   image?: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: String, nullable: true })
   banner?: string | null;
 
   @OneToMany(() => Product, (product) => product.shop, {

@@ -174,8 +174,8 @@ export class ShopService {
 
     const updatedShopData = {
       ...updateShopDto,
-      image: newImage ? newImage : updateShopDto.image,
-      banner: newBanner ? newBanner : updateShopDto.banner,
+      ...(newImage && { image: newImage }),
+      ...(newBanner && { banner: newBanner }),
     };
 
     if (newImage && shop.image !== null)

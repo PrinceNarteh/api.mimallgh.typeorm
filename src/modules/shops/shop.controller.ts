@@ -11,6 +11,7 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
+import * as fs from 'fs';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { Shop } from 'src/entities/shop.entity';
@@ -105,7 +106,10 @@ export class ShopController {
 
   @Get('/image/:shopImage')
   async findShopImage(@Param('shopImage') shopImage: string, @Res() res) {
-    res.sendFile(join(process.cwd(), 'uploads/shops/' + shopImage));
+    const path = join(process.cwd(), 'uploads/shops/' + shopImage);
+    if (fs.existsSync(path)) {
+      res.sendFile(path);
+    }
   }
 
   @Delete('/banner/:shopId')
