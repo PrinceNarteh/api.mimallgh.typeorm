@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
@@ -16,11 +16,13 @@ class Item {
   productId: Product;
 
   @IsNotEmpty()
-  @IsString()
+  @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
   price: number;
 
   @IsNotEmpty()
-  @IsString()
+  @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
   quantity: number;
 
   @IsNotEmpty()
@@ -40,8 +42,9 @@ export class CreateDeliveryDto {
   @IsString()
   alternatePhoneNumber?: string;
 
-  @IsNotEmpty()
   @IsNumber()
+  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value, 10))
   amount: number;
 
   @IsNotEmpty()

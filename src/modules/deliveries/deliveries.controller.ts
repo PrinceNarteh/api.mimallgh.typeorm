@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Delivery } from 'src/entities/delivery.entity';
-import { DeliveryService } from './delivery.service';
+import { DeliveryService } from './deliveries.service';
 import { CreateDeliveryDto } from './dto/deliveryDto';
 
-@Controller('delivery')
+@Controller('deliveries')
 export class DeliveryController {
   constructor(private readonly deliveryService: DeliveryService) {}
 

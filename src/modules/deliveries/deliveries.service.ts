@@ -38,6 +38,7 @@ export class DeliveryService {
     createDeliveryDto: CreateDeliveryDto,
   ): Promise<Delivery> {
     const delivery = this.deliveryRepo.create(createDeliveryDto);
+    console.log(createDeliveryDto);
     await this.deliveryRepo.save(delivery);
     return delivery;
   }
