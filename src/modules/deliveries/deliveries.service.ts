@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateDeliveryDto } from './dto/deliveryDto';
 
 @Injectable()
-export class DeliveryService {
+export class DeliveriesService {
   constructor(
     @InjectRepository(Delivery)
     private readonly deliveryRepo: Repository<Delivery>,

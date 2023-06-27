@@ -1,26 +1,26 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Delivery } from 'src/entities/delivery.entity';
-import { DeliveryService } from './deliveries.service';
+import { DeliveriesService } from './deliveries.service';
 import { CreateDeliveryDto } from './dto/deliveryDto';
 
 @Controller('deliveries')
-export class DeliveryController {
-  constructor(private readonly deliveryService: DeliveryService) {}
+export class DeliveriesController {
+  constructor(private readonly deliveriesService: DeliveriesService) {}
 
   @Get(':deliveryId')
   async getDelivery(
     @Param('deliveryId') deliveryId: string,
   ): Promise<Delivery> {
-    return this.deliveryService.getDelivery(deliveryId);
+    return this.deliveriesService.getDelivery(deliveryId);
   }
 
   @Get()
   async getAllDeliveries() {
-    return this.deliveryService.getAllDeliveries();
+    return this.deliveriesService.getAllDeliveries();
   }
 
   @Post()
   async createDelivery(@Body() createDeliveryDto: CreateDeliveryDto) {
-    return this.deliveryService.createDelivery(createDeliveryDto);
+    return this.deliveriesService.createDelivery(createDeliveryDto);
   }
 }
