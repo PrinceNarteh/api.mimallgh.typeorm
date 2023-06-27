@@ -21,7 +21,6 @@ export class DeliveriesController {
 
   @Post()
   async createDelivery(@Body() createDeliveryDto: CreateDeliveryDto) {
-    console.log(createDeliveryDto);
     return this.deliveriesService.createDelivery(createDeliveryDto);
   }
 }
