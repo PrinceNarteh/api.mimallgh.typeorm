@@ -1,6 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Product } from './product.entity';
 import { DeliveryCompany } from './deliveryCompany.entity';
 
 @Entity('delivery_company_images')

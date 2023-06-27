@@ -16,7 +16,7 @@ const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
 );
 
-@Entity()
+@Entity('orders')
 export class Order extends Base {
   @Column({
     name: 'order_id',

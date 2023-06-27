@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Delivery } from 'src/entities/delivery.entity';
 import { Repository } from 'typeorm';
+import { DeliveryCompaniesService } from '../delivery-companies/delivery-companies.service';
 import { CreateDeliveryDto } from './dto/deliveryDto';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class DeliveriesService {
   constructor(
     @InjectRepository(Delivery)
     private readonly deliveryRepo: Repository<Delivery>,
+    private readonly deliveryCompanyService: DeliveryCompaniesService,
   ) {}
 
   async getDelivery(id: string): Promise<Delivery> {
@@ -30,7 +32,7 @@ export class DeliveriesService {
   async createDelivery(
     createDeliveryDto: CreateDeliveryDto,
   ): Promise<Delivery> {
-    const deliveryCompany = await this.getDelivery(
+    const deliveryCompany = await this.deliveryCompanyService.findOne(
       createDeliveryDto.deliveryCompany,
     );
     const delivery = this.deliveryRepo.create({

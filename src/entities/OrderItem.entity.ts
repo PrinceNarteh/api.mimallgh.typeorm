@@ -5,7 +5,7 @@ import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 import { Product } from './product.entity';
 import { Shop } from './shop.entity';
 
-@Entity()
+@Entity('order_items')
 export class OrderItem extends Base {
   @Column()
   quantity: number;
