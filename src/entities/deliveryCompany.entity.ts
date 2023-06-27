@@ -2,6 +2,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { Base } from './base/baseEntity';
 import { DeliveryCompanyImage } from './deliveryCompanyImage.entity';
 import slugify from 'slugify';
+import { Delivery } from './delivery.entity';
 
 @Entity('delivery_companies')
 export class DeliveryCompany extends Base {
@@ -22,6 +23,9 @@ export class DeliveryCompany extends Base {
 
   @Column({ nullable: true })
   location: string;
+
+  @OneToMany(() => Delivery, (delivery) => delivery.deliveryCompany)
+  deliveries: Delivery[];
 
   @OneToMany(
     () => DeliveryCompanyImage,

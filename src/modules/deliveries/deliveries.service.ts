@@ -14,13 +14,6 @@ export class DeliveriesService {
   async getDelivery(id: string): Promise<Delivery> {
     const delivery = await this.deliveryRepo.findOne({
       where: { id },
-      select: {
-        items: {
-          product: {
-            title: true,
-          },
-        },
-      },
     });
 
     if (!delivery) {
@@ -37,8 +30,13 @@ export class DeliveriesService {
   async createDelivery(
     createDeliveryDto: CreateDeliveryDto,
   ): Promise<Delivery> {
-    const delivery = this.deliveryRepo.create(createDeliveryDto);
-    console.log(createDeliveryDto);
+    const deliveryCompany = await this.getDelivery(
+      createDeliveryDto.deliveryCompany,
+    );
+    const delivery = this.deliveryRepo.create({
+      ...createDeliveryDto,
+      deliveryCompany,
+    });
     await this.deliveryRepo.save(delivery);
     return delivery;
   }

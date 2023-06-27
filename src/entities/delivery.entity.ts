@@ -1,10 +1,21 @@
-import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Base } from './base/baseEntity';
-import { ColumnNumericTransformer } from './base/columnNumericTransformer';
-import { Item } from './deliveryItem.entity';
+import { DeliveryCompany } from './deliveryCompany.entity';
 
 @Entity('delivery')
 export class Delivery extends Base {
+  @Column()
+  request: string;
+
+  @Column()
+  from: string;
+
+  @Column()
+  to: string;
+
+  @Column({ nullable: true })
+  otherDetails?: string;
+
   @Column()
   fullName: string;
 
@@ -12,35 +23,29 @@ export class Delivery extends Base {
   phoneNumber: string;
 
   @Column({ nullable: true })
-  alternatePhoneNumber: string;
+  alternatePhoneNumber?: string;
 
-  @Column('decimal', {
-    precision: 10,
-    scale: 2,
-    default: 0,
-    transformer: new ColumnNumericTransformer(),
-  })
-  amount: number;
+  @Column()
+  location: string;
 
-  @Column('decimal', {
-    precision: 10,
-    scale: 2,
-    default: 0,
-    transformer: new ColumnNumericTransformer(),
-  })
+  @Column()
   deliveryCharge: number;
 
-  @OneToMany(() => Item, (item) => item.delivery, {
-    cascade: true,
-    eager: true,
-  })
-  items: Item[];
+  @Column()
+  time: string;
 
-  @BeforeInsert()
-  async calcAmount() {
-    this.amount = this.items.reduce(
-      (amt, currentItem) => amt + currentItem.price * currentItem.quantity,
-      0,
-    );
-  }
+  @Column()
+  date: string;
+
+  @ManyToOne(
+    () => DeliveryCompany,
+    (deliveryCompany) => deliveryCompany.deliveries,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn({
+    name: 'delivery_company_id',
+  })
+  deliveryCompany: DeliveryCompany;
 }

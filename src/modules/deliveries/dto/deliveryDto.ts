@@ -1,36 +1,23 @@
-import { Transform, Type } from 'class-transformer';
-import {
-  ArrayMinSize,
-  IsArray,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import { Product } from 'src/entities/product.entity';
-import { Shop } from 'src/entities/shop.entity';
-
-class Item {
-  @IsNotEmpty()
-  @IsString()
-  productId: Product;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Transform(({ value }) => parseInt(value, 10))
-  price: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Transform(({ value }) => parseInt(value, 10))
-  quantity: number;
-
-  @IsNotEmpty()
-  @IsString()
-  shopId: Shop;
-}
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateDeliveryDto {
+  @IsNotEmpty()
+  @IsString()
+  request: string;
+
+  @IsNotEmpty()
+  @IsString()
+  from: string;
+
+  @IsNotEmpty()
+  @IsString()
+  to: string;
+
+  @IsString()
+  @IsOptional()
+  otherDetails?: string;
+
   @IsNotEmpty()
   @IsString()
   fullName: string;
@@ -40,20 +27,27 @@ export class CreateDeliveryDto {
   phoneNumber: string;
 
   @IsString()
+  @IsOptional()
   alternatePhoneNumber?: string;
 
-  @IsNumber()
   @IsNotEmpty()
-  @Transform(({ value }) => parseInt(value, 10))
-  amount: number;
+  @IsString()
+  location: string;
 
   @IsNotEmpty()
   @IsNumber()
+  @Transform(({ value }) => parseInt(value, 10))
   deliveryCharge: number;
 
-  @IsArray()
-  @ArrayMinSize(1)
-  @ValidateNested({ each: true })
-  @Type(() => Item)
-  items: Item[];
+  @IsNotEmpty()
+  @IsString()
+  time: string;
+
+  @IsNotEmpty()
+  @IsString()
+  date: string;
+
+  @IsNotEmpty()
+  @IsString()
+  deliveryCompany: string;
 }

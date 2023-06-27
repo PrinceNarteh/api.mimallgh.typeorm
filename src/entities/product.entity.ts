@@ -4,7 +4,6 @@ import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 import { Review } from './review.entity';
 import { Shop } from './shop.entity';
 import { ProductImage } from './productImage.entity';
-import { Item } from './deliveryItem.entity';
 
 export enum CategoryType {
   food = 'food',
@@ -73,9 +72,6 @@ export class Product extends Base {
     eager: true,
   })
   images: ProductImage[];
-
-  @OneToMany(() => Item, (item) => item.product)
-  items: Item[];
 
   @ManyToOne(() => Shop, (shop) => shop.products)
   @JoinColumn({ name: 'shop_id' })
