@@ -4,21 +4,26 @@ import {
   IsArray,
   IsDefined,
   IsInt,
+  IsNotEmpty,
   IsPositive,
   IsString,
   ValidateNested,
 } from 'class-validator';
 
 class CreateOrderItemDto {
+  @IsNotEmpty()
   @IsPositive()
   quantity: number;
 
+  @IsNotEmpty()
   @IsPositive()
   price: number;
 
+  @IsNotEmpty()
   @IsString()
   productId: string;
 
+  @IsNotEmpty()
   @IsString()
   shopId: string;
 }
@@ -26,6 +31,18 @@ class CreateOrderItemDto {
 export class CreateOrderDto {
   @IsInt()
   amount: number;
+
+  @IsNotEmpty()
+  @IsString()
+  fullName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  phoneNumber: string;
+
+  @IsNotEmpty()
+  @IsString()
+  alternatePhoneNumber: string;
 
   @IsDefined()
   @IsArray()

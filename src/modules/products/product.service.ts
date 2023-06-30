@@ -14,13 +14,13 @@ import {
   IFindManyOptions,
   returnValue,
 } from 'src/types/findManyOptions';
+import { deleteFile } from 'src/utils/deleteFile';
 import { Brackets, Repository } from 'typeorm';
 import {
   AdminCreateProductDto,
   CreateProductDto,
   UpdateProductDto,
 } from './dto/productDto';
-import { deleteFile } from 'src/utils/deleteFile';
 
 @Injectable()
 export class ProductService {
@@ -62,15 +62,12 @@ export class ProductService {
     if (keys.includes('search')) {
       query = query.andWhere(
         new Brackets((qb) => {
-          qb.where('product.title LIKE :title', {
-            title: `%${queries.search}%`,
-          })
-            .orWhere('product.description LIKE :description', {
-              description: `%${queries.search}%`,
-            })
-            .orWhere('shop.name LIKE :name', {
-              name: `%${queries.search}%`,
-            });
+          qb.where(
+            'product.title LIKE :search OR product.description LIKE :search OR shop.name LIKE :search',
+            {
+              search: `%${queries.search}%`,
+            },
+          );
         }),
       );
     }

@@ -13,6 +13,7 @@ import { ShopModule } from './modules/shops/shop.module';
 import { UserModule } from './modules/users/user.module';
 import { DeliveryCompaniesModule } from './modules/delivery-companies/delivery-companies.module';
 import { DeliveriesModule } from './modules/deliveries/deliveries.module';
+import { QuickOrdersModule } from './modules/quick-orders/quick-orders.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { DeliveriesModule } from './modules/deliveries/deliveries.module';
     ReviewsModule,
     DeliveryCompaniesModule,
     DeliveriesModule,
+    QuickOrdersModule,
   ],
   providers: [],
 })
