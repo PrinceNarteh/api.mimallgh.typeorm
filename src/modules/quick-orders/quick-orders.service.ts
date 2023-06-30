@@ -29,6 +29,15 @@ export class QuickOrdersService {
     };
   }
 
+  async getQuickOrder(orderId: string, relations?: boolean) {
+    const order = await this.quickOrderRepo.findOne({
+      where: { id: orderId },
+      ...(relations && { relations: ['items'] }),
+    });
+
+    return order;
+  }
+
   async createQuickOrder(order: CreateQuickOrderDto) {
     const quickOrder = this.quickOrderRepo.create(order);
     await this.quickOrderRepo.save(quickOrder);

@@ -1,4 +1,4 @@
-import { Controller, Param, Get, Post, Body } from '@nestjs/common';
+import { Controller, Param, Get, Post, Body, Query } from '@nestjs/common';
 import { QuickOrdersService } from './quick-orders.service';
 import { CreateQuickOrderDto } from './dto/quickOrderDto';
 
@@ -7,8 +7,16 @@ export class QuickOrdersController {
   constructor(private readonly orderService: QuickOrdersService) {}
 
   @Get()
-  async getAllQuickOrders(@Param() param: { [key: string]: string }) {
+  async getAllQuickOrders(@Query() param: { [key: string]: string }) {
     return this.orderService.getAllQuickOrders(param);
+  }
+
+  @Get(':orderId')
+  async getQuickOrder(
+    @Param(':orderId') orderId: string,
+    @Query('relations') relations?: boolean,
+  ) {
+    return this.orderService.getQuickOrder(orderId, relations);
   }
 
   @Post()

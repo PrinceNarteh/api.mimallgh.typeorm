@@ -3,6 +3,7 @@ import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import { OrderItem } from './OrderItem.entity';
 import { Base } from './base/baseEntity';
 import { ColumnNumericTransformer } from './base/columnNumericTransformer';
+import { QuickOrderItem } from './QuickOrderItem.entity';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -35,7 +36,7 @@ export class QuickOrder extends Base {
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
     onDelete: 'CASCADE',
   })
-  items: OrderItem[];
+  items: QuickOrderItem[];
 
   @BeforeInsert()
   async calcAmount() {
