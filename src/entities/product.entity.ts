@@ -4,6 +4,7 @@ import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 import { Review } from './review.entity';
 import { Shop } from './shop.entity';
 import { ProductImage } from './productImage.entity';
+import { QuickOrderItem } from './QuickOrderItem.entity';
 
 export enum CategoryType {
   food = 'food',
@@ -72,6 +73,11 @@ export class Product extends Base {
     eager: true,
   })
   images: ProductImage[];
+
+  @OneToMany(() => QuickOrderItem, (quickOrderItem) => quickOrderItem.product, {
+    cascade: true,
+  })
+  quickOrderItems: QuickOrderItem[];
 
   @ManyToOne(() => Shop, (shop) => shop.products)
   @JoinColumn({ name: 'shop_id' })

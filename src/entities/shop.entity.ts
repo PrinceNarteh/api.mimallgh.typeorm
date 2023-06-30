@@ -4,6 +4,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { OrderItem } from './OrderItem.entity';
 import { Base } from './base/baseEntity';
 import { Product } from './product.entity';
+import { QuickOrderItem } from './QuickOrderItem.entity';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -76,6 +77,15 @@ export class Shop extends Base {
     onDelete: 'CASCADE',
   })
   orders: OrderItem[];
+
+  @OneToMany(
+    () => QuickOrderItem,
+    (quickOrderItem) => quickOrderItem.product,
+    {
+      cascade: true,
+    },
+  )
+  quickOrderItems: QuickOrderItem[];
 
   @BeforeInsert()
   async beforeInsert() {

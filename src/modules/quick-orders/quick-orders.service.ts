@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { DeliveryCompaniesService } from '../delivery-companies/delivery-companies.service';
 import { CreateQuickOrderDto } from './dto/quickOrderDto';
 import { QuickOrderItem } from 'src/entities/QuickOrderItem.entity';
+import { ShopService } from '../shops/shop.service';
+import { ProductService } from '../products/product.service';
 
 @Injectable()
 export class QuickOrdersService {
@@ -14,6 +16,8 @@ export class QuickOrdersService {
     @InjectRepository(QuickOrderItem)
     private quickOrderItemRepo: Repository<QuickOrderItem>,
     private deliveryCompaniesService: DeliveryCompaniesService,
+    private shopService: ShopService,
+    private productService: ProductService,
   ) {}
 
   async getAllQuickOrders(param: { [key: string]: string }) {
@@ -57,24 +61,23 @@ export class QuickOrdersService {
       deliveryCompany,
     });
 
-    // const items = [];
-    // for (const item of order.items) {
-    //   const res = this.quickOrderItemRepo.create({
-    //     ...item,
-    //     shop: {
-    //       id: item.shopId,
-    //     },
-    //     product: {
-    //       id: item.productId,
-    //     },
-    //   });
+    const items = [];
+    for (const item of order.items) {
+      const shop = await this.shopService.shop(item.shopId);
+      const product = await this.productService.product(item.productId);
+      const res = this.quickOrderItemRepo.create({
+        ...item,
+        shop,
+        order: quickOrder,
+      });
 
-    //   await res.save();
-    //   items.push(res);
-    // }
+      await res.save();
+      items.push(res);
+    }
 
-    // quickOrder.items = items;
-    await this.quickOrderRepo.save(quickOrder);
+    quickOrder.items = items;
+    // await this.quickOrderRepo.save(quickOrder);
+    console.log(items);
     console.log(quickOrder);
     return quickOrder;
   }

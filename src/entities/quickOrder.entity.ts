@@ -21,6 +21,7 @@ const nanoid = customAlphabet(
 export class QuickOrder extends Base {
   @Column({
     name: 'order_id',
+    nullable: true,
   })
   orderId: string;
 
@@ -57,7 +58,7 @@ export class QuickOrder extends Base {
   alternate_phoneNumber: string;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
-    onDelete: 'CASCADE',
+    cascade: true,
   })
   items: QuickOrderItem[];
 
