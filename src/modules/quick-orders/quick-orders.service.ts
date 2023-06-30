@@ -73,16 +73,13 @@ export class QuickOrdersService {
         ...item,
         shop,
         product,
+        order: quickOrder,
       });
 
       await res.save();
       quickItems.push(res);
     }
 
-    quickOrder.items = quickItems;
-    await this.quickOrderRepo.save(quickOrder);
-    console.log(items);
-    console.log(quickOrder);
     return quickOrder;
   }
 }
