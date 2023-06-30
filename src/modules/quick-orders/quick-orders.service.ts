@@ -4,12 +4,15 @@ import { QuickOrder } from 'src/entities/quickOrder.entity';
 import { Repository } from 'typeorm';
 import { DeliveryCompaniesService } from '../delivery-companies/delivery-companies.service';
 import { CreateQuickOrderDto } from './dto/quickOrderDto';
+import { QuickOrderItem } from 'src/entities/QuickOrderItem.entity';
 
 @Injectable()
 export class QuickOrdersService {
   constructor(
     @InjectRepository(QuickOrder)
     private quickOrderRepo: Repository<QuickOrder>,
+    @InjectRepository(QuickOrderItem)
+    private quickOrderItemRepo: Repository<QuickOrderItem>,
     private deliveryCompaniesService: DeliveryCompaniesService,
   ) {}
 
@@ -41,17 +44,38 @@ export class QuickOrdersService {
   }
 
   async createQuickOrder(order: CreateQuickOrderDto) {
+    order.items = order.items.map((items) => ({ ...items }));
     const deliveryCompany = await this.deliveryCompaniesService.findOne(
       order.deliveryCompany,
     );
     if (!deliveryCompany) {
       throw new NotFoundException('Delivery company not found');
     }
+
     const quickOrder = this.quickOrderRepo.create({
       ...order,
       deliveryCompany,
     });
+
+    // const items = [];
+    // for (const item of order.items) {
+    //   const res = this.quickOrderItemRepo.create({
+    //     ...item,
+    //     shop: {
+    //       id: item.shopId,
+    //     },
+    //     product: {
+    //       id: item.productId,
+    //     },
+    //   });
+
+    //   await res.save();
+    //   items.push(res);
+    // }
+
+    // quickOrder.items = items;
     await this.quickOrderRepo.save(quickOrder);
+    console.log(quickOrder);
     return quickOrder;
   }
 }
