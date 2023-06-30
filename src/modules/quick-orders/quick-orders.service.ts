@@ -60,9 +60,8 @@ export class QuickOrdersService {
     const quickOrder = this.quickOrderRepo.create({
       ...result,
       deliveryCompany,
+      items: [],
     });
-
-    await quickOrder.save();
 
     const quickItems: QuickOrderItem[] = [];
     for (const item of items) {
@@ -78,6 +77,10 @@ export class QuickOrdersService {
       await res.save();
       quickItems.push(res);
     }
+
+    quickOrder.items = [...quickItems];
+
+    await quickOrder.save();
 
     return quickOrder;
   }
