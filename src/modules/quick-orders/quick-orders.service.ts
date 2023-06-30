@@ -73,6 +73,7 @@ export class QuickOrdersService {
         ...item,
         shop,
         product,
+        order: quickOrder,
       });
 
       await res.save();

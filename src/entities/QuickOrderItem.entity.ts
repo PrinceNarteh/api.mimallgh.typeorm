@@ -27,7 +27,7 @@ export class QuickOrderItem extends Base {
   @JoinColumn({ name: 'shop_id' })
   shop: Shop;
 
-  @ManyToOne(() => Order, (order) => order.items)
+  @ManyToOne(() => QuickOrder, (order) => order.items)
   @JoinColumn({ name: 'quick_order_id' })
   order: QuickOrder;
 }
