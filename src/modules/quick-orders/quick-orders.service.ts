@@ -48,7 +48,6 @@ export class QuickOrdersService {
   }
 
   async createQuickOrder(order: CreateQuickOrderDto) {
-    order.items = order.items.map((items) => ({ ...items }));
     const deliveryCompany = await this.deliveryCompaniesService.findOne(
       order.deliveryCompany,
     );
@@ -56,27 +55,32 @@ export class QuickOrdersService {
       throw new NotFoundException('Delivery company not found');
     }
 
+    const { items, ...result } = order;
+
     const quickOrder = this.quickOrderRepo.create({
-      ...order,
+      ...result,
       deliveryCompany,
     });
 
-    const items = [];
-    for (const item of order.items) {
+    await quickOrder.save();
+
+    const quickItems: QuickOrderItem[] = [];
+    for (const item of items) {
       const shop = await this.shopService.shop(item.shopId);
       const product = await this.productService.product(item.productId);
       const res = this.quickOrderItemRepo.create({
         ...item,
         shop,
+        product,
         order: quickOrder,
       });
 
       await res.save();
-      items.push(res);
+      quickItems.push(res);
     }
 
-    quickOrder.items = items;
-    // await this.quickOrderRepo.save(quickOrder);
+    quickOrder.items = quickItems;
+    await this.quickOrderRepo.save(quickOrder);
     console.log(items);
     console.log(quickOrder);
     return quickOrder;
