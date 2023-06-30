@@ -1,9 +1,17 @@
 import { customAlphabet } from 'nanoid/async';
-import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { OrderItem } from './OrderItem.entity';
 import { Base } from './base/baseEntity';
 import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 import { QuickOrderItem } from './QuickOrderItem.entity';
+import { DeliveryCompany } from './deliveryCompany.entity';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -23,6 +31,21 @@ export class QuickOrder extends Base {
     transformer: new ColumnNumericTransformer(),
   })
   amount: number;
+
+  @ManyToOne(
+    () => DeliveryCompany,
+    (deliveryCompany) => deliveryCompany.quickOrders,
+  )
+  @JoinColumn({ name: 'delivery_company_id' })
+  deliveryCompany: DeliveryCompany;
+
+  @Column('decimal', {
+    precision: 10,
+    scale: 2,
+    default: 0,
+    transformer: new ColumnNumericTransformer(),
+  })
+  deliveryCharge: number;
 
   @Column({ name: 'full_name' })
   fullName: string;

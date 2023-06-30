@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QuickOrder } from 'src/entities/quick-order.entity';
+import { QuickOrder } from 'src/entities/quickOrder.entity';
 import { Repository } from 'typeorm';
+import { DeliveryCompaniesService } from '../delivery-companies/delivery-companies.service';
 import { CreateQuickOrderDto } from './dto/quickOrderDto';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class QuickOrdersService {
   constructor(
     @InjectRepository(QuickOrder)
     private quickOrderRepo: Repository<QuickOrder>,
+    private deliveryCompaniesService: DeliveryCompaniesService,
   ) {}
 
   async getAllQuickOrders(param: { [key: string]: string }) {
@@ -39,7 +41,16 @@ export class QuickOrdersService {
   }
 
   async createQuickOrder(order: CreateQuickOrderDto) {
-    const quickOrder = this.quickOrderRepo.create(order);
+    const deliveryCompany = await this.deliveryCompaniesService.findOne(
+      order.deliveryCompany,
+    );
+    if (!deliveryCompany) {
+      throw new NotFoundException('Delivery company not found');
+    }
+    const quickOrder = this.quickOrderRepo.create({
+      ...order,
+      deliveryCompany,
+    });
     await this.quickOrderRepo.save(quickOrder);
     return quickOrder;
   }

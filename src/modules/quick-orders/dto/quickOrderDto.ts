@@ -1,10 +1,11 @@
 import { PartialType } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsDefined,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsPositive,
   IsString,
   ValidateNested,
@@ -37,13 +38,23 @@ export class CreateQuickOrderDto {
   @IsString()
   phoneNumber: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  alternatePhoneNumber: string;
+  alternatePhoneNumber?: string;
 
   @IsNotEmpty()
   @IsInt()
+  @Transform(({ value }) => parseInt(value, 10))
   amount: number;
+
+  @IsNotEmpty()
+  @IsString()
+  deliveryCompany: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  @Transform(({ value }) => parseInt(value, 10))
+  deliveryCharge: number;
 
   @IsDefined()
   @IsArray()

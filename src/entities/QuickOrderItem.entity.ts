@@ -3,7 +3,7 @@ import { Base } from './base/baseEntity';
 import { ColumnNumericTransformer } from './base/columnNumericTransformer';
 import { Order } from './order.entity';
 import { Product } from './product.entity';
-import { QuickOrder } from './quick-order.entity';
+import { QuickOrder } from './quickOrder.entity';
 import { Shop } from './shop.entity';
 
 @Entity('quick_order_items')

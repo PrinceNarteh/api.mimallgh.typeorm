@@ -3,6 +3,7 @@ import { Base } from './base/baseEntity';
 import { DeliveryCompanyImage } from './deliveryCompanyImage.entity';
 import slugify from 'slugify';
 import { Delivery } from './delivery.entity';
+import { QuickOrder } from './quickOrder.entity';
 
 @Entity('delivery_companies')
 export class DeliveryCompany extends Base {
@@ -26,6 +27,9 @@ export class DeliveryCompany extends Base {
 
   @OneToMany(() => Delivery, (delivery) => delivery.deliveryCompany)
   deliveries: Delivery[];
+
+  @OneToMany(() => QuickOrder, (quickOrder) => quickOrder.deliveryCompany)
+  quickOrders: QuickOrder[];
 
   @OneToMany(
     () => DeliveryCompanyImage,
