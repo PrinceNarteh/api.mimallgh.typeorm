@@ -57,7 +57,7 @@ export class QuickOrder extends Base {
   @Column({ name: 'alternate_phone_number', nullable: true })
   alternate_phoneNumber: string;
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
+  @OneToMany(() => QuickOrderItem, (orderItem) => orderItem.order, {
     cascade: true,
   })
   items: QuickOrderItem[];

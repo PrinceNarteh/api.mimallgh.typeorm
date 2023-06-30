@@ -28,6 +28,6 @@ export class QuickOrderItem extends Base {
   shop: Shop;
 
   @ManyToOne(() => Order, (order) => order.items)
-  @JoinColumn({ name: 'order_id' })
+  @JoinColumn({ name: 'quick_order_id' })
   order: QuickOrder;
 }
