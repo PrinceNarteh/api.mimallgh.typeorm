@@ -63,12 +63,7 @@ export class QuickOrder extends Base {
   items: QuickOrderItem[];
 
   @BeforeInsert()
-  async calcAmount() {
-    this.amount = this.items.reduce(
-      (amt, currentItem) => amt + currentItem.price * currentItem.quantity,
-      0,
-    );
-
+  async beforeInsert() {
     this.orderId = await nanoid(10);
   }
 }
