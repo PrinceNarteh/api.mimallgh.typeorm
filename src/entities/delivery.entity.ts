@@ -31,7 +31,9 @@ export class Delivery extends Base {
   @Column()
   deliveryCharge: number;
 
-  @Column()
+  @Column({
+    name: 'date_and_time',
+  })
   dateAndTime: string;
 
   @ManyToOne(
