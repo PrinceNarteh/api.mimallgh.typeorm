@@ -32,10 +32,7 @@ export class Delivery extends Base {
   deliveryCharge: number;
 
   @Column()
-  time: string;
-
-  @Column()
-  date: string;
+  dateAndTime: string;
 
   @ManyToOne(
     () => DeliveryCompany,

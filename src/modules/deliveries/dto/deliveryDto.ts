@@ -41,11 +41,7 @@ export class CreateDeliveryDto {
 
   @IsNotEmpty()
   @IsString()
-  time: string;
-
-  @IsNotEmpty()
-  @IsString()
-  date: string;
+  dateAndTime: string;
 
   @IsNotEmpty()
   @IsString()
