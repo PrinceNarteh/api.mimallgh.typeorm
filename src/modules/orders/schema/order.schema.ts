@@ -1,5 +1,6 @@
 import { Document, Types } from 'mongoose';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { OrderItem } from './order-item.schema';
 
 @Schema()
 export class Order {
@@ -13,7 +14,7 @@ export class Order {
   user: 'User';
 
   @Prop([{ type: Types.ObjectId, ref: 'OrderItem', required: true }])
-  items: 'OrderItem[]';
+  items: OrderItem[];
 
   //   @BeforeInsert()
   //   async calcAmount() {

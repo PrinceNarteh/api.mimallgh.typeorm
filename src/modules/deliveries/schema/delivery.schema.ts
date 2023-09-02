@@ -1,5 +1,6 @@
 import { Types, Document } from 'mongoose';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { DeliveryCompany } from 'src/modules/delivery-companies/schema/delivery-company.schema';
 
 @Schema({ collection: 'deliveries' })
 export class Delivery {
@@ -38,7 +39,7 @@ export class Delivery {
     type: Types.ObjectId,
     ref: 'DeliveryCompany',
   })
-  deliveryCompany: 'DeliveryCompany';
+  deliveryCompany: DeliveryCompany;
 }
 
 export type DeliveryDocument = Delivery & Document;
