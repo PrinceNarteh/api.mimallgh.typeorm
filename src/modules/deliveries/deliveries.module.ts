@@ -1,12 +1,18 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Delivery } from 'src/entities/delivery.entity';
+
+import { MongooseModule } from '@nestjs/mongoose';
 import { DeliveryCompaniesModule } from '../delivery-companies/delivery-companies.module';
 import { DeliveriesController } from './deliveries.controller';
 import { DeliveriesService } from './deliveries.service';
+import { DELIVERY_MODEL, DeliverySchema } from './schema/deliveries.schema';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Delivery]), DeliveryCompaniesModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: DELIVERY_MODEL, schema: DeliverySchema },
+    ]),
+    DeliveryCompaniesModule,
+  ],
   controllers: [DeliveriesController],
   providers: [DeliveriesService],
 })

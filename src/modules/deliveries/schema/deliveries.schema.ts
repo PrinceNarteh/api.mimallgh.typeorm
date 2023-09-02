@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose';
+import { Types, Document } from 'mongoose';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ collection: 'deliveries' })
@@ -33,9 +33,14 @@ export class Delivery {
   @Prop({ required: true })
   dateAndTime: string;
 
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({
+    required: true,
+    type: Types.ObjectId,
+    ref: 'DeliveryCompany',
+  })
   deliveryCompany: 'DeliveryCompany';
 }
 
-export type DeliveryDocument = mongoose.HydratedDocument<Delivery>;
+export type DeliveryDocument = Delivery & Document;
 export const DeliverySchema = SchemaFactory.createForClass(Delivery);
+export const DELIVERY_MODEL = Delivery.name;
