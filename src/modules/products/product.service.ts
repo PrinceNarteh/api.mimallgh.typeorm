@@ -21,14 +21,12 @@ import {
   CreateProductDto,
   UpdateProductDto,
 } from './dto/productDto';
+import { ProductRepository } from './product.schema';
 
 @Injectable()
 export class ProductService {
   constructor(
-    @InjectRepository(Product)
-    private readonly productRepo: Repository<Product>,
-    @InjectRepository(ProductImage)
-    private readonly productImgRepo: Repository<ProductImage>,
+    private readonly productRepo: ProductRepository,
     private readonly shopService: ShopService,
   ) {}
 
@@ -131,11 +129,13 @@ export class ProductService {
     }
 
     return {
-      total,
-      page: Number(page),
-      perPage: Number(perPage),
-      totalPages: Math.ceil(total / perPage),
       data: sortedData,
+      meta: {
+        total,
+        page: Number(page),
+        perPage: Number(perPage),
+        totalPages: Math.ceil(total / perPage),
+      },
     };
   }
 
