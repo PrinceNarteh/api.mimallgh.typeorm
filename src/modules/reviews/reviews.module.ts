@@ -1,13 +1,20 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ProductModule } from '../products/product.module';
 import { ReviewsController } from './reviews.controller';
 import { ReviewsService } from './reviews.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Review } from 'src/entities/review.entity';
-import { UserModule } from '../users/user.module';
-import { ProductModule } from '../products/product.module';
+import { REVIEW_MODEL, ReviewSchema } from './schema/review.schema';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Review]), UserModule, ProductModule],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: REVIEW_MODEL,
+        schema: ReviewSchema,
+      },
+    ]),
+    ProductModule,
+  ],
   controllers: [ReviewsController],
   providers: [ReviewsService],
 })
