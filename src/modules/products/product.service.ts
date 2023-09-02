@@ -33,7 +33,7 @@ export class ProductService {
   ) {}
 
   async getAllProducts(queries: { [key: string]: string }) {
-    const keys = Object.keys(queries);
+    const isPresent = (query: string) => query in queries;
     const page = Number(queries.page) || 1;
     let perPage = Number(queries.perPage) || 10;
 
@@ -42,24 +42,24 @@ export class ProductService {
       .leftJoin('product.shop', 'shop')
       .leftJoin('product.images', 'image');
 
-    if (keys.includes('category'))
+    if (isPresent('category'))
       query = query.andWhere(`product.category = :category`, {
         category: queries.category,
       });
 
-    if (keys.includes('location')) {
+    if (isPresent('location')) {
       query = query.andWhere('shop.location = :location', {
         location: queries.location,
       });
     }
 
-    if (keys.includes('shopId')) {
+    if (isPresent('shopId')) {
       query = query.andWhere('shop.id = :shopId', {
         shopId: queries.shopId,
       });
     }
 
-    if (keys.includes('search')) {
+    if (isPresent('search')) {
       query = query.andWhere(
         new Brackets((qb) => {
           qb.where(
