@@ -6,6 +6,10 @@ import { ShopModule } from '../shops/shop.module';
 import { QuickOrdersController } from './quick-orders.controller';
 import { QuickOrdersService } from './quick-orders.service';
 import {
+  QUICK_ORDER_ITEM_MODEL,
+  QuickOrderItemSchema,
+} from './schema/quick-order-item.schema';
+import {
   QUICK_ORDER_MODEL,
   QuickOrderSchema,
 } from './schema/quick-order.schema';
@@ -16,6 +20,10 @@ import {
       {
         name: QUICK_ORDER_MODEL,
         schema: QuickOrderSchema,
+      },
+      {
+        name: QUICK_ORDER_ITEM_MODEL,
+        schema: QuickOrderItemSchema,
       },
     ]),
     DeliveryCompaniesModule,
