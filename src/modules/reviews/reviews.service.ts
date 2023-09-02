@@ -1,14 +1,11 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
-  ForbiddenException,
 } from '@nestjs/common';
-import { CreateReviewDto } from './dto/reviewDto';
-import { UserService } from '../users/user.service';
 import { ProductService } from '../products/product.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Review } from 'src/entities/review.entity';
-import { Repository } from 'typeorm';
+import { UserService } from '../users/user.service';
+import { CreateReviewDto } from './dto/reviewDto';
 import { ReviewRepository } from './reviews.repository';
 import { ReviewDocument } from './schema/review.schema';
 
@@ -39,7 +36,7 @@ export class ReviewsService {
     productId: string;
     createReviewDto: CreateReviewDto;
   }) {
-    const user = await this.userService.user(userId);
+    const user = await this.userService.findById(userId);
     const product = await this.productService.product(productId);
 
     const review = this.reviewRepo.create({
@@ -62,13 +59,13 @@ export class ReviewsService {
     productId: string;
     updateReviewDto: Partial<CreateReviewDto>;
   }) {
-    const user = await this.userService.user(userId);
+    const user = await this.userService.findById(userId);
     await this.productService.product(productId);
     const review = await this.getReview(reviewId);
 
-    // if (user.id !== review.user.) {
-    //   throw new ForbiddenException('You are not allowed to edit review');
-    // }
+    if (user.id !== review.user.) {
+      throw new ForbiddenException('You are not allowed to edit review');
+    }
 
     await this.reviewRepo.findOneAndUpdate({ id: reviewId }, updateReviewDto);
 

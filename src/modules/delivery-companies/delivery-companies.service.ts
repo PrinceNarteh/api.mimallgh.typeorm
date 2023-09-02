@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DeliveryCompanyImage } from 'src/entities/deliveryCompanyImage.entity';
 import { deleteFile } from 'src/utils/deleteFile';
 import { DeliveryCompanyRepository } from './delivery-company.repository';
 import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
