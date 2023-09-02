@@ -5,12 +5,6 @@ import { Review } from 'src/modules/reviews/schema/review.schema';
 
 export type UserRole = 'admin' | 'user';
 
-export type UserLevel =
-  | 'level_one'
-  | 'level_two'
-  | 'level_three'
-  | 'super_user';
-
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true })

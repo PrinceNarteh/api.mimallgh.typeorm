@@ -74,16 +74,6 @@ export class DeliveryCompaniesService {
     return this.deliveryCompanyRepo.delete({ id: deliveryCompanyId });
   }
 
-  // async findImage(imageId: string) {
-  //   const img = this.deliveryCompanyImgRepo.findOne({ where: { id: imageId } });
-
-  //   if (!img) {
-  //     throw new NotFoundException('Product Image Not Found');
-  //   }
-
-  //   return img;
-  // }
-
   async deleteImage({
     deliveryCompanyId,
     imageName,

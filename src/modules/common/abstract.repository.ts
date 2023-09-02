@@ -7,6 +7,12 @@ export class AbstractRepository<T extends Document> {
     return this.entityModel.find(entityFilterQuery);
   }
 
+  async paginate(params: { page?: number; limit?: number; search?: string }) {
+    const page = params.page || 1;
+    const limit = params.limit || 10;
+    const search = params.search || '';
+  }
+
   async findOne(
     entityFilterQuery: FilterQuery<T>,
     projection?: Record<string, unknown>,

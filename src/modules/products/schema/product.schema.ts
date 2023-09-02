@@ -45,11 +45,11 @@ export class Product {
   @Prop([Number])
   rating: number[];
 
-  @Prop({ type: Types.ObjectId, ref: 'Review' })
-  reviews: 'Review[]';
-
   @Prop([String])
   images: string[];
+
+  @Prop({ type: Types.ObjectId, ref: 'Review' })
+  reviews: 'Review[]';
 
   @Prop({ type: Types.ObjectId, ref: 'QuickOrderItem' })
   quickOrderItems: ' QuickOrderItem[]';
@@ -58,6 +58,13 @@ export class Product {
   shop: 'Shop';
 }
 
+export const PRODUCT_MODEL = Product.name;
 export type ProductDocument = Product & Document;
 export const ProductSchema = SchemaFactory.createForClass(Product);
-export const PRODUCT_MODEL = Product.name;
+ProductSchema.pre('find', function (next: Function) {
+  this.populate({ path: 'shop', select: { name: 1, location: 1 } });
+});
+
+ProductSchema.pre('findOne', function (next: Function) {
+  this.populate('shop');
+});

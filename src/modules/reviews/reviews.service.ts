@@ -27,7 +27,6 @@ export class ReviewsService {
       throw new NotFoundException('Review Not Found');
     }
 
-
     return review;
   }
 
@@ -67,11 +66,11 @@ export class ReviewsService {
     await this.productService.product(productId);
     const review = await this.getReview(reviewId);
 
-    if (user.id !== review.user.) {
-      throw new ForbiddenException('You are not allowed to edit review');
-    }
+    // if (user.id !== review.user.) {
+    //   throw new ForbiddenException('You are not allowed to edit review');
+    // }
 
-    await this.reviewRepo.update(reviewId, updateReviewDto);
+    await this.reviewRepo.findOneAndUpdate({ id: reviewId }, updateReviewDto);
 
     return this.getReview(reviewId);
   }
