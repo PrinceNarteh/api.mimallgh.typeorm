@@ -9,7 +9,7 @@ export class AbstractRepository<T extends Document> {
 
   async findOne(
     entityFilterQuery: FilterQuery<T>,
-    projection: Record<string, unknown>,
+    projection?: Record<string, unknown>,
   ): Promise<T | null> {
     return this.entityModel.findOne(entityFilterQuery, {
       __v: 0,
