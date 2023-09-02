@@ -129,7 +129,7 @@ export class ProductController {
     );
   }
 
-  @UseGuards(ShopJwtGuard)
+  // @UseGuards(ShopJwtGuard)
   @Delete(':productId')
   async deleteProduct(@Request() req, @Param('productId') productId: string) {
     return this.productService.deleteProduct(req.user, productId);
