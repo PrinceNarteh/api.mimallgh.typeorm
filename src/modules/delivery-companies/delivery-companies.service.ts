@@ -1,150 +1,97 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DeliveryCompany } from 'src/entities/deliveryCompany.entity';
-import { Repository } from 'typeorm';
-import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
 import { DeliveryCompanyImage } from 'src/entities/deliveryCompanyImage.entity';
 import { deleteFile } from 'src/utils/deleteFile';
+import { DeliveryCompanyRepository } from './delivery-company.repository';
+import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
+import { DeliveryCompanyDocument } from './schema/delivery-company.schema';
 
 @Injectable()
 export class DeliveryCompaniesService {
   constructor(
-    @InjectRepository(DeliveryCompany)
-    private readonly deliveryCompanyRepo: Repository<DeliveryCompany>,
-    @InjectRepository(DeliveryCompanyImage)
-    private readonly deliveryCompanyImgRepo: Repository<DeliveryCompanyImage>,
+    private readonly deliveryCompanyRepo: DeliveryCompanyRepository,
   ) {}
 
-  async findAll() {
-    return this.deliveryCompanyRepo.find({
-      relations: ['images'],
-    });
+  async findAll(): Promise<DeliveryCompanyDocument[]> {
+    return this.deliveryCompanyRepo.find({});
   }
 
-  async findOne(id: string) {
-    return this.deliveryCompanyRepo.findOne({
-      where: { id },
-      relations: ['images'],
-    });
+  async findOne(id: string): Promise<DeliveryCompanyDocument | null> {
+    return this.deliveryCompanyRepo.findOne({ _id: id });
   }
 
-  async findOneBySlug(slug: string) {
-    return this.deliveryCompanyRepo.findOne({
-      where: { slug },
-      relations: ['images'],
-    });
+  async findOneBySlug(slug: string): Promise<DeliveryCompanyDocument | null> {
+    return this.deliveryCompanyRepo.findOneBySlug(slug);
   }
 
   async create(
     createProductDto: CreateDeliveryCompanyDto,
     imageNames: Array<string>,
-  ) {
-    const imagesArr: DeliveryCompanyImage[] = [];
-    for (let image of imageNames) {
-      const res = this.deliveryCompanyImgRepo.create({ name: image });
-      await this.deliveryCompanyImgRepo.save(res);
-      imagesArr.push(res);
-    }
-
+  ): Promise<DeliveryCompanyDocument> {
     const product = this.deliveryCompanyRepo.create({
       ...createProductDto,
-      images: imagesArr,
+      images: imageNames,
     });
 
-    await this.deliveryCompanyRepo.save(product);
-
-    return product;
+    return this.deliveryCompanyRepo.create(product);
   }
 
   async update(
     deliveryCompanyId: string,
     updateDeliveryCompanyDto: Partial<CreateDeliveryCompanyDto>,
     imageNames?: Array<string>,
-  ) {
+  ): Promise<DeliveryCompanyDocument | null> {
     const deliveryCompany = await this.deliveryCompanyRepo.findOne({
-      where: { id: deliveryCompanyId },
-      relations: {
-        images: true,
-      },
+      id: deliveryCompanyId,
     });
     if (!deliveryCompany) {
-      throw new NotFoundException('Product not found');
-    }
-    const imagesArr: DeliveryCompanyImage[] = [];
-    let data: any;
-
-    if (imageNames) {
-      for (let image of imageNames) {
-        const res = this.deliveryCompanyImgRepo.create({ name: image });
-        await this.deliveryCompanyImgRepo.save(res);
-        imagesArr.push(res);
-      }
+      throw new NotFoundException('delivery company not found');
     }
 
-    if (updateDeliveryCompanyDto.images) {
-      const images = JSON.parse(updateDeliveryCompanyDto.images as any);
-
-      data = {
+    return this.deliveryCompanyRepo.findOne(
+      { id: deliveryCompanyId },
+      {
         ...updateDeliveryCompanyDto,
-        images: [...images, ...imagesArr],
-      };
-    } else {
-      data = {
-        ...updateDeliveryCompanyDto,
-        images: [...deliveryCompany.images, ...imagesArr],
-      };
-    }
-
-    const updatedProduct = Object.assign(deliveryCompany, data);
-    await updatedProduct.save();
-
-    return updatedProduct;
+        ...(imageNames.length > 0 && {
+          images: [...deliveryCompany.images, ...imageNames],
+        }),
+      },
+    );
   }
 
-  async delete(deliveryCompanyId: string) {
+  async delete(
+    deliveryCompanyId: string,
+  ): Promise<DeliveryCompanyDocument | null> {
     const deliveryCompany = await this.deliveryCompanyRepo.findOne({
-      where: { id: deliveryCompanyId },
-      relations: ['images'],
+      id: deliveryCompanyId,
     });
 
     if (!deliveryCompany) return null;
 
-    await this.deliveryCompanyImgRepo.delete({
-      deliveryCompanyId: {
-        id: deliveryCompanyId,
-      },
-    });
-
     deliveryCompany.images.forEach((image) => {
-      deleteFile(image.name, 'slides');
+      deleteFile(image, 'slides');
     });
 
-    await this.deliveryCompanyRepo.delete(deliveryCompanyId);
-
-    return 'Product deleted successfully';
+    return this.deliveryCompanyRepo.delete({ id: deliveryCompanyId });
   }
 
-  async findImage(imageId: string) {
-    const img = this.deliveryCompanyImgRepo.findOne({ where: { id: imageId } });
+  // async findImage(imageId: string) {
+  //   const img = this.deliveryCompanyImgRepo.findOne({ where: { id: imageId } });
 
-    if (!img) {
-      throw new NotFoundException('Product Image Not Found');
-    }
+  //   if (!img) {
+  //     throw new NotFoundException('Product Image Not Found');
+  //   }
 
-    return img;
-  }
+  //   return img;
+  // }
 
   async deleteImage({
-    deliveryCompanyId, 
-    imageId,
+    deliveryCompanyId,
+    imageName,
   }: {
     deliveryCompanyId: string;
-    imageId: string;
+    imageName: string;
   }) {
-    const img = await this.findImage(imageId);
-    await this.deliveryCompanyImgRepo.delete({ id: imageId });
-
-    if (img) deleteFile(img.name, 'slides');
+    deleteFile(imageName, 'slides');
 
     return await this.findOne(deliveryCompanyId);
   }
