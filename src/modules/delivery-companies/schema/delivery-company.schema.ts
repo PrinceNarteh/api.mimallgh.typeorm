@@ -1,6 +1,6 @@
 import { Document, Types } from 'mongoose';
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Delivery } from 'src/modules/deliveries/schema/deliveries.schema';
+import { Delivery } from 'src/modules/deliveries/schema/delivery.schema';
 
 Schema({ collection: 'delivery_companies' });
 export class DeliveryCompany {

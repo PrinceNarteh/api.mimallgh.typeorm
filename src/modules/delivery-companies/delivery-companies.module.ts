@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   DELIVERY_COMPANY_MODEL,
   DeliveryCompanySchema,
-} from './schema/delivery-companies.schema';
+} from './schema/delivery-company.schema';
 
 @Module({
   imports: [

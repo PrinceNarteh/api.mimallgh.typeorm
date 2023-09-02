@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DeliveryCompaniesModule } from '../delivery-companies/delivery-companies.module';
 import { DeliveriesController } from './deliveries.controller';
 import { DeliveriesService } from './deliveries.service';
-import { DELIVERY_MODEL, DeliverySchema } from './schema/deliveries.schema';
+import { DELIVERY_MODEL, DeliverySchema } from './schema/delivery.schema';
 
 @Module({
   imports: [

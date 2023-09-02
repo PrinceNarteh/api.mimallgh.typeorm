@@ -1,16 +1,23 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { DeliveryCompaniesModule } from '../delivery-companies/delivery-companies.module';
+import { ProductModule } from '../products/product.module';
+import { ShopModule } from '../shops/shop.module';
 import { QuickOrdersController } from './quick-orders.controller';
 import { QuickOrdersService } from './quick-orders.service';
-import { DeliveryCompaniesModule } from '../delivery-companies/delivery-companies.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { QuickOrder } from 'src/entities/quickOrder.entity';
-import { QuickOrderItem } from 'src/entities/QuickOrderItem.entity';
-import { ShopModule } from '../shops/shop.module';
-import { ProductModule } from '../products/product.module';
+import {
+  QUICK_ORDER_MODEL,
+  QuickOrderSchema,
+} from './schema/quick-order.schema';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([QuickOrder, QuickOrderItem]),
+    MongooseModule.forFeature([
+      {
+        name: QUICK_ORDER_MODEL,
+        schema: QuickOrderSchema,
+      },
+    ]),
     DeliveryCompaniesModule,
     ShopModule,
     ProductModule,
