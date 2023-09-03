@@ -7,14 +7,15 @@ import { CreateQuickOrderDto } from './dto/quickOrderDto';
 import { QuickOrderItem } from 'src/entities/QuickOrderItem.entity';
 import { ShopService } from '../shops/shop.service';
 import { ProductService } from '../products/product.service';
+import { QuickOrderRepository } from './quick-orders.repository';
+import { QuickOrderItemRepository } from './quick-order-item.repository';
+import { QuickOrderDocument } from './schema/quick-order.schema';
 
 @Injectable()
 export class QuickOrdersService {
   constructor(
-    @InjectRepository(QuickOrder)
-    private quickOrderRepo: Repository<QuickOrder>,
-    @InjectRepository(QuickOrderItem)
-    private quickOrderItemRepo: Repository<QuickOrderItem>,
+    private quickOrderRepo: QuickOrderRepository,
+    private quickOrderItemRepo: QuickOrderItemRepository,
     private deliveryCompaniesService: DeliveryCompaniesService,
     private shopService: ShopService,
     private productService: ProductService,
@@ -38,16 +39,17 @@ export class QuickOrdersService {
     };
   }
 
-  async getQuickOrder(orderId: string, relations?: boolean) {
-    const order = await this.quickOrderRepo.findOne({
-      where: { id: orderId },
-      ...(relations && { relations: ['items'] }),
-    });
-
+  async getQuickOrder(
+    orderId: string,
+    relations?: boolean,
+  ): Promise<QuickOrderDocument | null> {
+    const order = await this.quickOrderRepo.findOne({ id: orderId });
     return order;
   }
 
-  async createQuickOrder(order: CreateQuickOrderDto) {
+  async createQuickOrder(
+    order: CreateQuickOrderDto,
+  ): Promise<QuickOrderDocument> {
     const deliveryCompany = await this.deliveryCompaniesService.findOne(
       order.deliveryCompany,
     );
