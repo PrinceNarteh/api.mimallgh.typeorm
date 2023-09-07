@@ -11,7 +11,7 @@ export type UserLevel =
   | 'level_three'
   | 'super_user';
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   @Prop({ required: true })
   firstName: string;

@@ -17,6 +17,16 @@ export class AbstractRepository<T extends Document> {
     });
   }
 
+  async findById(
+    entityId: string,
+    projection?: Record<string, unknown>,
+  ): Promise<T | null> {
+    return this.entityModel.findById(entityId, {
+      __v: 0,
+      ...projection,
+    });
+  }
+
   async create(createEntityData: unknown): Promise<T> {
     const entity = new this.entityModel(createEntityData);
     return entity.save();

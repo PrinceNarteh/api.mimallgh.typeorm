@@ -9,26 +9,24 @@ import { ProductService } from '../products/product.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from 'src/entities/review.entity';
 import { Repository } from 'typeorm';
+import { ReviewRepository } from './reviews.repository';
+import { ReviewDocument } from './schema/review.schema';
 
 @Injectable()
 export class ReviewsService {
   constructor(
-    @InjectRepository(Review)
-    private readonly reviewRepo: Repository<Review>,
+    private readonly reviewRepo: ReviewRepository,
     private readonly userService: UserService,
     private readonly productService: ProductService,
   ) {}
 
-  async getReview(id: string): Promise<Review | null> {
-    const review = await this.reviewRepo.findOne({
-      where: {
-        id,
-      },
-    });
+  async getReview(id: string): Promise<ReviewDocument | null> {
+    const review = await this.reviewRepo.findById(id);
 
     if (!review) {
       throw new NotFoundException('Review Not Found');
     }
+
 
     return review;
   }
@@ -51,8 +49,6 @@ export class ReviewsService {
       product,
     });
 
-    await this.reviewRepo.save(review);
-
     return review;
   }
 
@@ -71,7 +67,7 @@ export class ReviewsService {
     await this.productService.product(productId);
     const review = await this.getReview(reviewId);
 
-    if (user.id !== review.user.id) {
+    if (user.id !== review.user.) {
       throw new ForbiddenException('You are not allowed to edit review');
     }
 
@@ -92,9 +88,9 @@ export class ReviewsService {
   }) {
     const user = await this.userService.user(userId);
     await this.productService.product(productId);
-    const review = await this.getReview(reviewId);
+    const review = await this.reviewRepo.findById(reviewId);
 
-    if (user.id !== review.user.id) {
+    if (user.id !== review.user) {
       throw new ForbiddenException('You are not allowed to edit review');
     }
 
