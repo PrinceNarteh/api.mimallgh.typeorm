@@ -1,6 +1,7 @@
 import { Document, Types } from 'mongoose';
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
 import { customAlphabet } from 'nanoid';
+import { QuickOrderItem } from './quick-order-item.schema';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -43,7 +44,7 @@ export class QuickOrder {
     name: 'quick_order_item',
     required: true,
   })
-  items: 'QuickOrderItem[]';
+  items: QuickOrderItem[];
 
   //   @BeforeInsert()
   //   async beforeInsert() {

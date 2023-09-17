@@ -1,9 +1,10 @@
-import { Document, Types } from 'mongoose';
-import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
+import { Prop, Schema } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 
-import * as bcrypt from 'bcrypt';
 import { customAlphabet } from 'nanoid/async';
+import { OrderItem } from 'src/modules/orders/schema/order-item.schema';
 import { Product } from 'src/modules/products/schema/product.schema';
+import { QuickOrderItem } from 'src/modules/quick-orders/schema/quick-order-item.schema';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -82,7 +83,7 @@ export class Shop {
       ref: 'OrderItem',
     },
   ])
-  orders: 'OrderItem[]';
+  orders: OrderItem[];
 
   @Prop([
     {
@@ -90,7 +91,7 @@ export class Shop {
       ref: 'QuickOrderItem',
     },
   ])
-  quickOrderItems: 'QuickOrderItem[]';
+  quickOrderItems: QuickOrderItem[];
 
   //   @BeforeInsert()
   //   async beforeInsert() {
