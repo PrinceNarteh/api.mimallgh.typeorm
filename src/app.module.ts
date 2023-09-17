@@ -14,6 +14,7 @@ import { ShopAuthModule } from './modules/shop-auth/shop-auth.module';
 import { ShopModule } from './modules/shops/shop.module';
 import { UserModule } from './modules/users/user.module';
 import { RolesModule } from './modules/roles/roles.module';
+import { PermissionsModule } from './modules/permissions/permissions.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { RolesModule } from './modules/roles/roles.module';
     DeliveriesModule,
     QuickOrdersModule,
     RolesModule,
+    PermissionsModule,
   ],
   providers: [],
 })
