@@ -1,4 +1,47 @@
-import { Controller } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { CreateRoleDto } from './dto/roles.dto';
+import { RolesService } from './roles.service';
+import { RoleDocument } from './schema/role.schema';
 
 @Controller('roles')
-export class RolesController {}
+export class RolesController {
+  constructor(private readonly roleService: RolesService) {}
+
+  @Get()
+  async getRoles(
+    @Param() param: { [key: string]: string },
+  ): Promise<RoleDocument[]> {
+    return this.roleService.getRoles(param);
+  }
+
+  @Get('/:roleId')
+  async getRole(@Param('roleId') roleId: string): Promise<RoleDocument> {
+    return this.roleService.findRoleById(roleId);
+  }
+
+  @Post()
+  async createRole(@Body() createRoleDto: CreateRoleDto) {
+    return this.roleService.createRole(createRoleDto);
+  }
+
+  @Patch('/:roleId')
+  async updateRole(
+    @Param('roleId') roleId: string,
+    @Body() updateRoleDto: Partial<CreateRoleDto>,
+  ) {
+    return this.roleService.findRoleAndUpdate(roleId, updateRoleDto);
+  }
+
+  @Delete('/:roleId')
+  async deleteRole(roleId: string): Promise<RoleDocument> {
+    return this.roleService.deleteRole(roleId);
+  }
+}
