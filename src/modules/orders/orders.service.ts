@@ -1,138 +1,57 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserService } from 'src/modules/users/user.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Order } from 'src/entities/order.entity';
-import { Repository, FindManyOptions } from 'typeorm';
-import { OrderItem } from 'src/entities/OrderItem.entity';
-import { User } from 'src/entities/user.entity';
-import { CreateOrderDto, UpdateOrderDto } from './dto/orderDto';
-import {
-  FindManyReturnType,
-  IFindManyOptions,
-  returnValue,
-} from 'src/types/findManyOptions';
-import { chain } from 'lodash';
 import { format } from 'date-fns';
+import { chain } from 'lodash';
+import { FilterQuery } from 'mongoose';
+import { UserService } from 'src/modules/users/user.service';
 import { ProductService } from '../products/product.service';
 import { ShopService } from '../shops/shop.service';
+import { CreateOrderDto, UpdateOrderDto } from './dto/orderDto';
+import { OrderRepository } from './orders.repository';
+import { OrderDocument } from './schema/order.schema';
+import { UserDocument } from '../users/schema/user.schema';
 
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectRepository(Order)
-    private readonly orderRepo: Repository<Order>,
-    @InjectRepository(OrderItem)
-    private readonly orderItemRepo: Repository<OrderItem>,
+    private readonly orderRepo: OrderRepository,
     private readonly productService: ProductService,
     private readonly shopService: ShopService,
     private readonly userService: UserService,
   ) {}
 
-  async getAllOrders(params: IFindManyOptions<Order>) {
+  async getAllOrders(
+    params: FilterQuery<OrderDocument>,
+  ): Promise<OrderDocument[]> {
     const {
       currentPage,
       perPage,
       findOptions: { order, skip },
     } = params;
 
-    const [orders, total] = await this.orderRepo.findAndCount({
-      order,
-      skip,
-      take: perPage,
-      relations: {
-        items: true,
-        user: true,
-      },
-      select: {
-        user: {
-          firstName: true,
-          lastName: true,
-        },
-      },
-    });
-
-    let idx = 0;
-    let res = chain(orders)
-      .map((item) => {
-        return {
-          ...item,
-          createdAt: format(new Date(item.createdAt), 'do LLL yyyy'),
-          updatedAt: format(new Date(item.createdAt), 'do LLL yyyy'),
-        };
-      })
-      .map((value, i) => ({
-        id: value.id,
-        items: value,
-      }))
-      .groupBy('items.createdAt')
-      .map((value, i) => {
-        return {
-          date: i,
-          items: chain(value)
-            .groupBy('items.orderId')
-            .map((val, orderId) => {
-              return {
-                id: val[idx].id,
-                amount: val[idx].items.amount,
-                createdAt: val[idx].items.createdAt,
-                user: `${val[idx].items.user.firstName} ${val[idx].items.user.lastName}`,
-                orderId,
-                orders: [...val[idx].items.items],
-              };
-            })
-            .value(),
-        };
-      })
-      .value();
-
-    return {
-      total,
-      perPage,
-      page: currentPage,
-      data: res,
-    };
+    return this.orderRepo.find({});
   }
 
   async getOrdersByUser(
     userId: string,
-    params: IFindManyOptions<Order>,
-  ): Promise<FindManyReturnType<Order>> {
+    params: FilterQuery<OrderDocument>,
+  ): Promise<OrderDocument[]> {
     const {
       currentPage,
       perPage,
       findOptions: { order, skip },
     } = params;
 
-    const [orders, total] = await this.orderRepo.findAndCount({
-      where: {
-        user: {
-          id: userId,
-        },
-      },
-      skip,
-      take: perPage,
-      order,
-      relations: {
-        items: true,
-      },
-    });
-
-    return returnValue({
-      currentPage,
-      perPage,
-      total,
-      data: orders,
-    });
+    return this.orderRepo.find({});
   }
 
-  async getOrdersByShop(shopId: string, params: IFindManyOptions<Order>) {
+  async getOrdersByShop(shopId: string, params: FilterQuery<OrderDocument>) {
     const {
       currentPage,
       perPage,
       findOptions: { order, skip },
     } = params;
 
-    const [orders, total] = await this.orderItemRepo.findAndCount({
+    const [orders, total] = await this.orderRepo.find({
       where: {
         shop: {
           id: shopId,
@@ -190,8 +109,11 @@ export class OrdersService {
     };
   }
 
-  async getOrderByShop(shopId: string, orderId: string): Promise<OrderItem[]> {
-    return await this.orderItemRepo.find({
+  async getOrderByShop(
+    shopId: string,
+    orderId: string,
+  ): Promise<OrderDocument[]> {
+    return await this.orderRepo.find({
       where: {
         shop: {
           id: shopId,
@@ -227,7 +149,7 @@ export class OrdersService {
     });
   }
 
-  async getOrderById(orderId: string): Promise<Order> {
+  async getOrderById(orderId: string): Promise<OrderDocument> {
     return await this.orderRepo.findOne({
       where: {
         id: orderId,
@@ -261,8 +183,8 @@ export class OrdersService {
     });
   }
 
-  async createOrder(user: User, createOrderDto: CreateOrderDto) {
-    const userExists = await this.userService.user(user.id);
+  async createOrder(user: UserDocument, createOrderDto: CreateOrderDto) {
+    const userExists = await this.userService.findById(user.id);
 
     const { items, ...result } = createOrderDto;
     let orderItems = [];
@@ -270,12 +192,11 @@ export class OrdersService {
     for (let item of items) {
       let product = await this.productService.product(item.productId);
       let shop = await this.shopService.shop(item.shopId);
-      const res = this.orderItemRepo.create({
+      const res = this.orderRepo.create({
         ...item,
         product,
         shop,
       });
-      await this.orderItemRepo.save(res);
       orderItems.push(res);
     }
 
@@ -285,7 +206,7 @@ export class OrdersService {
       items: orderItems,
     });
 
-    await this.orderRepo.save(order);
+    await this.orderRepo.create(order);
 
     return order;
   }
@@ -295,7 +216,7 @@ export class OrdersService {
     orderId: string,
     updateOrderDto: UpdateOrderDto,
   ) {
-    let user = await this.userService.user(userId);
+    let user = await this.userService.findById(userId);
     if (!user) {
       throw new NotFoundException('User Not Found');
     }
@@ -305,7 +226,7 @@ export class OrdersService {
       throw new NotFoundException('Order Not Found');
     }
 
-    await this.orderItemRepo.delete({
+    await this.orderRepo.delete({
       order: {
         id: orderId,
       },
@@ -315,8 +236,8 @@ export class OrdersService {
     const orderItems = [];
 
     for (let item of items) {
-      const orderItem = this.orderItemRepo.create(item);
-      await this.orderItemRepo.save(orderItem);
+      const orderItem = this.orderRepo.create(item);
+      await this.orderRepo.create(orderItem);
       orderItems.push(orderItem);
     }
 
@@ -332,6 +253,6 @@ export class OrdersService {
   }
 
   async deleteOrder(orderId: string) {
-    return await this.orderRepo.delete(orderId);
+    return await this.orderRepo.delete({ id: orderId });
   }
 }
