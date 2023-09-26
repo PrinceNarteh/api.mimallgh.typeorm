@@ -7,7 +7,6 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import { UserLevel, UserRole } from 'src/entities/user.entity';
 
 export class CreateUserDto {
   @IsString()
@@ -59,11 +58,11 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  role: UserRole;
+  role: string;
 
   @IsString()
   @IsOptional()
-  level: UserLevel;
+  level: string;
 
   @IsString()
   @IsOptional()

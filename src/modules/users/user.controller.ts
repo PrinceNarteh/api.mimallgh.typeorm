@@ -1,7 +1,5 @@
 import { Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from 'src/entities/user.entity';
-import { FindManyOptions, ILike } from 'typeorm';
 
 @Controller('users')
 export class UserController {
@@ -15,38 +13,12 @@ export class UserController {
     @Query('search') search?: string,
     @Query('role') role?: string,
   ) {
-    page = page || 1;
-    perPage = perPage || 10;
-    order = order || 'asc';
-
-    const findOptions: FindManyOptions<User> = {
-      where: {
-        role,
-      },
-      take: perPage,
-      skip: (page - 1) * perPage,
-      order: {
-        id: order,
-      },
-    };
-
-    if (search) {
-      findOptions.where = [
-        { firstName: ILike(`%${search}%`) },
-        { lastName: ILike(`%${search}%`) },
-        { email: ILike(`%${search}%`) },
-        { phoneNumber: ILike(`%${search}%`) },
-      ];
-    }
-
-    const options = { findOptions, currentPage: page, perPage };
-
-    return this.userService.getUsers(options);
+    return this.userService.find({});
   }
 
   @Get(':userId')
   async getUser(@Param('userId') userId: string) {
-    return this.userService.user(userId);
+    return this.userService.findById(userId);
   }
 
   @Put(':userId')
