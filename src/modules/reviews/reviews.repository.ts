@@ -8,8 +8,8 @@ import { REVIEW_MODEL, ReviewDocument } from './schema/review.schema';
 export class ReviewRepository extends AbstractRepository<ReviewDocument> {
   constructor(
     @InjectModel(REVIEW_MODEL)
-    private deliveryModel: Model<ReviewDocument>,
+    private reviewModel: Model<ReviewDocument>,
   ) {
-    super(deliveryModel);
+    super(reviewModel);
   }
 }

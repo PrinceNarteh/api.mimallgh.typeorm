@@ -12,9 +12,9 @@ import { ReviewDocument } from './schema/review.schema';
 @Injectable()
 export class ReviewsService {
   constructor(
+    private readonly productService: ProductService,
     private readonly reviewRepo: ReviewRepository,
     private readonly userService: UserService,
-    private readonly productService: ProductService,
   ) {}
 
   async getReview(id: string): Promise<ReviewDocument | null> {
@@ -63,7 +63,7 @@ export class ReviewsService {
     await this.productService.product(productId);
     const review = await this.getReview(reviewId);
 
-    if (user.id !== review.user.) {
+    if (user.id !== review.user.email) {
       throw new ForbiddenException('You are not allowed to edit review');
     }
 
@@ -82,7 +82,7 @@ export class ReviewsService {
     productId: string;
     updateReviewDto: Partial<CreateReviewDto>;
   }) {
-    const user = await this.userService.user(userId);
+    const user = await this.userService.findById(userId);
     await this.productService.product(productId);
     const review = await this.reviewRepo.findById(reviewId);
 
@@ -90,7 +90,7 @@ export class ReviewsService {
       throw new ForbiddenException('You are not allowed to edit review');
     }
 
-    await this.reviewRepo.delete(reviewId);
+    await this.reviewRepo.delete({ id: reviewId });
 
     return 'Review deleted successfully';
   }

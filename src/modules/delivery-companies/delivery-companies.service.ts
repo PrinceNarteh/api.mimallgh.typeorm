@@ -15,7 +15,7 @@ export class DeliveryCompaniesService {
   }
 
   async findOne(id: string): Promise<DeliveryCompanyDocument | null> {
-    return this.deliveryCompanyRepo.findOne({ _id: id });
+    return this.deliveryCompanyRepo.findOne({ id });
   }
 
   async findOneBySlug(slug: string): Promise<DeliveryCompanyDocument | null> {
