@@ -3,25 +3,17 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { chain, filter, sampleSize, uniqBy } from 'lodash';
-import { Product } from 'src/entities/product.entity';
-import { ProductImage } from 'src/entities/productImage.entity';
-import { Shop } from 'src/entities/shop.entity';
+import { FilterQuery } from 'mongoose';
 import { ShopService } from 'src/modules/shops/shop.service';
-import {
-  FindManyReturnType,
-  IFindManyOptions,
-  returnValue,
-} from 'src/types/findManyOptions';
 import { deleteFile } from 'src/utils/deleteFile';
-import { Brackets, Repository } from 'typeorm';
+import { ShopDocument } from '../shops/schema/shop.schema';
 import {
   AdminCreateProductDto,
   CreateProductDto,
   UpdateProductDto,
 } from './dto/productDto';
 import { ProductRepository } from './product.schema';
+import { ProductDocument } from './schema/product.schema';
 
 @Injectable()
 export class ProductService {
@@ -30,269 +22,65 @@ export class ProductService {
     private readonly shopService: ShopService,
   ) {}
 
-  async getAllProducts(queries: { [key: string]: string }) {
-    const isPresent = (query: string) => query in queries;
-    const page = Number(queries.page) || 1;
-    let perPage = Number(queries.perPage) || 10;
-
-    let query = this.productRepo
-      .createQueryBuilder('product')
-      .leftJoin('product.shop', 'shop')
-      .leftJoin('product.images', 'image');
-
-    if (isPresent('category'))
-      query = query.andWhere(`product.category = :category`, {
-        category: queries.category,
-      });
-
-    if (isPresent('location')) {
-      query = query.andWhere('shop.location = :location', {
-        location: queries.location,
-      });
-    }
-
-    if (isPresent('shopId')) {
-      query = query.andWhere('shop.id = :shopId', {
-        shopId: queries.shopId,
-      });
-    }
-
-    if (isPresent('search')) {
-      query = query.andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            'product.title LIKE :search OR product.description LIKE :search OR shop.name LIKE :search',
-            {
-              search: `%${queries.search}%`,
-            },
-          );
-        }),
-      );
-    }
-
-    let categorizedPerPage = keys.includes(
-      `${keys.find((val) => /categori[sz]ed/.test(val))}`,
-    )
-      ? perPage * 8
-      : perPage;
-
-    let [products, total] = await query
-      .skip((page - 1) * perPage)
-      .take(categorizedPerPage)
-      .select([
-        'product.id',
-        'product.title',
-        'product.price',
-        'product.category',
-        'product.stock',
-        'product.description',
-        'image.id',
-        'image.name',
-        'shop.id',
-        'shop.name',
-        'shop.location',
-      ])
-      .getManyAndCount();
-
-    let sortedData = uniqBy(products, 'id');
-
-    if (keys.includes('category') && keys.includes('search')) {
-      sortedData = filter(sortedData, { category: queries.category });
-      total = sortedData.length;
-    }
-
-    if (keys.includes(`${keys.find((val) => /categori[sz]ed/.test(val))}`)) {
-      let res = chain(sortedData)
-        .uniqBy('id')
-        .groupBy('category')
-        .map((value, key) => ({
-          category: key,
-          data: value,
-        }))
-        .sortBy('category')
-        .value();
-
-      res = chain(res)
-        .map((item) => ({
-          category: item.category,
-          data: sampleSize(item.data, perPage),
-        }))
-        .value();
-
-      return {
-        total: total,
-        page: Number(page),
-        perPage: Number(perPage),
-        totalPages: Math.ceil(sortedData.length / perPage),
-        data: res,
-      };
-    }
-
-    return {
-      data: sortedData,
-      meta: {
-        total,
-        page: Number(page),
-        perPage: Number(perPage),
-        totalPages: Math.ceil(total / perPage),
-      },
-    };
+  async getAllProducts(queries: {
+    [key: string]: string;
+  }): Promise<ProductDocument[]> {
+    return this.productRepo.find({});
   }
 
-  async product(id: string): Promise<Product | null> {
-    const product = await this.productRepo.findOne({
-      where: { id },
-      relations: {
-        images: true,
-        shop: true,
-      },
-      select: {
-        shop: {
-          id: true,
-          shopCode: true,
-          name: true,
-        },
-      },
-    });
+  async product(id: string): Promise<ProductDocument> {
+    const product = await this.productRepo.findById(id);
     if (!product) {
       throw new NotFoundException('Product not found');
     }
     return product;
   }
 
-  async categorizedProducts(params: IFindManyOptions<Product>) {
+  async categorizedProducts(params: FilterQuery<ProductDocument>) {
     const {
       currentPage,
       perPage,
       findOptions: { skip, where, order },
     } = params;
 
-    const [products, total] = await this.productRepo.findAndCount({
-      skip,
-      where,
-      order,
-      relations: {
-        images: true,
-        shop: true,
-      },
-      select: {
-        shop: {
-          id: true,
-          shopCode: true,
-          name: true,
-        },
-      },
-    });
-
-    const res = chain(products)
-      .uniqBy('id')
-      .groupBy('category')
-      .map((value, key) => ({
-        category: key,
-        data: value,
-      }))
-      .sortBy('category')
-      .value();
-
-    return res;
+    return this.productRepo.find({});
   }
 
   async productsByShop(
     shopId: string,
-    params: IFindManyOptions<Product>,
-  ): Promise<FindManyReturnType<Product>> {
+    params: FilterQuery<ProductDocument>,
+  ): Promise<ProductDocument[]> {
     const {
       currentPage,
       perPage,
       findOptions: { skip, order, take },
     } = params;
 
-    const [products, total] = await this.productRepo.findAndCount({
-      where: {
-        shop: {
-          id: shopId,
-        },
-      },
-      skip,
-      take,
-      order,
-      relations: {
-        shop: true,
-        images: true,
-      },
-      select: {
-        shop: {
-          id: true,
-          shopCode: true,
-          name: true,
-        },
-      },
-    });
-
-    return returnValue({
-      total,
-      currentPage,
-      perPage,
-      data: products,
-    });
+    return this.productRepo.find({ shop: shopId });
   }
 
   async createProduct(
     shopId: string,
     createProductDto: CreateProductDto,
     imageNames: Array<string>,
-  ) {
+  ): Promise<ProductDocument> {
     const shop = await this.shopService.shop(shopId);
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
-
-    const imagesArr: ProductImage[] = [];
-    for (let image of imageNames) {
-      const res = this.productImgRepo.create({ name: image });
-      await this.productImgRepo.save(res);
-      imagesArr.push(res);
-    }
-
-    const product = this.productRepo.create({
-      ...createProductDto,
-      shop,
-      images: imagesArr,
-    });
-
-    await this.productRepo.save(product);
-
-    return product;
+    return this.productRepo.create(createProductDto);
   }
 
   async adminCreateProduct(
     createProductDto: Partial<AdminCreateProductDto>,
     imageNames: Array<string>,
-  ) {
+  ): Promise<ProductDocument> {
     const shop = await this.shopService.shop(createProductDto.shopId);
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
 
-    const imagesArr: ProductImage[] = [];
-    for (let image of imageNames) {
-      const res = this.productImgRepo.create({ name: image });
-      await this.productImgRepo.save(res);
-      imagesArr.push(res);
-    }
-
-    const product = this.productRepo.create({
-      ...createProductDto,
-      shop,
-      images: imagesArr,
-    });
-
-    await this.productRepo.save(product);
-
-    return {
-      shopId: shop.id,
-      ...product,
-    };
+    return this.productRepo.create(createProductDto);
   }
 
   async updateProduct(
@@ -310,34 +98,10 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-
-    if (product.shop.id !== shop.id) {
-      throw new ForbiddenException(
-        'You are not permitted to perform this action',
-      );
-    }
-
-    const imagesArr: ProductImage[] = [];
-
-    if (imageNames) {
-      for (let image of imageNames) {
-        const res = this.productImgRepo.create({ name: image });
-        await this.productImgRepo.save(res);
-        imagesArr.push(res);
-      }
-    }
-
-    const images = JSON.parse(updateProductDto.images as any);
-
-    const data = {
-      ...updateProductDto,
-      images: [...images, ...imagesArr],
-    };
-
-    const updatedProduct = Object.assign(product, data);
-    await updatedProduct.save();
-
-    return updatedProduct;
+    return this.productRepo.findOneAndUpdate(
+      { id: productId },
+      updateProductDto,
+    );
   }
 
   async adminUpdateProduct(
@@ -355,33 +119,10 @@ export class ProductService {
       throw new NotFoundException('Product not found');
     }
 
-    const imagesArr: ProductImage[] = [];
-
-    if (imageNames) {
-      for (let image of imageNames) {
-        const res = this.productImgRepo.create({ name: image });
-        await this.productImgRepo.save(res);
-        imagesArr.push(res);
-      }
-    }
-
-    const images = JSON.parse(updateProductDto.images as any);
-
-    const data = {
-      ...updateProductDto,
-      images: [...images, ...imagesArr],
-    };
-
-    const updatedProduct = Object.assign(product, data);
-    await updatedProduct.save();
-
-    return {
-      shopId: updatedProduct.shopId,
-      ...updatedProduct,
-    };
+    return this.productRepo.findOneAndUpdate({ id: product }, updateProductDto);
   }
 
-  async deleteProduct(shop: Shop, productId: string) {
+  async deleteProduct(shop: ShopDocument, productId: string) {
     const product = await this.productRepo.findOne({
       where: { id: productId },
       relations: {
@@ -391,29 +132,17 @@ export class ProductService {
 
     if (!product) return null;
 
-    if (product && shop.id !== product.shop.id) {
+    if (product && shop.id !== product.shop) {
       throw new ForbiddenException(
         'You are not permitted to perform this action',
       );
     }
 
-    await this.productImgRepo.delete({
-      productId: {
-        id: productId,
-      },
-    });
-
-    product.images.forEach((image) => {
-      deleteFile(image.name, 'products');
-    });
-
-    await this.productRepo.delete(productId);
-
     return 'Product deleted successfully';
   }
 
   async findProductImage(imageId: string) {
-    const img = this.productImgRepo.findOne({ where: { id: imageId } });
+    const img = this.productRepo.findOne({ where: { id: imageId } });
 
     if (!img) {
       throw new NotFoundException('Product Image Not Found');
@@ -430,9 +159,9 @@ export class ProductService {
     imageId: string;
   }) {
     const img = await this.findProductImage(imageId);
-    await this.productImgRepo.delete({ id: imageId });
+    await this.productRepo.delete({ id: imageId });
 
-    if (img) deleteFile(img.name, 'products');
+    if (img) deleteFile('img', 'products');
 
     return await this.product(productId);
   }
