@@ -1,19 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { uniqBy } from 'lodash';
-import { customAlphabet } from 'nanoid';
-import { Shop } from 'src/entities/shop.entity';
-import {
-  FindManyReturnType,
-  IFindManyOptions,
-  returnValue,
-} from 'src/types/findManyOptions';
-import { pad } from 'src/utils/pad';
-import { Repository } from 'typeorm';
-import { CreateShopDto } from './dto/shopDto';
 import { chain } from 'lodash';
+import { FilterQuery } from 'mongoose';
+import { customAlphabet } from 'nanoid';
 import { deleteFile } from 'src/utils/deleteFile';
+import { pad } from 'src/utils/pad';
+import { CreateShopDto } from './dto/shopDto';
+import { ShopDocument } from './schema/shop.schema';
+import { ShopRepository } from './shops.repository';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -21,10 +15,7 @@ const nanoid = customAlphabet(
 
 @Injectable()
 export class ShopService {
-  constructor(
-    @InjectRepository(Shop)
-    private readonly shopRepo: Repository<Shop>,
-  ) {}
+  constructor(private readonly shopRepo: ShopRepository) {}
 
   async shop(id: string) {
     const returnShop = await this.shopRepo.findOne({
@@ -61,75 +52,32 @@ export class ShopService {
     return returnValue;
   }
 
-  async findShopByShopCode(shopCode: string): Promise<Shop | null> {
-    return this.shopRepo.findOne({
-      where: { shopCode },
-      relations: {
-        products: true,
-      },
-    });
+  async findShopByShopCode(shopCode: string): Promise<ShopDocument> {
+    return this.shopRepo.findOne({ shopCode });
   }
 
-  async getAllShops(): Promise<Shop[]> {
-    const shops = await this.shopRepo.find({
-      relations: ['products'],
-    });
+  async getAllShops(
+    filter: FilterQuery<ShopDocument>,
+  ): Promise<ShopDocument[]> {
+    const shops = await this.shopRepo.find(filter);
     return shops;
   }
 
-  async getSingleShop(id: string): Promise<Shop | null> {
-    const shop = await this.shopRepo.findOne({
-      where: {
-        id,
-      },
-      relations: ['products'],
-    });
+  async getSingleShop(id: string): Promise<ShopDocument> {
+    const shop = await this.shopRepo.findOne({ id });
     return shop;
   }
 
-  async shops(
-    params: IFindManyOptions<Shop>,
-  ): Promise<FindManyReturnType<Shop>> {
-    const {
-      perPage,
-      currentPage,
-      findOptions: { order, skip, take, where },
-    } = params;
-
-    const [shops, total] = await this.shopRepo.findAndCount({
-      skip,
-      take,
-      where,
-      order: {
-        shopCode: 'ASC',
-        ...order,
-      },
-      relations: {
-        products: true,
-      },
-    });
-
-    const sortedShops = uniqBy(shops, 'id');
-
-    return returnValue({
-      perPage,
-      currentPage,
-      total,
-      data: sortedShops,
-    });
+  async shops(params: FilterQuery<ShopDocument>): Promise<ShopDocument[]> {
+    return this.shopRepo.find(params);
   }
 
   async createShop(
     data: CreateShopDto,
     image?: string,
     banner?: string,
-  ): Promise<Shop> {
-    const shops = await this.shopRepo.find({
-      order: {
-        shopCode: 'desc',
-      },
-      take: 1,
-    });
+  ): Promise<ShopDocument> {
+    const shops = (await this.shopRepo.find({})).slice(-1);
 
     const password = nanoid(10);
     const hashPassword = await bcrypt.hash(password, 12);
@@ -154,8 +102,6 @@ export class ShopService {
       password: hashPassword,
     });
 
-    await this.shopRepo.save(shop);
-
     return shop;
   }
 
@@ -164,7 +110,7 @@ export class ShopService {
     updateShopDto: any,
     newImage?: string,
     newBanner?: string,
-  ): Promise<Shop> {
+  ): Promise<ShopDocument> {
     const shop = await this.shopRepo.findOne({
       where: { id: shopId },
     });
@@ -183,16 +129,12 @@ export class ShopService {
     if (newBanner && shop.banner !== null)
       deleteFile(updateShopDto.banner, 'shops');
 
-    await this.shopRepo.update({ id: shopId }, updatedShopData);
-
-    return await this.shopRepo.findOne({
-      where: { id: shopId },
-    });
+    return this.shopRepo.findOneAndUpdate({ id: shopId }, updatedShopData);
   }
 
   async deleteShop(id: string) {
     const shop = await this.shop(id);
-    await this.shopRepo.delete(id);
+    await this.shopRepo.delete({ id });
     if (shop.image) {
       deleteFile(shop.image, 'products');
     }
@@ -205,14 +147,14 @@ export class ShopService {
   async deleteShopImage(id: string) {
     const shop = await this.shop(id);
     deleteFile(shop.image, 'shops');
-    await this.shopRepo.update({ id }, { image: null });
+    await this.shopRepo.findOneAndUpdate({ id }, { image: null });
     return this.shop(id);
   }
 
   async deleteShopBanner(id: string) {
     let shop = await this.shop(id);
     deleteFile(shop.banner, 'shops');
-    await this.shopRepo.update({ id }, { banner: null });
+    await this.shopRepo.findOneAndUpdate({ id }, { banner: null });
     shop = await this.shop(id);
     return shop;
   }

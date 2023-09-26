@@ -1,5 +1,5 @@
-import { Prop, Schema } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
 
 import { customAlphabet } from 'nanoid/async';
 import { OrderItem } from 'src/modules/orders/schema/order-item.schema';
@@ -147,3 +147,7 @@ export class Shop {
   //     }
   //   }
 }
+
+export type ShopDocument = Shop & Document;
+export const ShopSchema = SchemaFactory.createForClass(Shop);
+export const SHOP_MODEL = Shop.name;
