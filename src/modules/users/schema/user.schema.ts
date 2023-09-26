@@ -51,19 +51,10 @@ export class User {
   })
   active: boolean;
 
-  @Prop({
-    type: 'enum',
-    enum: ['admin', 'user'],
-    default: 'user',
-  })
+  @Prop()
   role: string;
 
-  @Prop({
-    type: 'enum',
-    enum: ['level_one', 'level_two', 'level_three', 'super_user'],
-    nullable: true,
-    default: 'level_one',
-  })
+  @Prop()
   level: string;
 
   @Prop([

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/entities/user.entity';
 import { UserService } from 'src/modules/users/user.service';
+import { UserDocument } from '../users/schema/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +37,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User) {
+  async login(user: UserDocument) {
     let payload = {
       id: user.id,
       role: user.role,
@@ -53,7 +53,7 @@ export class AuthService {
     };
   }
 
-  async refreshToken(user: User) {
+  async refreshToken(user: UserDocument) {
     let payload = {
       id: user.id,
       role: user.role,

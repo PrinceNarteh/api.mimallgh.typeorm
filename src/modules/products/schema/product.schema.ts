@@ -38,11 +38,7 @@ export class Product {
   @Prop({ required: true })
   brand: string;
 
-  @Prop({
-    type: 'enum',
-    enum: CategoryType,
-    required: true,
-  })
+  @Prop()
   category: string;
 
   @Prop([Number])

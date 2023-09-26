@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { Delivery } from 'src/entities/delivery.entity';
 import { DeliveriesService } from './deliveries.service';
 import { CreateDeliveryDto } from './dto/deliveryDto';
+import { DeliveryDocument } from './schema/delivery.schema';
 
 @Controller('deliveries')
 export class DeliveriesController {
@@ -10,13 +10,13 @@ export class DeliveriesController {
   @Get(':deliveryId')
   async getDelivery(
     @Param('deliveryId') deliveryId: string,
-  ): Promise<Delivery> {
+  ): Promise<DeliveryDocument> {
     return this.deliveriesService.getDelivery(deliveryId);
   }
 
   @Get()
   async getAllDeliveries() {
-    return this.deliveriesService.getAllDeliveries();
+    return this.deliveriesService.getAllDeliveries({});
   }
 
   @Post()
