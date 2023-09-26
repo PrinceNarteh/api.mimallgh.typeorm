@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Shop } from 'src/entities/shop.entity';
 import { ShopService } from 'src/modules/shops/shop.service';
+import { ShopDocument } from '../shops/schema/shop.schema';
 
 @Injectable()
 export class ShopAuthService {
@@ -20,7 +20,7 @@ export class ShopAuthService {
     return null;
   }
 
-  async login(shop: Shop) {
+  async login(shop: ShopDocument) {
     let payload = {
       id: shop.id,
       name: shop.name,
@@ -34,7 +34,7 @@ export class ShopAuthService {
     };
   }
 
-  async refreshToken(shop: Shop) {
+  async refreshToken(shop: ShopDocument) {
     let payload = {
       id: shop.id,
       name: shop.name,

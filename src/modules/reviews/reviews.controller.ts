@@ -12,7 +12,7 @@ import {
 import { JwtGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateReviewDto } from './dto/reviewDto';
 import { ReviewsService } from './reviews.service';
-import { User } from 'src/entities/user.entity';
+import { UserDocument } from '../users/schema/user.schema';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -27,7 +27,7 @@ export class ReviewsController {
   @Post(':productId')
   async createReview(
     @Param('productId') productId: string,
-    @Request() user: User,
+    @Request() user: UserDocument,
     @Body() createReviewDto: CreateReviewDto,
   ) {
     return this.reviewService.createReview({
@@ -42,7 +42,7 @@ export class ReviewsController {
   updateReview(
     @Param('reviewId') reviewId: string,
     @Param('productId') productId: string,
-    @Request() user: User,
+    @Request() user: UserDocument,
     @Body() updateReviewDto: Partial<CreateReviewDto>,
   ) {
     return this.reviewService.updateReview({

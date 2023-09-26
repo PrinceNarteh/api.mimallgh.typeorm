@@ -1,11 +1,18 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Shop } from 'src/entities/shop.entity';
+import { MongooseModule } from '@nestjs/mongoose';
+import { SHOP_MODEL, ShopSchema } from './schema/shop.schema';
 import { ShopController } from './shop.controller';
 import { ShopService } from './shop.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Shop])],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: SHOP_MODEL,
+        schema: ShopSchema,
+      },
+    ]),
+  ],
   controllers: [ShopController],
   exports: [ShopService],
   providers: [ShopService],
