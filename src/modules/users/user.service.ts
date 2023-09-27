@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserRepository } from './user.repository';
+import { UserRepository } from './users.repository';
 import { CreateUserDto } from './dto/userDto';
 import { UserDocument } from './schema/user.schema';
 import { FilterQuery } from 'mongoose';

@@ -8,8 +8,8 @@ import { SHOP_MODEL, ShopDocument } from './schema/shop.schema';
 export class ShopRepository extends AbstractRepository<ShopDocument> {
   constructor(
     @InjectModel(SHOP_MODEL)
-    private ShopModel: Model<ShopDocument>,
+    private shopModel: Model<ShopDocument>,
   ) {
-    super(ShopModel);
+    super(shopModel);
   }
 }

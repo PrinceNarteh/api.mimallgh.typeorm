@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SHOP_MODEL, ShopSchema } from './schema/shop.schema';
 import { ShopController } from './shop.controller';
 import { ShopService } from './shop.service';
+import { ShopRepository } from './shops.repository';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { ShopService } from './shop.service';
   ],
   controllers: [ShopController],
   exports: [ShopService],
-  providers: [ShopService],
+  providers: [ShopService, ShopRepository],
 })
 export class ShopModule {}

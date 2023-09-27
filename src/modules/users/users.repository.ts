@@ -13,3 +13,4 @@ export class UserRepository extends AbstractRepository<UserDocument> {
     super(userModel);
   }
 }
+ 
