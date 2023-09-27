@@ -4,6 +4,8 @@ import { ProductModule } from '../products/product.module';
 import { ReviewsController } from './reviews.controller';
 import { ReviewsService } from './reviews.service';
 import { REVIEW_MODEL, ReviewSchema } from './schema/review.schema';
+import { ReviewRepository } from './reviews.repository';
+import { UserModule } from '../users/user.module';
 
 @Module({
   imports: [
@@ -14,8 +16,9 @@ import { REVIEW_MODEL, ReviewSchema } from './schema/review.schema';
       },
     ]),
     ProductModule,
+    UserModule,
   ],
   controllers: [ReviewsController],
-  providers: [ReviewsService],
+  providers: [ReviewsService, ReviewRepository],
 })
 export class ReviewsModule {}

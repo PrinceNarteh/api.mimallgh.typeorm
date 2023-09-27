@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { deleteFile } from 'src/utils/deleteFile';
-import { DeliveryCompanyRepository } from './delivery-company.repository';
+import { DeliveryCompanyRepository } from './delivery-companies.repository';
 import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
 import { DeliveryCompanyDocument } from './schema/delivery-company.schema';
 

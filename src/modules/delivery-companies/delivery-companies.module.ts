@@ -6,6 +6,7 @@ import {
   DELIVERY_COMPANY_MODEL,
   DeliveryCompanySchema,
 } from './schema/delivery-company.schema';
+import { DeliveryCompanyRepository } from './delivery-companies.repository';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import {
     ]),
   ],
   controllers: [DeliveryCompaniesController],
-  providers: [DeliveryCompaniesService],
+  providers: [DeliveryCompaniesService, DeliveryCompanyRepository],
   exports: [DeliveryCompaniesService],
 })
 export class DeliveryCompaniesModule {}

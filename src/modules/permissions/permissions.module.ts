@@ -6,6 +6,7 @@ import {
   PERMISSION_MODEL,
   PermissionSchema,
 } from './schema/permissions.schema';
+import { PermissionRepository } from './permissions.repository';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import {
       },
     ]),
   ],
-  providers: [PermissionsService],
+  providers: [PermissionsService, PermissionRepository],
   controllers: [PermissionsController],
 })
 export class PermissionsModule {}
