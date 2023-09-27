@@ -13,6 +13,8 @@ import {
   QUICK_ORDER_MODEL,
   QuickOrderSchema,
 } from './schema/quick-order.schema';
+import { QuickOrderRepository } from './quick-orders.repository';
+import { QuickOrderItemRepository } from './quick-order-item.repository';
 
 @Module({
   imports: [
@@ -31,6 +33,10 @@ import {
     ProductModule,
   ],
   controllers: [QuickOrdersController],
-  providers: [QuickOrdersService],
+  providers: [
+    QuickOrdersService,
+    QuickOrderRepository,
+    QuickOrderItemRepository,
+  ],
 })
 export class QuickOrdersModule {}

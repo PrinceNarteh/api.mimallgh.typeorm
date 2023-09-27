@@ -3,7 +3,7 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Delivery } from 'src/modules/deliveries/schema/delivery.schema';
 import { QuickOrder } from 'src/modules/quick-orders/schema/quick-order.schema';
 
-Schema({ collection: 'delivery_companies' });
+@Schema({ collection: 'delivery_companies' })
 export class DeliveryCompany {
   @Prop()
   name: string;
