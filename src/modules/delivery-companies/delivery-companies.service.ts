@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { deleteFile } from 'src/utils/deleteFile';
 import { DeliveryCompanyRepository } from './delivery-companies.repository';
 import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
@@ -23,15 +27,16 @@ export class DeliveryCompaniesService {
   }
 
   async create(
-    createProductDto: CreateDeliveryCompanyDto,
+    createDeliveryCompanyDto: CreateDeliveryCompanyDto,
     imageNames: Array<string>,
   ): Promise<DeliveryCompanyDocument> {
-    const product = this.deliveryCompanyRepo.create({
-      ...createProductDto,
-      images: imageNames,
+    const emailExists = await this.deliveryCompanyRepo.findOne({
+      email: createDeliveryCompanyDto.email,
     });
-
-    return this.deliveryCompanyRepo.create(product);
+    if (emailExists) {
+      throw new ConflictException('Email already exists');
+    }
+    return this.deliveryCompanyRepo.create(createDeliveryCompanyDto);
   }
 
   async update(

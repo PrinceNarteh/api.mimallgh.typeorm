@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AbstractRepository } from '../common/abstract.repository';
+import { AbstractRepository } from '../../common/abstract.repository';
 import {
   PERMISSION_MODEL,
   PermissionDocument,

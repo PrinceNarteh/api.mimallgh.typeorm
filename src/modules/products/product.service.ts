@@ -12,7 +12,7 @@ import {
   CreateProductDto,
   UpdateProductDto,
 } from './dto/productDto';
-import { ProductRepository } from './product.schema';
+import { ProductRepository } from './product.repository';
 import { ProductDocument } from './schema/product.schema';
 
 @Injectable()
@@ -22,10 +22,10 @@ export class ProductService {
     private readonly shopService: ShopService,
   ) {}
 
-  async getAllProducts(queries: {
-    [key: string]: string;
-  }): Promise<ProductDocument[]> {
-    return this.productRepo.find({});
+  async getAllProducts(
+    filter: FilterQuery<ProductDocument>,
+  ): Promise<ProductDocument[]> {
+    return this.productRepo.find(filter);
   }
 
   async product(id: string): Promise<ProductDocument> {
