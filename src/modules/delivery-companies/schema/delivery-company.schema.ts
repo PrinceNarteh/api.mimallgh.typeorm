@@ -25,7 +25,7 @@ export class DeliveryCompany {
 
   @Prop({ name: 'alternate_phone_number' })
   alternatePhoneNumber: string;
-
+   
   @Prop({ name: 'whatsapp_number', required: true })
   whatsappNumber: string;
 

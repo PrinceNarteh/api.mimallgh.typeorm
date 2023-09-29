@@ -19,7 +19,7 @@ export class DeliveryCompaniesService {
   }
 
   async findOne(id: string): Promise<DeliveryCompanyDocument | null> {
-    return this.deliveryCompanyRepo.findOne({ id });
+    return this.deliveryCompanyRepo.findById(id);
   }
 
   async findOneBySlug(slug: string): Promise<DeliveryCompanyDocument | null> {
