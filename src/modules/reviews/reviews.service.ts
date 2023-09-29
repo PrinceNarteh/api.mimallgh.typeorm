@@ -90,7 +90,7 @@ export class ReviewsService {
       throw new ForbiddenException('You are not allowed to edit review');
     }
 
-    await this.reviewRepo.delete({ id: reviewId });
+    await this.reviewRepo.delete(reviewId);
 
     return 'Review deleted successfully';
   }

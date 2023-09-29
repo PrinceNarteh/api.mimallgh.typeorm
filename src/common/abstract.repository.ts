@@ -52,8 +52,8 @@ export class AbstractRepository<T extends Document> {
     );
   }
 
-  async delete(entityFilterQuery: FilterQuery<T>): Promise<T> {
-    return this.entityModel.findOneAndDelete(entityFilterQuery);
+  async delete(id: string): Promise<T> {
+    return this.entityModel.findByIdAndDelete(id);
   }
 
   async deleteMany(entityFilterQuery: FilterQuery<T>): Promise<boolean> {

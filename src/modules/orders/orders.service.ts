@@ -226,11 +226,7 @@ export class OrdersService {
       throw new NotFoundException('Order Not Found');
     }
 
-    await this.orderRepo.delete({
-      order: {
-        id: orderId,
-      },
-    });
+    await this.orderRepo.delete(orderId);
 
     const { items, ...data } = updateOrderDto;
     const orderItems = [];
@@ -253,6 +249,6 @@ export class OrdersService {
   }
 
   async deleteOrder(orderId: string) {
-    return await this.orderRepo.delete({ id: orderId });
+    return await this.orderRepo.delete(orderId);
   }
 }

@@ -65,17 +65,19 @@ export class DeliveryCompaniesService {
   async delete(
     deliveryCompanyId: string,
   ): Promise<DeliveryCompanyDocument | null> {
-    const deliveryCompany = await this.deliveryCompanyRepo.findOne({
-      id: deliveryCompanyId,
-    });
+    const deliveryCompany = await this.deliveryCompanyRepo.findById(
+      deliveryCompanyId,
+    );
 
     if (!deliveryCompany) return null;
+
+    console.log(deliveryCompany);
 
     deliveryCompany.images.forEach((image) => {
       deleteFile(image, 'slides');
     });
 
-    return this.deliveryCompanyRepo.delete({ id: deliveryCompanyId });
+    return this.deliveryCompanyRepo.delete(deliveryCompanyId);
   }
 
   async deleteImage({

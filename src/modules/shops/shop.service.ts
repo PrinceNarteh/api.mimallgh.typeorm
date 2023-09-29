@@ -134,7 +134,7 @@ export class ShopService {
 
   async deleteShop(id: string) {
     const shop = await this.shop(id);
-    await this.shopRepo.delete({ id });
+    await this.shopRepo.delete(id);
     if (shop.image) {
       deleteFile(shop.image, 'products');
     }

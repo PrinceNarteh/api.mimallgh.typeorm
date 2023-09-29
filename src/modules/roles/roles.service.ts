@@ -33,6 +33,6 @@ export class RolesService {
   }
 
   async deleteRole(id: string): Promise<RoleDocument> {
-    return this.roleRepo.delete({ id });
+    return this.roleRepo.delete(id);
   }
 }

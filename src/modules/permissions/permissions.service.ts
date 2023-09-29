@@ -43,6 +43,6 @@ export class PermissionsService {
   }
 
   async deletePermission(id: string): Promise<PermissionDocument> {
-    return this.permissionsRepo.delete({ id });
+    return this.permissionsRepo.delete(id);
   }
 }

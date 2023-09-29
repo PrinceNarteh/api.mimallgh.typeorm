@@ -49,7 +49,7 @@ export class UserService {
   }
 
   async deleteUser(userId: string): Promise<UserDocument> {
-    const deletedUser = await this.userRepo.delete({ id: userId });
+    const deletedUser = await this.userRepo.delete(userId);
     return deletedUser;
   }
 }
