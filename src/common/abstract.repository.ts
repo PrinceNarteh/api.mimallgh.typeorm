@@ -42,11 +42,12 @@ export class AbstractRepository<T extends Document> {
     entityFilterQuery: FilterQuery<T>,
     entityUpdateData: UpdateQuery<unknown>,
   ): Promise<T> {
-    return this.entityModel.findOneAndUpdate(
+    return this.entityModel.findByIdAndUpdate(
       entityFilterQuery,
       entityUpdateData,
       {
         new: true,
+        runValidators: true,
       },
     );
   }

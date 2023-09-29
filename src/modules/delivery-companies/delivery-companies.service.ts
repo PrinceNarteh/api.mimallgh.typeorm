@@ -44,18 +44,18 @@ export class DeliveryCompaniesService {
     updateDeliveryCompanyDto: Partial<CreateDeliveryCompanyDto>,
     imageNames?: Array<string>,
   ): Promise<DeliveryCompanyDocument | null> {
-    const deliveryCompany = await this.deliveryCompanyRepo.findOne({
-      id: deliveryCompanyId,
-    });
+    const deliveryCompany = await this.deliveryCompanyRepo.findById(
+      deliveryCompanyId,
+    );
     if (!deliveryCompany) {
-      throw new NotFoundException('delivery company not found');
+      throw new NotFoundException('Delivery company not found');
     }
 
-    return this.deliveryCompanyRepo.findOne(
-      { id: deliveryCompanyId },
+    return this.deliveryCompanyRepo.findOneAndUpdate(
+      { _id: deliveryCompanyId },
       {
         ...updateDeliveryCompanyDto,
-        ...(imageNames.length > 0 && {
+        ...(imageNames?.length > 0 && {
           images: [...deliveryCompany.images, ...imageNames],
         }),
       },

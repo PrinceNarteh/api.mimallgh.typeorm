@@ -25,7 +25,7 @@ export class DeliveryCompany {
 
   @Prop({ name: 'alternate_phone_number' })
   alternatePhoneNumber: string;
-   
+
   @Prop({ name: 'whatsapp_number', required: true })
   whatsappNumber: string;
 
@@ -83,6 +83,20 @@ DeliveryCompanySchema.pre('save', async function (next: Function) {
 
   next();
 });
+
+DeliveryCompanySchema.pre<DeliveryCompanyDocument>(
+  'findOneAndUpdate',
+  async function (next: Function) {
+    const name = this.get('name');
+    if (name) {
+      this.set(
+        'slug',
+        slugify(name, { remove: /[*+~.()'"!:@]/g, lower: true }),
+      );
+    }
+    next();
+  },
+);
 
 DeliveryCompanySchema.set('toJSON', {
   transform: function (doc, ret, opt) {
