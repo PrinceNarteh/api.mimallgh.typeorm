@@ -23,8 +23,10 @@ import { ShopService } from './shop.service';
 export class ShopController {
   constructor(private readonly shopService: ShopService) {}
 
-  @Get('all')
-  async getAllShops() {
+  @Get()
+  async getAllShops(
+    @Param() params: { [key: string]: string },
+  ): Promise<ShopDocument[]> {
     return this.shopService.getAllShops({});
   }
 

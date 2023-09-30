@@ -71,8 +71,6 @@ export class DeliveryCompaniesService {
 
     if (!deliveryCompany) return null;
 
-    console.log(deliveryCompany);
-
     deliveryCompany.images.forEach((image) => {
       deleteFile(image, 'slides');
     });

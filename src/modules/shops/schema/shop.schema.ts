@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-
 import { customAlphabet } from 'nanoid/async';
+import * as bcrypt from 'bcrypt';
+
 import { OrderItem } from 'src/modules/orders/schema/order-item.schema';
 import { Product } from 'src/modules/products/schema/product.schema';
 import { QuickOrderItem } from 'src/modules/quick-orders/schema/quick-order-item.schema';
@@ -21,7 +22,7 @@ export class Shop {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, select: false })
   password: string;
 
   @Prop({ required: true })
@@ -64,10 +65,10 @@ export class Shop {
   closingTime: string;
 
   @Prop()
-  image?: string;
+  image: string;
 
   @Prop()
-  banner?: string;
+  banner: string;
 
   @Prop([
     {
@@ -92,62 +93,73 @@ export class Shop {
     },
   ])
   quickOrderItems: QuickOrderItem[];
-
-  //   @BeforeInsert()
-  //   async beforeInsert() {
-  //     const genPassword = await nanoid(10);
-  //     this.password = await bcrypt.hash(genPassword, 12);
-  //     this.plainPassword = genPassword;
-
-  //     if (this.facebookHandle) {
-  //       this.facebookHandle =
-  //         'https://wwww.facebook.com/' + this.facebookHandle.trim();
-  //     }
-
-  //     if (this.instagramHandle) {
-  //       this.instagramHandle =
-  //         'https://www.instagram.com/' + this.instagramHandle.trim();
-  //     }
-
-  //     if (this.whatsappNumber) {
-  //       this.whatsappNumber = 'https://wa.me/' + this.whatsappNumber.trim();
-  //     }
-
-  //     if (this.twitterHandle) {
-  //       this.twitterHandle = 'https://twitter.com/' + this.twitterHandle.trim();
-  //     }
-
-  //     if (this.tiktokHandle) {
-  //       this.tiktokHandle = 'https://www.tiktok.com/' + this.tiktokHandle.trim();
-  //     }
-  //   }
-
-  //   @BeforeUpdate()
-  //   async beforeUpdate() {
-  //     if (this.facebookHandle) {
-  //       this.facebookHandle =
-  //         'https://wwww.facebook.com/' + this.facebookHandle.trim();
-  //     }
-
-  //     if (this.instagramHandle) {
-  //       this.instagramHandle =
-  //         'https://www.instagram.com/' + this.instagramHandle.trim();
-  //     }
-
-  //     if (this.whatsappNumber) {
-  //       this.whatsappNumber = 'https://wa.me/' + this.whatsappNumber.trim();
-  //     }
-
-  //     if (this.twitterHandle) {
-  //       this.twitterHandle = 'https://twitter.com/' + this.twitterHandle.trim();
-  //     }
-
-  //     if (this.tiktokHandle) {
-  //       this.tiktokHandle = 'https://www.tiktok.com/' + this.tiktokHandle.trim();
-  //     }
-  //   }
 }
 
 export type ShopDocument = Shop & Document;
 export const ShopSchema = SchemaFactory.createForClass(Shop);
 export const SHOP_MODEL = Shop.name;
+
+ShopSchema.pre('save', async function (next) {
+  if (this.get('password')) {
+    const genPassword = await nanoid(10);
+    this.password = await bcrypt.hash(genPassword, 12);
+    this.plainPassword = genPassword;
+  }
+
+  if (this.get('facebookHandle')) {
+    this.facebookHandle =
+      'https://wwww.facebook.com/' + this.facebookHandle.trim();
+  }
+
+  if (this.get('instagramHandle')) {
+    this.instagramHandle =
+      'https://www.instagram.com/' + this.instagramHandle.trim();
+  }
+
+  if (this.get('whatsappNumber')) {
+    this.whatsappNumber = 'https://wa.me/' + this.whatsappNumber.trim();
+  }
+
+  if (this.get('twitterHandle')) {
+    this.twitterHandle = 'https://twitter.com/' + this.twitterHandle.trim();
+  }
+
+  if (this.get('tiktokHandle')) {
+    this.tiktokHandle = 'https://www.tiktok.com/' + this.tiktokHandle.trim();
+  }
+
+  next();
+});
+
+ShopSchema.pre<ShopDocument>('findOneAndUpdate', function (next) {
+  if (this.get('facebookHandle')) {
+    this.facebookHandle =
+      'https://wwww.facebook.com/' + this.facebookHandle.trim();
+  }
+
+  if (this.get('instagramHandle')) {
+    this.instagramHandle =
+      'https://www.instagram.com/' + this.instagramHandle.trim();
+  }
+
+  if (this.get('whatsappNumber')) {
+    this.whatsappNumber = 'https://wa.me/' + this.whatsappNumber.trim();
+  }
+
+  if (this.get('twitterHandle')) {
+    this.twitterHandle = 'https://twitter.com/' + this.twitterHandle.trim();
+  }
+
+  if (this.get('tiktokHandle')) {
+    this.tiktokHandle = 'https://www.tiktok.com/' + this.tiktokHandle.trim();
+  }
+
+  next();
+});
+
+ShopSchema.set('toJSON', {
+  transform: function (doc, ret, opt) {
+    delete ret['password'];
+    return ret;
+  },
+});
