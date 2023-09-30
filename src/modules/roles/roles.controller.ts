@@ -10,6 +10,7 @@ import {
 import { CreateRoleDto } from './dto/roles.dto';
 import { RolesService } from './roles.service';
 import { RoleDocument } from './schema/role.schema';
+import { MongoID } from 'src/common/validate-id';
 
 @Controller('roles')
 export class RolesController {
@@ -23,8 +24,8 @@ export class RolesController {
   }
 
   @Get('/:roleId')
-  async getRole(@Param('roleId') roleId: string): Promise<RoleDocument> {
-    return this.roleService.findRoleById(roleId);
+  async getRole(@Param() { id }: MongoID): Promise<RoleDocument> {
+    return this.roleService.findRoleById(id);
   }
 
   @Post()
@@ -34,10 +35,10 @@ export class RolesController {
 
   @Patch('/:roleId')
   async updateRole(
-    @Param('roleId') roleId: string,
+    @Param('roleId') { id }: MongoID,
     @Body() updateRoleDto: Partial<CreateRoleDto>,
   ) {
-    return this.roleService.findRoleAndUpdate(roleId, updateRoleDto);
+    return this.roleService.findRoleAndUpdate(id, updateRoleDto);
   }
 
   @Delete('/:roleId')
