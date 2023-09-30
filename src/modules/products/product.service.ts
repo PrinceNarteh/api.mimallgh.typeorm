@@ -25,7 +25,7 @@ export class ProductService {
   async getProducts(
     filter: FilterQuery<ProductDocument>,
   ): Promise<ProductDocument[]> {
-    return this.productRepo.find(filter);
+    return this.productRepo.find({});
   }
 
   async product(id: string): Promise<ProductDocument> {
@@ -68,7 +68,10 @@ export class ProductService {
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
-    return this.productRepo.create(createProductDto);
+    return this.productRepo.create({
+      ...createProductDto,
+      shop: shop._id,
+    });
   }
 
   async adminCreateProduct(
@@ -76,6 +79,7 @@ export class ProductService {
     imageNames: Array<string>,
   ): Promise<ProductDocument> {
     const shop = await this.shopService.getShop(createProductDto.shopId);
+
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
@@ -84,17 +88,11 @@ export class ProductService {
   }
 
   async updateProduct(
-    shop: { id: string; shopCode: string },
     productId: string,
     updateProductDto: UpdateProductDto,
     imageNames?: Array<string>,
   ) {
-    const product = await this.productRepo.findOne({
-      where: { id: productId },
-      relations: {
-        shop: true,
-      },
-    });
+    const product = await this.productRepo.findById(productId);
     if (!product) {
       throw new NotFoundException('Product not found');
     }
@@ -120,12 +118,7 @@ export class ProductService {
   }
 
   async deleteProduct(shop: ShopDocument, productId: string) {
-    const product = await this.productRepo.findOne({
-      where: { id: productId },
-      relations: {
-        shop: true,
-      },
-    });
+    const product = await this.productRepo.findById(productId);
 
     if (!product) return null;
 
@@ -139,7 +132,7 @@ export class ProductService {
   }
 
   async findProductImage(imageId: string) {
-    const img = this.productRepo.findOne({ where: { id: imageId } });
+    const img = this.productRepo.findById(imageId);
 
     if (!img) {
       throw new NotFoundException('Product Image Not Found');

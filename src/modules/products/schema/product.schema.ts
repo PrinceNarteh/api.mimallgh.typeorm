@@ -38,7 +38,7 @@ export class Product {
   @Prop({ required: true })
   brand: string;
 
-  @Prop()
+  @Prop({ required: true })
   category: string;
 
   @Prop([Number])
@@ -53,7 +53,7 @@ export class Product {
   @Prop({ type: Types.ObjectId, ref: 'QuickOrderItem' })
   quickOrderItems: QuickOrderItem[];
 
-  @Prop({ type: Types.ObjectId, ref: 'Shop' })
+  @Prop({ type: Types.ObjectId, ref: 'Shop', required: true })
   shop: Shop;
 }
 
@@ -63,8 +63,10 @@ export const ProductSchema = SchemaFactory.createForClass(Product);
 
 ProductSchema.pre('find', function (next: Function) {
   this.populate({ path: 'shop', select: { name: 1, location: 1 } });
+  next();
 });
 
 ProductSchema.pre('findOne', function (next: Function) {
   this.populate('shop');
+  next();
 });

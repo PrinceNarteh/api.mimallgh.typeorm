@@ -98,7 +98,7 @@ export class ProductController {
   }
 
   @Patch(':productId')
-  @UseGuards(ShopJwtGuard)
+  // @UseGuards(ShopJwtGuard)
   @UseInterceptors(TransformDtoPipe, FilesInterceptor('newImages', 4))
   async updateProduct(
     @Param('productId') productId: string,
@@ -106,7 +106,7 @@ export class ProductController {
     @UploadedFiles(new SharpFilesInterceptorPipe('products'))
     imageNames?: Array<string>,
   ) {
-    return this.productService.adminUpdateProduct(
+    return this.productService.updateProduct(
       productId,
       updateProductDto,
       imageNames,
@@ -117,14 +117,12 @@ export class ProductController {
   // @UseGuards(ShopJwtGuard)
   @UseInterceptors(TransformDtoPipe, FilesInterceptor('newImages', 4))
   async adminUpdateProduct(
-    @Request() req,
     @Param('productId') productId: string,
     @Body() updateProductDto: Partial<CreateProductDto>,
     @UploadedFiles(new SharpFilesInterceptorPipe('products'))
     imageNames?: Array<string>,
   ) {
     return this.productService.updateProduct(
-      req.user,
       productId,
       updateProductDto,
       imageNames,
