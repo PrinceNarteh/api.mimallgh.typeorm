@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString, ArrayNotEmpty } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateRoleDto {
   @IsNotEmpty()

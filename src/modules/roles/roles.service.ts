@@ -27,8 +27,8 @@ export class RolesService {
 
   async findRoleAndUpdate(
     roleId: string,
-    data: Partial<RoleDocument>,
-  ): Promise<CreateRoleDto> {
+    data: Partial<CreateRoleDto>,
+  ): Promise<RoleDocument> {
     return this.roleRepo.findByIdAndUpdate(roleId, data);
   }
 
