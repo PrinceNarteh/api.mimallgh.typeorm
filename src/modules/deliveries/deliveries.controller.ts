@@ -8,7 +8,10 @@ import {
   Post,
 } from '@nestjs/common';
 import { DeliveriesService } from './deliveries.service';
-import { CreateDeliveryDto } from './dto/deliveryDto';
+import {
+  CreateDeliveryDto,
+  GetDeliveriesByCompanyDto,
+} from './dto/deliveryDto';
 import { DeliveryDocument } from './schema/delivery.schema';
 
 @Controller('deliveries')
@@ -25,6 +28,13 @@ export class DeliveriesController {
   @Get()
   async getDeliveries(@Query() query: { [key: string]: string }) {
     return this.deliveriesService.getAllDeliveries(query);
+  }
+
+  @Post('/company')
+  async getDeliveriesByCompany(
+    @Body() { company_id }: GetDeliveriesByCompanyDto,
+  ) {
+    return this.deliveriesService.deliveriesByCompany(company_id);
   }
 
   @Post()

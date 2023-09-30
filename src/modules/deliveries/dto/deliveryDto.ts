@@ -47,3 +47,9 @@ export class CreateDeliveryDto {
   @IsString()
   delivery_company: string;
 }
+
+export class GetDeliveriesByCompanyDto {
+  @IsNotEmpty()
+  @IsString()
+  company_id: string;
+}

@@ -13,7 +13,7 @@ export class DeliveriesService {
   ) {}
 
   async getDelivery(id: string): Promise<DeliveryDocument> {
-    const delivery = await this.deliveryRepo.findOne({ id });
+    const delivery = await this.deliveryRepo.findById(id);
     if (!delivery) {
       throw new NotFoundException('Delivery item not found');
     }
@@ -24,6 +24,10 @@ export class DeliveriesService {
     filter: FilterQuery<DeliveryDocument>,
   ): Promise<DeliveryDocument[]> {
     return await this.deliveryRepo.find(filter);
+  }
+
+  async deliveriesByCompany(companyId: string): Promise<DeliveryDocument[]> {
+    return await this.deliveryRepo.find({ delivery_company: companyId });
   }
 
   async createDelivery(
