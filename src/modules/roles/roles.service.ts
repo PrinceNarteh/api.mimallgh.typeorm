@@ -29,7 +29,7 @@ export class RolesService {
     roleId: string,
     data: Partial<RoleDocument>,
   ): Promise<CreateRoleDto> {
-    return this.roleRepo.findOneAndUpdate({ id: roleId }, data);
+    return this.roleRepo.findByIdAndUpdate(roleId, data);
   }
 
   async deleteRole(id: string): Promise<RoleDocument> {

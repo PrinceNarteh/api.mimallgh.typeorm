@@ -131,27 +131,40 @@ ShopSchema.pre('save', async function (next) {
   next();
 });
 
-ShopSchema.pre<ShopDocument>('findOneAndUpdate', function (next) {
+ShopSchema.pre('findOneAndUpdate', async function (next) {
   if (this.get('facebookHandle')) {
-    this.facebookHandle =
-      'https://wwww.facebook.com/' + this.facebookHandle.trim();
+    this.set(
+      'facebookHandle',
+      `https://wwww.facebook.com/${this.get('facebookHandle').trim()}`,
+    );
   }
 
   if (this.get('instagramHandle')) {
-    this.instagramHandle =
-      'https://www.instagram.com/' + this.instagramHandle.trim();
+    this.set(
+      'instagramHandle',
+      `https://www.instagram.com/${this.get('instagramHandle').trim()}`,
+    );
   }
 
   if (this.get('whatsappNumber')) {
-    this.whatsappNumber = 'https://wa.me/' + this.whatsappNumber.trim();
+    this.set(
+      'whatsappNumber',
+      `https://wa.me/${this.get('whatsappNumber').trim()}`,
+    );
   }
 
   if (this.get('twitterHandle')) {
-    this.twitterHandle = 'https://twitter.com/' + this.twitterHandle.trim();
+    this.set(
+      'twitterHandle',
+      `https://twitter.com/${this.get('twitterHandle').trim()}`,
+    );
   }
 
   if (this.get('tiktokHandle')) {
-    this.tiktokHandle = 'https://www.tiktok.com/' + this.tiktokHandle.trim();
+    this.set(
+      'tiktokHandle',
+      `https://www.tiktok.com/${this.get('tiktokHandle').trim()}`,
+    );
   }
 
   next();

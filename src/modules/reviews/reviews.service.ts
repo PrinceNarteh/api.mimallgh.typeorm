@@ -67,7 +67,7 @@ export class ReviewsService {
       throw new ForbiddenException('You are not allowed to edit review');
     }
 
-    await this.reviewRepo.findOneAndUpdate({ id: reviewId }, updateReviewDto);
+    await this.reviewRepo.findByIdAndUpdate(reviewId, updateReviewDto);
 
     return this.getReview(reviewId);
   }

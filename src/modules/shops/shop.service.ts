@@ -73,9 +73,7 @@ export class ShopService {
     newImage?: string,
     newBanner?: string,
   ): Promise<ShopDocument> {
-    const shop = await this.shopRepo.findOne({
-      where: { id: shopId },
-    });
+    const shop = await this.shopRepo.findById(shopId);
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
@@ -91,7 +89,7 @@ export class ShopService {
     if (newBanner && shop.banner !== null)
       deleteFile(updateShopDto.banner, 'shops');
 
-    return this.shopRepo.findOneAndUpdate({ id: shopId }, updatedShopData);
+    return this.shopRepo.findByIdAndUpdate(shopId, updatedShopData);
   }
 
   async deleteShop(id: string) {
@@ -109,14 +107,14 @@ export class ShopService {
   async deleteShopImage(id: string) {
     const shop = await this.getShop(id);
     deleteFile(shop.image, 'shops');
-    await this.shopRepo.findOneAndUpdate({ id }, { image: null });
+    await this.shopRepo.findByIdAndUpdate(id, { image: null });
     return this.getShop(id);
   }
 
   async deleteShopBanner(id: string) {
     let shop = await this.getShop(id);
     deleteFile(shop.banner, 'shops');
-    await this.shopRepo.findOneAndUpdate({ id }, { banner: null });
+    await this.shopRepo.findByIdAndUpdate(id, { banner: null });
     shop = await this.getShop(id);
     return shop;
   }

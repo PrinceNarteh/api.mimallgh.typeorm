@@ -41,10 +41,7 @@ export class UserService {
     userId: string,
     user: Partial<CreateUserDto>,
   ): Promise<UserDocument> {
-    const updatedUser = await this.userRepo.findOneAndUpdate(
-      { id: userId },
-      user,
-    );
+    const updatedUser = await this.userRepo.findByIdAndUpdate(userId, user);
     return updatedUser;
   }
 

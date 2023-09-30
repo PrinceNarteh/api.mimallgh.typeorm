@@ -98,10 +98,7 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-    return this.productRepo.findOneAndUpdate(
-      { id: productId },
-      updateProductDto,
-    );
+    return this.productRepo.findByIdAndUpdate(productId, updateProductDto);
   }
 
   async adminUpdateProduct(
@@ -119,7 +116,7 @@ export class ProductService {
       throw new NotFoundException('Product not found');
     }
 
-    return this.productRepo.findOneAndUpdate({ id: product }, updateProductDto);
+    return this.productRepo.findByIdAndUpdate(product._id, updateProductDto);
   }
 
   async deleteProduct(shop: ShopDocument, productId: string) {

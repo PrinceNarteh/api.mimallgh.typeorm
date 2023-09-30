@@ -38,18 +38,14 @@ export class AbstractRepository<T extends Document> {
     return entity.save();
   }
 
-  async findOneAndUpdate(
-    entityFilterQuery: FilterQuery<T>,
+  async findByIdAndUpdate(
+    entityId: string,
     entityUpdateData: UpdateQuery<unknown>,
   ): Promise<T> {
-    return this.entityModel.findByIdAndUpdate(
-      entityFilterQuery,
-      entityUpdateData,
-      {
-        new: true,
-        runValidators: true,
-      },
-    );
+    return this.entityModel.findByIdAndUpdate(entityId, entityUpdateData, {
+      new: true,
+      runValidators: true,
+    });
   }
 
   async delete(id: string): Promise<T> {

@@ -51,15 +51,12 @@ export class DeliveryCompaniesService {
       throw new NotFoundException('Delivery company not found');
     }
 
-    return this.deliveryCompanyRepo.findOneAndUpdate(
-      { _id: deliveryCompanyId },
-      {
-        ...updateDeliveryCompanyDto,
-        ...(imageNames?.length > 0 && {
-          images: [...deliveryCompany.images, ...imageNames],
-        }),
-      },
-    );
+    return this.deliveryCompanyRepo.findByIdAndUpdate(deliveryCompanyId, {
+      ...updateDeliveryCompanyDto,
+      ...(imageNames?.length > 0 && {
+        images: [...deliveryCompany.images, ...imageNames],
+      }),
+    });
   }
 
   async delete(

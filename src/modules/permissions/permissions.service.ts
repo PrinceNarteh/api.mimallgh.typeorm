@@ -35,8 +35,8 @@ export class PermissionsService {
     permissionId: string,
     updatePermissionDto: CreatePermissionDto,
   ): Promise<PermissionDocument> {
-    const createdPermission = await this.permissionsRepo.findOneAndUpdate(
-      { id: permissionId },
+    const createdPermission = await this.permissionsRepo.findByIdAndUpdate(
+      permissionId,
       updatePermissionDto,
     );
     return createdPermission;
