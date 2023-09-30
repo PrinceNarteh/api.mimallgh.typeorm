@@ -10,25 +10,25 @@ import {
 
 export class CreateUserDto {
   @IsString()
-  firstName: string;
+  first_name: string;
 
   @IsString()
-  lastName: string;
+  last_name: string;
 
   @IsString()
   @IsOptional()
-  middleName?: string;
+  middle_name?: string;
 
   @IsString()
   @IsOptional()
   address?: string;
 
   @IsNumberString()
-  phoneNumber: string;
+  phone_number: string;
 
   @IsNumberString()
   @IsOptional()
-  alternateNumber: string;
+  alternate_number: string;
 
   @IsString()
   @IsOptional()
@@ -37,36 +37,28 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @IsString()
   @MinLength(6)
+  @IsString()
   password: string;
 
   @IsString()
   @IsOptional()
-  cardType?: string;
+  card_type?: string;
 
   @IsString()
   @IsOptional()
-  cardNumber?: string;
+  card_number?: string;
 
   @IsBoolean()
   @IsOptional()
   active: boolean;
 
   @IsOptional()
-  image?: string;
+  profile_image?: string;
 
   @IsString()
   @IsOptional()
   role: string;
-
-  @IsString()
-  @IsOptional()
-  level: string;
-
-  @IsString()
-  @IsOptional()
-  shopId: string;
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}

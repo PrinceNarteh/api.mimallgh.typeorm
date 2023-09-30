@@ -1,5 +1,6 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import * as bcrypt from 'bcrypt';
 import { Document, Types } from 'mongoose';
-import { SchemaFactory, Schema, Prop } from '@nestjs/mongoose';
 import { Order } from 'src/modules/orders/schema/order.schema';
 import { Review } from 'src/modules/reviews/schema/review.schema';
 
@@ -8,22 +9,22 @@ export type UserRole = 'admin' | 'user';
 @Schema({ timestamps: true })
 export class User {
   @Prop({ required: true })
-  firstName: string;
+  first_name: string;
 
   @Prop({ required: true })
-  lastName: string;
+  last_name: string;
 
   @Prop()
-  middleName: string;
+  middle_name: string;
 
   @Prop()
   address: string;
 
   @Prop({ required: true })
-  phoneNumber: string;
+  phone_number: string;
 
   @Prop()
-  alternateNumber: string;
+  alternate_number: string;
 
   @Prop()
   nationality: string;
@@ -38,7 +39,7 @@ export class User {
   password: string;
 
   @Prop()
-  image: string;
+  profile_image: string;
 
   @Prop()
   cardType: string;
@@ -72,13 +73,16 @@ export class User {
     },
   ])
   reviews: Review[];
-
-  //   @BeforeInsert()
-  //   async hashPassword() {
-  //     this.password = await bcrypt.hash(this.password, 12);
-  //   }
 }
 
 export type UserDocument = User & Document;
 export const UserSchema = SchemaFactory.createForClass(User);
 export const USER_MODEL = User.name;
+
+UserSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 12);
+  }
+
+  next();
+});

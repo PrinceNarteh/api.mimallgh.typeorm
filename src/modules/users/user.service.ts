@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserRepository } from './users.repository';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { FilterQuery } from 'mongoose';
 import { CreateUserDto } from './dto/userDto';
 import { UserDocument } from './schema/user.schema';
-import { FilterQuery } from 'mongoose';
+import { UserRepository } from './users.repository';
 
 @Injectable()
 export class UserService {
@@ -33,6 +37,11 @@ export class UserService {
   }
 
   async createUser(user: CreateUserDto): Promise<UserDocument> {
+    const userExists = await this.userRepo.findOne({ email: user.email });
+
+    if (userExists) {
+      throw new ConflictException('User already exists');
+    }
     const createdUser = this.userRepo.create(user);
     return createdUser;
   }

@@ -1,19 +1,26 @@
-import { Controller, Get, Param, Put, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Patch,
+  Query,
+  Delete,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UserService } from './user.service';
+import { CreateUserDto } from './dto/userDto';
+import { UserDocument } from './schema/user.schema';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async getUsers(
-    @Query('page') page?: number,
-    @Query('perPage') perPage?: number,
-    @Query('order') order?: 'asc' | 'desc',
-    @Query('search') search?: string,
-    @Query('role') role?: string,
-  ) {
-    return this.userService.find({});
+  async getUsers(@Query() query: { [key: string]: string }) {
+    return this.userService.find(query);
   }
 
   @Get(':userId')
@@ -21,12 +28,20 @@ export class UserController {
     return this.userService.findById(userId);
   }
 
-  @Put(':userId')
+  @Post('/register')
+  @UseInterceptors(FileInterceptor('profile_image'))
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<UserDocument> {
+    return this.userService.createUser(createUserDto);
+  }
+
+  @Patch(':userId')
   async updateUser(@Param('userId') userId: string) {
     return `Update user with ID ${userId}`;
   }
 
-  @Put(':userId')
+  @Delete(':userId')
   async deleteUser(@Param('userId') userId: string) {
     return this.userService.deleteUser(userId);
   }
