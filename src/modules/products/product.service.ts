@@ -22,7 +22,7 @@ export class ProductService {
     private readonly shopService: ShopService,
   ) {}
 
-  async getAllProducts(
+  async getProducts(
     filter: FilterQuery<ProductDocument>,
   ): Promise<ProductDocument[]> {
     return this.productRepo.find(filter);

@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -23,12 +24,13 @@ export class CreateProductDto {
   description: string;
 
   @IsNumber()
-  @IsNotEmpty({ message: 'Phone number is required' })
+  @IsNotEmpty({ message: 'Price is required' })
   @Transform(({ value }) => parseInt(value, 10))
   price: number;
 
   @IsNumber()
   @Transform(({ value }) => parseInt(value, 10))
+  @IsOptional()
   discountPercentage: number;
 
   @IsNumber()

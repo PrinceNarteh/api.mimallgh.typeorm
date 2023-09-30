@@ -27,8 +27,8 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  async getAllProducts(@Query() query?: { [key: string]: string }) {
-    return this.productService.getAllProducts(query);
+  async getProducts(@Query() query?: { [key: string]: string }) {
+    return this.productService.getProducts(query);
   }
 
   @Get('category')
@@ -71,7 +71,7 @@ export class ProductController {
   }
 
   @Post()
-  @UseGuards(ShopJwtGuard)
+  // @UseGuards(ShopJwtGuard)
   @UseInterceptors(TransformDtoPipe, FilesInterceptor('images', 4))
   async createProduct(
     @Request() req,
@@ -80,7 +80,7 @@ export class ProductController {
     imageNames: Array<string>,
   ) {
     return this.productService.createProduct(
-      req.user.id,
+      '6517e3822efbf310b15aef20',
       createProductDto,
       imageNames,
     );

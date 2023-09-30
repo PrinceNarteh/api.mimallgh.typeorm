@@ -26,7 +26,7 @@ export class Product {
   @Prop({ required: true })
   price: number;
 
-  @Prop({ required: true })
+  @Prop({ default: 0 })
   discountPercentage: number;
 
   @Prop({
