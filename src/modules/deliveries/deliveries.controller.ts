@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Query,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { DeliveriesService } from './deliveries.service';
 import { CreateDeliveryDto } from './dto/deliveryDto';
 import { DeliveryDocument } from './schema/delivery.schema';
@@ -15,12 +23,20 @@ export class DeliveriesController {
   }
 
   @Get()
-  async getAllDeliveries() {
-    return this.deliveriesService.getAllDeliveries({});
+  async getDeliveries(@Query() query: { [key: string]: string }) {
+    return this.deliveriesService.getAllDeliveries(query);
   }
 
   @Post()
   async createDelivery(@Body() createDeliveryDto: CreateDeliveryDto) {
+    return this.deliveriesService.createDelivery(createDeliveryDto);
+  }
+
+  @Patch()
+  async updateDelivery(
+    @Param('deliveryId') deliveryId: string,
+    @Body() createDeliveryDto: CreateDeliveryDto,
+  ) {
     return this.deliveriesService.createDelivery(createDeliveryDto);
   }
 }

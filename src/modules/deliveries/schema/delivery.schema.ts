@@ -14,32 +14,32 @@ export class Delivery {
   to: string;
 
   @Prop()
-  otherDetails: string;
+  other_details: string;
 
   @Prop({ required: true })
-  fullName: string;
+  full_name: string;
 
   @Prop({ required: true })
-  phoneNumber: string;
+  phone_number: string;
 
   @Prop()
-  alternatePhoneNumber?: string;
+  alternate_phone_number?: string;
 
   @Prop({ required: true })
   location: string;
 
   @Prop({ required: true })
-  deliveryCharge: number;
+  delivery_charge: number;
 
   @Prop({ required: true })
-  dateAndTime: string;
+  date_and_time: string;
 
   @Prop({
     required: true,
     type: Types.ObjectId,
     ref: 'DeliveryCompany',
   })
-  deliveryCompany: DeliveryCompany;
+  delivery_company: DeliveryCompany;
 }
 
 export type DeliveryDocument = Delivery & Document;

@@ -29,12 +29,12 @@ export class DeliveriesService {
   async createDelivery(
     createDeliveryDto: CreateDeliveryDto,
   ): Promise<DeliveryDocument> {
-    const deliveryCompany = await this.deliverCompaniesService.findOne(
-      createDeliveryDto.deliveryCompany,
+    const deliveryCompany = await this.deliverCompaniesService.findById(
+      createDeliveryDto.delivery_company,
     );
     const delivery = this.deliveryRepo.create({
       ...createDeliveryDto,
-      deliveryCompany,
+      deliveryCompany: deliveryCompany._id,
     });
     return delivery;
   }

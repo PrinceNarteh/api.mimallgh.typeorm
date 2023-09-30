@@ -16,19 +16,19 @@ export class CreateDeliveryDto {
 
   @IsString()
   @IsOptional()
-  otherDetails?: string;
+  other_details?: string;
 
   @IsNotEmpty()
   @IsString()
-  fullName: string;
+  full_name: string;
 
   @IsNotEmpty()
   @IsString()
-  phoneNumber: string;
+  phone_number: string;
 
   @IsString()
   @IsOptional()
-  alternatePhoneNumber?: string;
+  alternate_phone_number?: string;
 
   @IsNotEmpty()
   @IsString()
@@ -37,13 +37,13 @@ export class CreateDeliveryDto {
   @IsNotEmpty()
   @IsNumber()
   @Transform(({ value }) => parseInt(value, 10))
-  deliveryCharge: number;
+  delivery_charge: number;
 
   @IsNotEmpty()
   @IsString()
-  dateAndTime: string;
+  date_and_time: string;
 
   @IsNotEmpty()
   @IsString()
-  deliveryCompany: string;
+  delivery_company: string;
 }

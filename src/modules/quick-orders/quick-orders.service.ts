@@ -32,7 +32,7 @@ export class QuickOrdersService {
   async createQuickOrder(
     order: CreateQuickOrderDto,
   ): Promise<QuickOrderDocument> {
-    const deliveryCompany = await this.deliveryCompaniesService.findOne(
+    const deliveryCompany = await this.deliveryCompaniesService.findById(
       order.deliveryCompany,
     );
     if (!deliveryCompany) {

@@ -18,7 +18,7 @@ export class DeliveryCompaniesService {
     return this.deliveryCompanyRepo.find({});
   }
 
-  async findOne(id: string): Promise<DeliveryCompanyDocument | null> {
+  async findById(id: string): Promise<DeliveryCompanyDocument | null> {
     return this.deliveryCompanyRepo.findById(id);
   }
 
@@ -84,6 +84,6 @@ export class DeliveryCompaniesService {
   }) {
     deleteFile(imageName, 'slides');
 
-    return await this.findOne(deliveryCompanyId);
+    return await this.findById(deliveryCompanyId);
   }
 }

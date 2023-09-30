@@ -30,7 +30,7 @@ export class DeliveryCompaniesController {
 
   @Get(':deliveryCompanyId')
   async findOne(@Param('deliveryCompanyId') deliveryCompanyId: string) {
-    const deliveryCompany = await this.deliveryCompaniesService.findOne(
+    const deliveryCompany = await this.deliveryCompaniesService.findById(
       deliveryCompanyId,
     );
     if (!deliveryCompany) {
