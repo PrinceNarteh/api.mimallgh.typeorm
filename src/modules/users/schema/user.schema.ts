@@ -42,10 +42,10 @@ export class User {
   profile_image: string;
 
   @Prop()
-  cardType: string;
+  card_type: string;
 
   @Prop()
-  cardNumber: string;
+  card_number: string;
 
   @Prop({
     default: true,
@@ -75,14 +75,13 @@ export class User {
   reviews: Review[];
 }
 
-export type UserDocument = User & Document;
-export const UserSchema = SchemaFactory.createForClass(User);
 export const USER_MODEL = User.name;
+export const UserSchema = SchemaFactory.createForClass(User);
+export type UserDocument = User & Document;
 
 UserSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12);
   }
-
   next();
 });

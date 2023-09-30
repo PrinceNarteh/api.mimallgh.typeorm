@@ -28,17 +28,21 @@ export class UserController {
     return this.userService.findById(userId);
   }
 
-  @Post('/register')
   @UseInterceptors(FileInterceptor('profile_image'))
+  @Post('/register')
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<UserDocument> {
     return this.userService.createUser(createUserDto);
   }
 
+  @UseInterceptors(FileInterceptor('profile_image'))
   @Patch(':userId')
-  async updateUser(@Param('userId') userId: string) {
-    return `Update user with ID ${userId}`;
+  async updateUser(
+    @Param('userId') userId: string,
+    @Body() data: Partial<CreateUserDto>,
+  ) {
+    return this.userService.updateUser(userId, data);
   }
 
   @Delete(':userId')

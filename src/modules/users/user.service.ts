@@ -42,14 +42,14 @@ export class UserService {
     if (userExists) {
       throw new ConflictException('User already exists');
     }
-    const createdUser = this.userRepo.create(user);
-    return createdUser;
+    return this.userRepo.create(user);
   }
 
   async updateUser(
     userId: string,
     user: Partial<CreateUserDto>,
   ): Promise<UserDocument> {
+    console.log(user);
     const updatedUser = await this.userRepo.findByIdAndUpdate(userId, user);
     return updatedUser;
   }
