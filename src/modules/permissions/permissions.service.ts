@@ -15,7 +15,7 @@ export class PermissionsService {
   }
 
   async getPermissionById(id: string): Promise<PermissionDocument> {
-    return this.permissionsRepo.findOne({ id });
+    return this.permissionsRepo.findById(id);
   }
 
   async getPermissionByName(name: string): Promise<PermissionDocument> {

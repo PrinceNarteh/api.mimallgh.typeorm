@@ -1,6 +1,15 @@
-import { IsMongoId } from 'class-validator';
+import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
+import { Types } from 'mongoose';
 
-export class MongoID {
-  @IsMongoId({ message: 'Not  a validated MongoDB ID' })
-  id: string;
+@Injectable()
+export class ParseMongoIdPipe implements PipeTransform<any, Types.ObjectId> {
+  transform(value: any): Types.ObjectId {
+    const validObjectId = Types.ObjectId.isValid(value);
+
+    if (!validObjectId) {
+      throw new BadRequestException('Invalid Mongo Id');
+    }
+
+    return Types.ObjectId.createFromHexString(value);
+  }
 }

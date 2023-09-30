@@ -10,6 +10,7 @@ import {
 import { PermissionsService } from './permissions.service';
 import { PermissionDocument } from './schema/permissions.schema';
 import { CreatePermissionDto } from './dto/permissions.dto';
+import { ParseMongoIdPipe } from 'src/common/validate-id';
 
 @Controller('permissions')
 export class PermissionsController {
@@ -24,9 +25,9 @@ export class PermissionsController {
 
   @Get('/:permissionId')
   async getPermission(
-    @Param('permissionId') permissionId: string,
+    @Param('permissionId', ParseMongoIdPipe) id: string,
   ): Promise<PermissionDocument> {
-    return this.permissionsService.getPermissionById(permissionId);
+    return this.permissionsService.getPermissionById(id);
   }
 
   @Post('/:permissionId')
@@ -45,7 +46,7 @@ export class PermissionsController {
 
   @Patch('/:permissionId')
   async updatePermission(
-    @Param('permissionId') permissionId: string,
+    @Param('permissionId', ParseMongoIdPipe) permissionId: string,
     @Body() updatePermissionDto: CreatePermissionDto,
   ): Promise<PermissionDocument> {
     return this.permissionsService.updatePermission(
@@ -56,7 +57,7 @@ export class PermissionsController {
 
   @Delete('/:permissionId')
   async deletePermission(
-    @Param('permissionId') permissionId: string,
+    @Param('permissionId', ParseMongoIdPipe) permissionId: string,
   ): Promise<PermissionDocument> {
     return this.permissionsService.deletePermission(permissionId);
   }
