@@ -17,59 +17,21 @@ const nanoid = customAlphabet(
 export class ShopService {
   constructor(private readonly shopRepo: ShopRepository) {}
 
-  async shop(id: string) {
-    const returnShop = await this.shopRepo.findOne({
-      where: { id },
-      relations: {
-        products: {
-          images: true,
-          shop: true,
-        },
-      },
-    });
-
-    if (!returnShop) {
-      throw new NotFoundException('Shop Not Found');
+  async getShop(id: string): Promise<ShopDocument> {
+    const shop = await this.shopRepo.findById(id);
+    if (!shop) {
+      throw new NotFoundException('shop not found');
     }
-
-    let { products, ...result } = returnShop;
-
-    let res = chain(products)
-      .uniqBy('id')
-      .groupBy('category')
-      .map((value, key) => ({
-        category: key,
-        data: value,
-      }))
-      .sortBy('category')
-      .value();
-
-    let returnValue = {
-      ...result,
-      products: res,
-    };
-
-    return returnValue;
+    return shop;
   }
 
   async findShopByShopCode(shopCode: string): Promise<ShopDocument> {
     return this.shopRepo.findOne({ shopCode });
   }
 
-  async getAllShops(
-    filter: FilterQuery<ShopDocument>,
-  ): Promise<ShopDocument[]> {
+  async getShops(filter: FilterQuery<ShopDocument>): Promise<ShopDocument[]> {
     const shops = await this.shopRepo.find(filter);
     return shops;
-  }
-
-  async getSingleShop(id: string): Promise<ShopDocument> {
-    const shop = await this.shopRepo.findOne({ id });
-    return shop;
-  }
-
-  async shops(params: FilterQuery<ShopDocument>): Promise<ShopDocument[]> {
-    return this.shopRepo.find(params);
   }
 
   async createShop(
@@ -133,7 +95,7 @@ export class ShopService {
   }
 
   async deleteShop(id: string) {
-    const shop = await this.shop(id);
+    const shop = await this.getShop(id);
     await this.shopRepo.delete(id);
     if (shop.image) {
       deleteFile(shop.image, 'products');
@@ -145,17 +107,17 @@ export class ShopService {
   }
 
   async deleteShopImage(id: string) {
-    const shop = await this.shop(id);
+    const shop = await this.getShop(id);
     deleteFile(shop.image, 'shops');
     await this.shopRepo.findOneAndUpdate({ id }, { image: null });
-    return this.shop(id);
+    return this.getShop(id);
   }
 
   async deleteShopBanner(id: string) {
-    let shop = await this.shop(id);
+    let shop = await this.getShop(id);
     deleteFile(shop.banner, 'shops');
     await this.shopRepo.findOneAndUpdate({ id }, { banner: null });
-    shop = await this.shop(id);
+    shop = await this.getShop(id);
     return shop;
   }
 }

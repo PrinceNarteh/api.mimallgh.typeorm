@@ -64,7 +64,7 @@ export class ProductService {
     createProductDto: CreateProductDto,
     imageNames: Array<string>,
   ): Promise<ProductDocument> {
-    const shop = await this.shopService.shop(shopId);
+    const shop = await this.shopService.getShop(shopId);
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }
@@ -75,7 +75,7 @@ export class ProductService {
     createProductDto: Partial<AdminCreateProductDto>,
     imageNames: Array<string>,
   ): Promise<ProductDocument> {
-    const shop = await this.shopService.shop(createProductDto.shopId);
+    const shop = await this.shopService.getShop(createProductDto.shopId);
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }

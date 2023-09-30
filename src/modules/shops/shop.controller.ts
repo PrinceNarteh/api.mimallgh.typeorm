@@ -23,35 +23,16 @@ import { ShopService } from './shop.service';
 export class ShopController {
   constructor(private readonly shopService: ShopService) {}
 
-  @Get()
-  async getAllShops(
-    @Param() params: { [key: string]: string },
-  ): Promise<ShopDocument[]> {
-    return this.shopService.getAllShops({});
-  }
-
-  @Get('single/:shopId')
-  async getSingleShop(@Param('shopId') shopId: string) {
-    return this.shopService.getSingleShop(shopId);
+  @Get(':shopId')
+  async getShop(@Param('shopId') shopId: string) {
+    return this.shopService.getShop(shopId);
   }
 
   @Get()
   async getShops(
-    @Query('page') page?: number,
-    @Query('perPage') perPage?: number,
-    @Query('order') order?: 'asc' | 'desc',
-    @Query('search') search?: string,
+    @Query() query: { [key: string]: string },
   ): Promise<ShopDocument[]> {
-    page = page || 1;
-    perPage = perPage || 10;
-    order = order || 'asc';
-
-    return this.shopService.shops({});
-  }
-
-  @Get(':shopId')
-  async getShop(@Param('shopId') shopId: string) {
-    return this.shopService.shop(shopId);
+    return this.shopService.getShops(query);
   }
 
   @Post()

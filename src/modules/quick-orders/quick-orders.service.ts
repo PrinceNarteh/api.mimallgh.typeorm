@@ -53,7 +53,7 @@ export class QuickOrdersService {
     await this.quickOrderRepo.create(quickOrder);
 
     for (const item of items) {
-      const shop = await this.shopService.shop(item.shopId);
+      const shop = await this.shopService.getShop(item.shopId);
       const product = await this.productService.product(item.productId);
       const res = this.quickOrderItemRepo.create({
         ...item,
