@@ -15,12 +15,12 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
-import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { createFindOptions } from 'src/utils/findManyOptions';
 import { SharpFilesInterceptorPipe } from '../../shared/pipes/sharp.pipe';
 import { AdminCreateProductDto, CreateProductDto } from './dto/productDto';
 import { TransformDtoPipe } from './pipe/createProduct.pipe';
 import { ProductService } from './product.service';
+import { ShopJwtGuard } from '../shops/auth/guards/jwt-auth.guard';
 
 @Controller('products')
 export class ProductController {

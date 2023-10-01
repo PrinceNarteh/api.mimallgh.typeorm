@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ShopService } from 'src/modules/shops/shop.service';
-import { ShopDocument } from '../shops/schema/shop.schema';
+import { ShopDocument } from '../schema/shop.schema';
 
 @Injectable()
 export class ShopAuthService {

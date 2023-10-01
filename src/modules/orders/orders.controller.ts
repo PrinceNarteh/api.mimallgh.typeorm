@@ -9,11 +9,11 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { JwtGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { ShopJwtGuard } from 'src/modules/shop-auth/guards/jwt-auth.guard';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/orderDto';
 import { createFindOptions } from 'src/utils/findManyOptions';
+import { ShopJwtGuard } from '../shops/auth/guards/jwt-auth.guard';
+import { JwtGuard } from '../users/auth/guards/jwt-auth.guard';
 
 @Controller('orders')
 export class OrdersController {
