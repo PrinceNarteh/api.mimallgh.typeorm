@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -32,7 +33,11 @@ export class RolesController {
 
   @Post()
   async createRole(@Body() createRoleDto: CreateRoleDto) {
-    return this.roleService.createRole(createRoleDto);
+    try {
+      return this.roleService.createRole(createRoleDto);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Patch('/:roleId')

@@ -3,16 +3,12 @@ import { Document, Types } from 'mongoose';
 
 @Schema()
 export class Role {
-  @Prop()
+  @Prop({ required: true, unique: true })
   name: string;
 
   @Prop({
-    type: [
-      {
-        type: Types.ObjectId,
-        ref: 'Permission',
-      },
-    ],
+    type: [String],
+    required: true,
   })
   permissions: Permissions[];
 }

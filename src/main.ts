@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe, ForbiddenException } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express/interfaces';
 import { join } from 'path';
+import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
 // const whitelist = [
 //   'https://mimallgh.com',
@@ -19,6 +20,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors({
     origin: '*',
   });
