@@ -5,7 +5,7 @@ import { OrderItem } from './order-item.schema';
 @Schema()
 export class Order {
   @Prop({ name: 'order_id', required: true })
-  orderId: string;
+  order_id: string;
 
   @Prop({ required: true })
   amount: number;

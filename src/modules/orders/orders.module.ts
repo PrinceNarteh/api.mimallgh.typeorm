@@ -3,11 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from 'src/modules/users/user.module';
 import { ProductModule } from '../products/product.module';
 import { ShopModule } from '../shops/shop.module';
+import { OrderItemRepository } from './order-item.repository';
 import { OrdersController } from './orders.controller';
+import { OrderRepository } from './orders.repository';
 import { OrdersService } from './orders.service';
 import { ORDER_ITEM_MODEL, OrderItemSchema } from './schema/order-item.schema';
 import { ORDER_MODEL, OrderSchema } from './schema/order.schema';
-import { OrderRepository } from './orders.repository';
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { OrderRepository } from './orders.repository';
     ShopModule,
   ],
   controllers: [OrdersController],
-  providers: [OrdersService, OrderRepository],
+  providers: [OrdersService, OrderRepository, OrderItemRepository],
 })
 export class OrdersModule {}

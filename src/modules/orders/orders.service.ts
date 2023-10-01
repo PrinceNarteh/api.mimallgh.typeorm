@@ -9,11 +9,13 @@ import { CreateOrderDto, UpdateOrderDto } from './dto/orderDto';
 import { OrderRepository } from './orders.repository';
 import { OrderDocument } from './schema/order.schema';
 import { UserDocument } from '../users/schema/user.schema';
+import { OrderItemRepository } from './order-item.repository';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly orderRepo: OrderRepository,
+    private readonly orderItemRepo: OrderItemRepository,
     private readonly productService: ProductService,
     private readonly shopService: ShopService,
     private readonly userService: UserService,
