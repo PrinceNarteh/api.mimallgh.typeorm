@@ -20,12 +20,12 @@ export class UserController {
 
   @Get()
   async getUsers(@Query() query: { [key: string]: string }) {
-    return this.userService.find(query);
+    return this.userService.getAllUsers(query);
   }
 
   @Get(':userId')
   async getUser(@Param('userId') userId: string) {
-    return this.userService.findById(userId);
+    return this.userService.getUser(userId);
   }
 
   @UseInterceptors(FileInterceptor('profile_image'))

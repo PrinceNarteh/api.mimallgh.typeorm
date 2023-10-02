@@ -26,16 +26,17 @@ export class DeliveriesService {
     return await this.deliveryRepo.find(filter);
   }
 
-  async deliveriesByCompany(companyId: string): Promise<DeliveryDocument[]> {
+  async getDeliveriesByCompany(companyId: string): Promise<DeliveryDocument[]> {
     return await this.deliveryRepo.find({ delivery_company: companyId });
   }
 
   async createDelivery(
     createDeliveryDto: CreateDeliveryDto,
   ): Promise<DeliveryDocument> {
-    const deliveryCompany = await this.deliverCompaniesService.findById(
-      createDeliveryDto.delivery_company,
-    );
+    const deliveryCompany =
+      await this.deliverCompaniesService.getDeliveryCompany(
+        createDeliveryDto.delivery_company,
+      );
     const delivery = this.deliveryRepo.create({
       ...createDeliveryDto,
       deliveryCompany: deliveryCompany._id,

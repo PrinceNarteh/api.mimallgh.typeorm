@@ -34,7 +34,7 @@ export class DeliveriesController {
   async getDeliveriesByCompany(
     @Body() { company_id }: GetDeliveriesByCompanyDto,
   ) {
-    return this.deliveriesService.deliveriesByCompany(company_id);
+    return this.deliveriesService.getDeliveriesByCompany(company_id);
   }
 
   @Post()

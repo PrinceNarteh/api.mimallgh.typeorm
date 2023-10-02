@@ -12,17 +12,19 @@ import { UserRepository } from './users.repository';
 export class UserService {
   constructor(private readonly userRepo: UserRepository) {}
 
-  async find(filter: FilterQuery<UserDocument>): Promise<UserDocument[]> {
+  async getAllUsers(
+    filter: FilterQuery<UserDocument>,
+  ): Promise<UserDocument[]> {
     const users = await this.userRepo.find(filter);
     return users;
   }
 
-  async findById(id: string): Promise<UserDocument> {
+  async getUser(id: string): Promise<UserDocument> {
     const user = await this.userRepo.findById(id);
     return user;
   }
 
-  async findOneByEmailOrPhoneNumber(emailOrPhoneNumber: string) {
+  async getUserByEmailOrPhoneNumber(emailOrPhoneNumber: string) {
     const user = await this.userRepo.findOne({
       where: [
         { email: emailOrPhoneNumber },

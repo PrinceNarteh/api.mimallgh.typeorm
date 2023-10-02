@@ -22,13 +22,13 @@ export class ProductService {
     private readonly shopService: ShopService,
   ) {}
 
-  async getProducts(
+  async getAllProducts(
     filter: FilterQuery<ProductDocument>,
   ): Promise<ProductDocument[]> {
     return this.productRepo.find({});
   }
 
-  async product(id: string): Promise<ProductDocument> {
+  async getProduct(id: string): Promise<ProductDocument> {
     const product = await this.productRepo.findById(id);
     if (!product) {
       throw new NotFoundException('Product not found');
@@ -46,7 +46,7 @@ export class ProductService {
     return this.productRepo.find({});
   }
 
-  async productsByShop(
+  async getProductsByShop(
     shopId: string,
     params: FilterQuery<ProductDocument>,
   ): Promise<ProductDocument[]> {
@@ -153,6 +153,6 @@ export class ProductService {
 
     if (img) deleteFile('img', 'products');
 
-    return await this.product(productId);
+    return await this.getProduct(productId);
   }
 }

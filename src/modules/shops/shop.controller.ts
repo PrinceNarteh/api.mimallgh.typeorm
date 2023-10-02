@@ -32,7 +32,7 @@ export class ShopController {
   async getShops(
     @Query() query: { [key: string]: string },
   ): Promise<ShopDocument[]> {
-    return this.shopService.getShops(query);
+    return this.shopService.getAllShops(query);
   }
 
   @Post()

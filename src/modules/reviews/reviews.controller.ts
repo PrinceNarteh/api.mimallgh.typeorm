@@ -18,6 +18,11 @@ import { JwtGuard } from '../users/auth/guards/jwt-auth.guard';
 export class ReviewsController {
   constructor(private readonly reviewService: ReviewsService) {}
 
+  @Get()
+  async getAllReviews() {
+    return await this.reviewService.getAllReviews();
+  }
+
   @Get('reviewId')
   async getReview(@Param('reviewId') reviewId: string) {
     return this.reviewService.getReview(reviewId);

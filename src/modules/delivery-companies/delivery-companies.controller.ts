@@ -25,14 +25,13 @@ export class DeliveryCompaniesController {
 
   @Get()
   async findAll() {
-    return this.deliveryCompaniesService.findAll();
+    return this.deliveryCompaniesService.getAllDeliveryCompanies();
   }
 
   @Get(':deliveryCompanyId')
   async findOne(@Param('deliveryCompanyId') deliveryCompanyId: string) {
-    const deliveryCompany = await this.deliveryCompaniesService.findById(
-      deliveryCompanyId,
-    );
+    const deliveryCompany =
+      await this.deliveryCompaniesService.getDeliveryCompany(deliveryCompanyId);
     if (!deliveryCompany) {
       throw new NotFoundException('Deliveries not found');
     }
@@ -43,9 +42,10 @@ export class DeliveryCompaniesController {
   async findOneBySlug(
     @Param('deliveryCompanySlug') deliveryCompanySlug: string,
   ) {
-    const deliveryCompany = await this.deliveryCompaniesService.findOneBySlug(
-      deliveryCompanySlug,
-    );
+    const deliveryCompany =
+      await this.deliveryCompaniesService.getDeliveryCompanyBySlug(
+        deliveryCompanySlug,
+      );
     if (!deliveryCompany) {
       throw new NotFoundException('Deliveries not found');
     }
@@ -59,7 +59,10 @@ export class DeliveryCompaniesController {
     @UploadedFiles(new SharpFilesInterceptorPipe('slides'))
     imageNames: Array<string>,
   ) {
-    return this.deliveryCompaniesService.create(createProductDto, imageNames);
+    return this.deliveryCompaniesService.createDeliveryCompany(
+      createProductDto,
+      imageNames,
+    );
   }
 
   @Patch(':deliveryCompanyId')
@@ -70,7 +73,7 @@ export class DeliveryCompaniesController {
     @UploadedFiles(new SharpFilesInterceptorPipe('slides'))
     imageNames?: Array<string>,
   ) {
-    return this.deliveryCompaniesService.update(
+    return this.deliveryCompaniesService.updateDeliveryCompany(
       deliveryCompanyId,
       updateDeliveryCompanyDto,
       imageNames,
@@ -81,7 +84,9 @@ export class DeliveryCompaniesController {
   async deleteDeliveryCompany(
     @Param('deliveryCompanyId') deliveryCompanyId: string,
   ) {
-    return this.deliveryCompaniesService.delete(deliveryCompanyId);
+    return this.deliveryCompaniesService.deleteDeliveryCompany(
+      deliveryCompanyId,
+    );
   }
 
   @Get('/image/:imageName')

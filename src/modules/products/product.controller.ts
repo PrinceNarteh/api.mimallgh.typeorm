@@ -27,8 +27,8 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  async getProducts(@Query() query?: { [key: string]: string }) {
-    return this.productService.getProducts(query);
+  async getAllProducts(@Query() query?: { [key: string]: string }) {
+    return this.productService.getAllProducts(query);
   }
 
   @Get('category')
@@ -62,12 +62,12 @@ export class ProductController {
       perPage,
       search,
     });
-    return this.productService.productsByShop(shopId, findOptions);
+    return this.productService.getProductsByShop(shopId, findOptions);
   }
 
   @Get(':productId')
   async getProduct(@Param('productId') productId: string) {
-    return this.productService.product(productId);
+    return this.productService.getProduct(productId);
   }
 
   @Post()

@@ -25,11 +25,13 @@ export class ShopService {
     return shop;
   }
 
-  async findShopByShopCode(shopCode: string): Promise<ShopDocument> {
+  async getShopByShopCode(shopCode: string): Promise<ShopDocument> {
     return this.shopRepo.findOne({ shopCode });
   }
 
-  async getShops(filter: FilterQuery<ShopDocument>): Promise<ShopDocument[]> {
+  async getAllShops(
+    filter: FilterQuery<ShopDocument>,
+  ): Promise<ShopDocument[]> {
     const shops = await this.shopRepo.find(filter);
     return shops;
   }

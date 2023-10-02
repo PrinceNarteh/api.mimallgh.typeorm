@@ -14,19 +14,23 @@ export class DeliveryCompaniesService {
     private readonly deliveryCompanyRepo: DeliveryCompanyRepository,
   ) {}
 
-  async findAll(): Promise<DeliveryCompanyDocument[]> {
+  async getAllDeliveryCompanies(): Promise<DeliveryCompanyDocument[]> {
     return this.deliveryCompanyRepo.find({});
   }
 
-  async findById(id: string): Promise<DeliveryCompanyDocument | null> {
+  async getDeliveryCompany(
+    id: string,
+  ): Promise<DeliveryCompanyDocument | null> {
     return this.deliveryCompanyRepo.findById(id);
   }
 
-  async findOneBySlug(slug: string): Promise<DeliveryCompanyDocument | null> {
+  async getDeliveryCompanyBySlug(
+    slug: string,
+  ): Promise<DeliveryCompanyDocument | null> {
     return this.deliveryCompanyRepo.findOneBySlug(slug);
   }
 
-  async create(
+  async createDeliveryCompany(
     createDeliveryCompanyDto: CreateDeliveryCompanyDto,
     imageNames: Array<string>,
   ): Promise<DeliveryCompanyDocument> {
@@ -39,7 +43,7 @@ export class DeliveryCompaniesService {
     return this.deliveryCompanyRepo.create(createDeliveryCompanyDto);
   }
 
-  async update(
+  async updateDeliveryCompany(
     deliveryCompanyId: string,
     updateDeliveryCompanyDto: Partial<CreateDeliveryCompanyDto>,
     imageNames?: Array<string>,
@@ -59,7 +63,7 @@ export class DeliveryCompaniesService {
     });
   }
 
-  async delete(
+  async deleteDeliveryCompany(
     deliveryCompanyId: string,
   ): Promise<DeliveryCompanyDocument | null> {
     const deliveryCompany = await this.deliveryCompanyRepo.findById(
@@ -84,6 +88,6 @@ export class DeliveryCompaniesService {
   }) {
     deleteFile(imageName, 'slides');
 
-    return await this.findById(deliveryCompanyId);
+    return await this.getDeliveryCompany(deliveryCompanyId);
   }
 }

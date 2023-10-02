@@ -20,14 +20,14 @@ export class PermissionsController {
   async getPermissions(
     @Param() param: { [key: string]: string },
   ): Promise<PermissionDocument[]> {
-    return this.permissionsService.getPermissions(param);
+    return this.permissionsService.getAllPermissions(param);
   }
 
   @Get('/:permissionId')
   async getPermission(
     @Param('permissionId', ParseMongoIdPipe) id: string,
   ): Promise<PermissionDocument> {
-    return this.permissionsService.getPermissionById(id);
+    return this.permissionsService.getPermission(id);
   }
 
   @Post('/:permissionId')

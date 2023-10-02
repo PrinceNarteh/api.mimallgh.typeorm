@@ -37,22 +37,24 @@ export class RolesService {
     private readonly permissionsService: PermissionsService,
   ) {}
 
-  async getRoles(filter: FilterQuery<RoleDocument>): Promise<RoleDocument[]> {
+  async getAllRoles(
+    filter: FilterQuery<RoleDocument>,
+  ): Promise<RoleDocument[]> {
     return this.roleRepo.find(filter);
   }
   async getRole(role: FilterQuery<RoleDocument>): Promise<RoleDocument> {
     return this.roleRepo.findOne(role);
   }
 
-  async findRoleById(id: string): Promise<RoleDocument> {
+  async getRoleById(id: string): Promise<RoleDocument> {
     const role = await this.roleRepo.findById(id);
     return role;
   }
 
   async createRole(createRoleDto: CreateRoleDto): Promise<RoleDocument> {
-    const permissions = (await this.permissionsService.getPermissions({})).map(
-      (permission) => String(permission.name),
-    );
+    const permissions = (
+      await this.permissionsService.getAllPermissions({})
+    ).map((permission) => String(permission.name));
 
     validatePermissions({
       allowedPermissions: permissions,

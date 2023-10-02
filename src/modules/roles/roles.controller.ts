@@ -21,14 +21,14 @@ export class RolesController {
   async getRoles(
     @Param() param: { [key: string]: string },
   ): Promise<RoleDocument[]> {
-    return this.roleService.getRoles(param);
+    return this.roleService.getAllRoles(param);
   }
 
   @Get('/:roleId')
   async getRole(
     @Param('roleId', ParseMongoIdPipe) roleId: string,
   ): Promise<RoleDocument> {
-    return this.roleService.findRoleById(roleId);
+    return this.roleService.getRoleById(roleId);
   }
 
   @Post()

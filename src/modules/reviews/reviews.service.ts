@@ -17,6 +17,10 @@ export class ReviewsService {
     private readonly userService: UserService,
   ) {}
 
+  async getAllReviews(): Promise<ReviewDocument[]> {
+    return this.reviewRepo.find({});
+  }
+
   async getReview(id: string): Promise<ReviewDocument | null> {
     const review = await this.reviewRepo.findById(id);
 
@@ -36,8 +40,8 @@ export class ReviewsService {
     productId: string;
     createReviewDto: CreateReviewDto;
   }) {
-    const user = await this.userService.findById(userId);
-    const product = await this.productService.product(productId);
+    const user = await this.userService.getUser(userId);
+    const product = await this.productService.getProduct(productId);
 
     const review = this.reviewRepo.create({
       ...createReviewDto,
@@ -59,8 +63,8 @@ export class ReviewsService {
     productId: string;
     updateReviewDto: Partial<CreateReviewDto>;
   }) {
-    const user = await this.userService.findById(userId);
-    await this.productService.product(productId);
+    const user = await this.userService.getUser(userId);
+    await this.productService.getProduct(productId);
     const review = await this.getReview(reviewId);
 
     if (user.id !== review.user.email) {
@@ -82,8 +86,8 @@ export class ReviewsService {
     productId: string;
     updateReviewDto: Partial<CreateReviewDto>;
   }) {
-    const user = await this.userService.findById(userId);
-    await this.productService.product(productId);
+    const user = await this.userService.getUser(userId);
+    await this.productService.getProduct(productId);
     const review = await this.reviewRepo.findById(reviewId);
 
     if (user.id !== review.user) {

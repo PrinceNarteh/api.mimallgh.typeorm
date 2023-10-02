@@ -8,13 +8,13 @@ import { CreatePermissionDto } from './dto/permissions.dto';
 export class PermissionsService {
   constructor(private readonly permissionsRepo: PermissionRepository) {}
 
-  async getPermissions(
+  async getAllPermissions(
     filter: FilterQuery<PermissionDocument>,
   ): Promise<PermissionDocument[]> {
     return this.permissionsRepo.find(filter);
   }
 
-  async getPermissionById(id: string): Promise<PermissionDocument> {
+  async getPermission(id: string): Promise<PermissionDocument> {
     return this.permissionsRepo.findById(id);
   }
 

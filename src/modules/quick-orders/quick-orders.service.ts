@@ -32,9 +32,10 @@ export class QuickOrdersService {
   async createQuickOrder(
     order: CreateQuickOrderDto,
   ): Promise<QuickOrderDocument> {
-    const deliveryCompany = await this.deliveryCompaniesService.findById(
-      order.deliveryCompany,
-    );
+    const deliveryCompany =
+      await this.deliveryCompaniesService.getDeliveryCompany(
+        order.deliveryCompany,
+      );
     if (!deliveryCompany) {
       throw new NotFoundException('Delivery company not found');
     }
@@ -54,7 +55,7 @@ export class QuickOrdersService {
 
     for (const item of items) {
       const shop = await this.shopService.getShop(item.shopId);
-      const product = await this.productService.product(item.productId);
+      const product = await this.productService.getProduct(item.productId);
       const res = this.quickOrderItemRepo.create({
         ...item,
         shop,
