@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DeliveryCompaniesModule } from '../delivery-companies/delivery-companies.module';
 import { ProductModule } from '../products/product.module';
-import { ShopModule } from '../shops/shop.module';
+import { ShopModule } from '../shops/shops.module';
 import { QuickOrdersController } from './quick-orders.controller';
 import { QuickOrdersService } from './quick-orders.service';
 import {

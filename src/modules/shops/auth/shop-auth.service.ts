@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { ShopService } from 'src/modules/shops/shop.service';
+import { ShopService } from 'src/modules/shops/shops.service';
 import { ShopDocument } from '../schema/shop.schema';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class ShopAuthService {
   ) {}
 
   async validateShop(shopCode: string, password: string) {
-    const shop = await this.shopService.findShopByShopCode(shopCode);
+    const shop = await this.shopService.getShopByShopCode(shopCode);
     if (shop && (await bcrypt.compare(password, shop.password))) {
       const { password, ...result } = shop;
       return result;

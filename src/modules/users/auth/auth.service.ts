@@ -12,7 +12,7 @@ export class AuthService {
   ) {}
 
   async validateUser(emailOrPhoneNumber: string, password: string) {
-    const user = await this.userService.findOneByEmailOrPhoneNumber(
+    const user = await this.userService.getUserByEmailOrPhoneNumber(
       emailOrPhoneNumber,
     );
     if (user && (await bcrypt.compare(password, user.password))) {
@@ -23,7 +23,7 @@ export class AuthService {
   }
 
   async validateAdmin(emailOrPhoneNumber: string, password: string) {
-    const user = await this.userService.findOneByEmailOrPhoneNumber(
+    const user = await this.userService.getUserByEmailOrPhoneNumber(
       emailOrPhoneNumber,
     );
     if (

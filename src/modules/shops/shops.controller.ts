@@ -17,7 +17,7 @@ import { join } from 'path';
 import { SharpUpdateFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { CreateShopDto } from './dto/shopDto';
 import { ShopDocument } from './schema/shop.schema';
-import { ShopService } from './shop.service';
+import { ShopService } from './shops.service';
 
 @Controller('shops')
 export class ShopController {

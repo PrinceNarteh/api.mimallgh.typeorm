@@ -10,12 +10,13 @@ export class ShopLocalStrategy extends PassportStrategy(
 ) {
   constructor(private shopService: ShopAuthService) {
     super({
-      usernameField: 'shopCode',
+      usernameField: 'shop_code',
     });
   }
 
-  async validate(shopCode: string, password: string) {
-    const shop = await this.shopService.validateShop(shopCode, password);
+  async validate(shop_code: string, password: string) {
+    console.log({ shop_code, password });
+    const shop = await this.shopService.validateShop(shop_code, password);
     if (!shop) {
       throw new UnauthorizedException('Invalid Credentials');
     }

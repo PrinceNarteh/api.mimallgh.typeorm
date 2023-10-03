@@ -4,12 +4,12 @@ import { chain } from 'lodash';
 import { FilterQuery } from 'mongoose';
 import { UserService } from 'src/modules/users/user.service';
 import { ProductService } from '../products/product.service';
-import { ShopService } from '../shops/shop.service';
+import { ShopService } from '../shops/shops.service';
+import { UserDocument } from '../users/schema/user.schema';
 import { CreateOrderDto, UpdateOrderDto } from './dto/orderDto';
+import { OrderItemRepository } from './order-item.repository';
 import { OrderRepository } from './orders.repository';
 import { OrderDocument } from './schema/order.schema';
-import { UserDocument } from '../users/schema/user.schema';
-import { OrderItemRepository } from './order-item.repository';
 
 @Injectable()
 export class OrdersService {
@@ -186,13 +186,13 @@ export class OrdersService {
   }
 
   async createOrder(user: UserDocument, createOrderDto: CreateOrderDto) {
-    const userExists = await this.userService.findById(user.id);
+    const userExists = await this.userService.getUser(user.id);
 
     const { items, ...result } = createOrderDto;
     let orderItems = [];
 
     for (let item of items) {
-      let product = await this.productService.product(item.productId);
+      let product = await this.productService.getProduct(item.productId);
       let shop = await this.shopService.getShop(item.shopId);
       const res = this.orderRepo.create({
         ...item,
@@ -218,7 +218,7 @@ export class OrdersService {
     orderId: string,
     updateOrderDto: UpdateOrderDto,
   ) {
-    let user = await this.userService.findById(userId);
+    let user = await this.userService.getUser(userId);
     if (!user) {
       throw new NotFoundException('User Not Found');
     }

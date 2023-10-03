@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DeliveryCompaniesService } from '../delivery-companies/delivery-companies.service';
 import { ProductService } from '../products/product.service';
-import { ShopService } from '../shops/shop.service';
+import { ShopService } from '../shops/shops.service';
 import { CreateQuickOrderDto } from './dto/quickOrderDto';
 import { QuickOrderItemRepository } from './quick-order-item.repository';
 import { QuickOrderRepository } from './quick-orders.repository';

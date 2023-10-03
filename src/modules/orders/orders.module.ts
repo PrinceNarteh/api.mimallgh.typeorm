@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from 'src/modules/users/user.module';
 import { ProductModule } from '../products/product.module';
-import { ShopModule } from '../shops/shop.module';
+import { ShopModule } from '../shops/shops.module';
 import { OrderItemRepository } from './order-item.repository';
 import { OrdersController } from './orders.controller';
 import { OrderRepository } from './orders.repository';

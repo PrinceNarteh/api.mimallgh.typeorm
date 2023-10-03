@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
-import { ShopService } from 'src/modules/shops/shop.service';
+import { ShopService } from 'src/modules/shops/shops.service';
 import { deleteFile } from 'src/utils/deleteFile';
 import { ShopDocument } from '../shops/schema/shop.schema';
 import {

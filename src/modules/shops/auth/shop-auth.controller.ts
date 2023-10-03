@@ -9,13 +9,13 @@ import {
 } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateShopDto } from 'src/modules/shops/dto/shopDto';
-import { ShopService } from 'src/modules/shops/shop.service';
+import { ShopService } from 'src/modules/shops/shops.service';
 import { SharpFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { ShopLocalAuthGuard } from './guards/local-auth.guard';
 import { ShopRefreshJwtGuard } from './guards/refresh-jwt-auth.guard';
 import { ShopAuthService } from './shop-auth.service';
 
-@Controller('shop-auth')
+@Controller('shops')
 export class ShopAuthController {
   constructor(
     private shopAuthService: ShopAuthService,
