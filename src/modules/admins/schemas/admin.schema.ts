@@ -1,11 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import { Document, Types } from 'mongoose';
-import { Order } from 'src/modules/orders/schema/order.schema';
-import { Review } from 'src/modules/reviews/schema/review.schema';
+import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class User {
+export class Admin {
   @Prop({ required: true })
   first_name: string;
 
@@ -52,29 +50,13 @@ export class User {
 
   @Prop()
   role: string;
-
-  @Prop([
-    {
-      type: Types.ObjectId,
-      ref: 'Order',
-    },
-  ])
-  orders: Order[];
-
-  @Prop([
-    {
-      type: Types.ObjectId,
-      ref: 'Review',
-    },
-  ])
-  reviews: Review[];
 }
 
-export const USER_MODEL = User.name;
-export const UserSchema = SchemaFactory.createForClass(User);
-export type UserDocument = User & Document;
+export const ADMIN_MODEL = Admin.name;
+export const AdminSchema = SchemaFactory.createForClass(Admin);
+export type AdminDocument = Admin & Document;
 
-UserSchema.pre('save', async function (next) {
+AdminSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12);
   }

@@ -49,7 +49,7 @@ export class CreateAdminDto {
   @IsOptional()
   card_number?: string;
 
-  @IsBoolean()
+  @IsBoolean({})
   @IsOptional()
   active: boolean;
 
