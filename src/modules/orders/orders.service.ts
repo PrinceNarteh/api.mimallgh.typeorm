@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { format } from 'date-fns';
 import { chain } from 'lodash';
 import { FilterQuery } from 'mongoose';
-import { UserService } from 'src/modules/users/user.service';
+import { UserService } from 'src/modules/users/users.service';
 import { ProductService } from '../products/product.service';
 import { ShopService } from '../shops/shops.service';
 import { UserDocument } from '../users/schema/user.schema';

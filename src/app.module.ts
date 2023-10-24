@@ -10,10 +10,11 @@ import { ProductModule } from './modules/products/product.module';
 import { QuickOrdersModule } from './modules/quick-orders/quick-orders.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { ShopModule } from './modules/shops/shops.module';
-import { UserModule } from './modules/users/user.module';
+import { UserModule } from './modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { AdminsModule } from './modules/admins/admins.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AuthModule } from './modules/auth/auth.module';
     QuickOrdersModule,
     RolesModule,
     PermissionsModule,
+    AdminsModule,
   ],
   providers: [],
 })

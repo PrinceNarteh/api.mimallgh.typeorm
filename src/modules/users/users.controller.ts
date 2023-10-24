@@ -9,7 +9,7 @@ import {
   Delete,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService } from './users.service';
 import { CreateUserDto } from './dto/userDto';
 import { UserDocument } from './schema/user.schema';
 import { FileInterceptor } from '@nestjs/platform-express';

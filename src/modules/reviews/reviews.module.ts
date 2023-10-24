@@ -5,7 +5,7 @@ import { ReviewsController } from './reviews.controller';
 import { ReviewsService } from './reviews.service';
 import { REVIEW_MODEL, ReviewSchema } from './schema/review.schema';
 import { ReviewRepository } from './reviews.repository';
-import { UserModule } from '../users/user.module';
+import { UserModule } from '../users/users.module';
 
 @Module({
   imports: [

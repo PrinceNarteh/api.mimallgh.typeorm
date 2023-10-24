@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ProductService } from '../products/product.service';
-import { UserService } from '../users/user.service';
+import { UserService } from '../users/users.service';
 import { CreateReviewDto } from './dto/reviewDto';
 import { ReviewRepository } from './reviews.repository';
 import { ReviewDocument } from './schema/review.schema';
