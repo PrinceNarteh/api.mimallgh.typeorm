@@ -8,8 +8,8 @@ import { ADMIN_MODEL, AdminDocument } from './schemas/admin.schema';
 export class AdminRepository extends AbstractRepository<AdminDocument> {
   constructor(
     @InjectModel(ADMIN_MODEL)
-    private userModel: Model<AdminDocument>,
+    private adminModel: Model<AdminDocument>,
   ) {
-    super(userModel);
+    super(adminModel);
   }
 }

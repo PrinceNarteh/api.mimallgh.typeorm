@@ -10,6 +10,7 @@ import { REQUEST } from '@nestjs/core';
 import { plainToInstance } from 'class-transformer';
 import { ValidationError, validate } from 'class-validator';
 import { Request } from 'express';
+import { CreateAdminDto } from 'src/modules/admins/dto/admin.dto';
 import { CreateDeliveryCompanyDto } from 'src/modules/delivery-companies/dto/delivery-company.dto';
 import { CreateShopDto } from 'src/modules/shops/dto/shopDto';
 import { CreateUserDto } from 'src/modules/users/dto/userDto';
@@ -31,6 +32,8 @@ export class RegisterBodyValidationPipe implements PipeTransform {
 
     if (type === 'body') {
       if (entity === AuthRoutes.Admins) {
+        const adminDto = plainToInstance(CreateAdminDto, value);
+        classAValidationErrors = await validate(adminDto);
       } else if (entity === AuthRoutes.DeliveryCompanies) {
         const deliveryCompanyDto = plainToInstance(
           CreateDeliveryCompanyDto,

@@ -3,18 +3,18 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { AdminsModule } from './modules/admins/admins.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { DeliveriesModule } from './modules/deliveries/deliveries.module';
 import { DeliveryCompaniesModule } from './modules/delivery-companies/delivery-companies.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { PermissionsModule } from './modules/permissions/permissions.module';
 import { ProductModule } from './modules/products/product.module';
 import { QuickOrdersModule } from './modules/quick-orders/quick-orders.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
+import { RolesModule } from './modules/roles/roles.module';
 import { ShopModule } from './modules/shops/shops.module';
 import { UserModule } from './modules/users/users.module';
-import { RolesModule } from './modules/roles/roles.module';
-import { PermissionsModule } from './modules/permissions/permissions.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { AdminsModule } from './modules/admins/admins.module';
 
 @Module({
   imports: [
@@ -27,6 +27,7 @@ import { AdminsModule } from './modules/admins/admins.module';
       }),
     }),
     AuthModule,
+    AdminsModule,
     UserModule,
     ProductModule,
     ShopModule,
@@ -37,7 +38,6 @@ import { AdminsModule } from './modules/admins/admins.module';
     QuickOrdersModule,
     RolesModule,
     PermissionsModule,
-    AdminsModule,
   ],
   providers: [],
 })
