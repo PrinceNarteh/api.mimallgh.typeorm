@@ -1,5 +1,6 @@
 import { Controller, Param, Post, Body, UseInterceptors } from '@nestjs/common';
-import { RegisterBodyPipe } from './interceptors/register.interceptor';
+import { RegisterBodyValidationPipe } from './pipes/register.pipe';
+import { RegisterInterceptor } from './interceptors/register.interceptor';
 
 const getDto = (entity: string) => {
   if (entity === 'user') {
@@ -9,11 +10,11 @@ const getDto = (entity: string) => {
   }
 };
 
+@UseInterceptors(RegisterInterceptor)
 @Controller('auth')
 export class AuthController {
   @Post(':entity/register')
-  register(@Body(RegisterBodyPipe) body: any) {
-    console.log({ body });
+  register(@Body(RegisterBodyValidationPipe) body: any) {
     return 'Registered';
   }
 }
