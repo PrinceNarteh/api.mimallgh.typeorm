@@ -13,7 +13,7 @@ import { ShopModule } from './modules/shops/shops.module';
 import { UserModule } from './modules/users/user.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
-import { AuthModule } from './modules/users/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
