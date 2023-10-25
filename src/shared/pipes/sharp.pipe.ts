@@ -2,11 +2,19 @@ import { Injectable, PipeTransform } from '@nestjs/common';
 import { createId } from '@paralleldrive/cuid2';
 import * as sharp from 'sharp';
 import { join } from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { customAlphabet } from 'nanoid/async';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
 );
+
+const checkForFolder = (folderName: string) => {
+  if (!fs.existsSync(`/uploads/${folderName}`)) {
+    fs.mkdirSync(path.join('uploads', folderName), { recursive: true });
+  }
+};
 
 @Injectable()
 export class SharpFileInterceptorPipe
@@ -18,6 +26,7 @@ export class SharpFileInterceptorPipe
   }
 
   async transform(image: Express.Multer.File): Promise<string> {
+    checkForFolder(this._directory);
     const genName = createId();
     const filename = `${genName}.webp`;
 
@@ -26,7 +35,7 @@ export class SharpFileInterceptorPipe
       .webp({ effort: 3 })
       .toFile(join('uploads', this._directory, filename));
 
-    return filename;
+    return filename; 
   }
 }
 

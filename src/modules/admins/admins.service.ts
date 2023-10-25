@@ -2,61 +2,70 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
 import { AdminRepository } from './admins.repository';
 import { CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class AdminsService {
-  constructor(private readonly adminRepo: AdminRepository) {}
+  constructor(
+    private readonly adminRepo: AdminRepository,
+    private readonly rolesService: RolesService,
+  ) {}
 
   async getAllAdmins(
     filter: FilterQuery<AdminDocument>,
   ): Promise<AdminDocument[]> {
-    const users = await this.adminRepo.find(filter);
-    return users;
+    return await this.adminRepo.find(filter);
   }
 
   async getAdmin(id: string): Promise<AdminDocument> {
-    const user = await this.adminRepo.findById(id);
-    return user;
+    return await this.adminRepo.findById(id);
   }
 
-  async getUserByEmailOrPhoneNumber(emailOrPhoneNumber: string) {
-    const user = await this.adminRepo.findOne({
+  async getAdminByEmailOrPhoneNumber(emailOrPhoneNumber: string) {
+    const admin = await this.adminRepo.findOne({
       where: [
         { email: emailOrPhoneNumber },
         { phoneNumber: emailOrPhoneNumber },
       ],
     });
 
-    if (!user) {
-      throw new NotFoundException('User not found');
+    if (!admin) {
+      throw new NotFoundException('admin not found');
     }
-    return user;
+    return admin;
   }
 
-  async createUser(user: CreateAdminDto): Promise<AdminDocument> {
-    const userExists = await this.adminRepo.findOne({ email: user.email });
+  async createAdmin(createAdminDto: CreateAdminDto): Promise<AdminDocument> {
+    const adminExists = await this.adminRepo.findOne({
+      email: createAdminDto.email,
+    });
 
-    if (userExists) {
-      throw new ConflictException('User already exists');
+    if (adminExists) {
+      throw new ConflictException('admin already exists');
     }
-    return this.adminRepo.create(user);
+
+    const role = await this.rolesService.getRoleById(createAdminDto.role);
+    if (!role) {
+      throw new BadRequestException('role not found');
+    }
+
+    return this.adminRepo.create(createAdminDto);
   }
 
-  async updateUser(
-    userId: string,
-    user: Partial<CreateAdminDto>,
+  async updateAdmin(
+    adminId: string,
+    admin: Partial<CreateAdminDto>,
   ): Promise<AdminDocument> {
-    const updatedUser = await this.adminRepo.findByIdAndUpdate(userId, user);
-    return updatedUser;
+    return await this.adminRepo.findByIdAndUpdate(adminId, admin);
   }
 
-  async deleteUser(userId: string): Promise<AdminDocument> {
-    const deletedUser = await this.adminRepo.delete(userId);
-    return deletedUser;
+  async deleteAdmin(adminId: string): Promise<AdminDocument> {
+    return await this.adminRepo.delete(adminId);
   }
 }

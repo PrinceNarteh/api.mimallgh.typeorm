@@ -13,5 +13,6 @@ import { PermissionsModule } from '../permissions/permissions.module';
   ],
   controllers: [RolesController],
   providers: [RolesService, RoleRepository],
+  exports: [RolesService],
 })
 export class RolesModule {}

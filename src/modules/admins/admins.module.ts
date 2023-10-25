@@ -4,6 +4,7 @@ import { AdminsService } from './admins.service';
 import { AdminRepository } from './admins.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ADMIN_MODEL, AdminSchema } from './schemas/admin.schema';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ADMIN_MODEL, AdminSchema } from './schemas/admin.schema';
         schema: AdminSchema,
       },
     ]),
+    RolesModule,
   ],
   controllers: [AdminsController],
   providers: [AdminsService, AdminRepository],

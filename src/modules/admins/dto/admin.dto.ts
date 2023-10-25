@@ -57,7 +57,6 @@ export class CreateAdminDto {
   profile_image?: string;
 
   @IsString()
-  @IsOptional()
   role: string;
 }
 
