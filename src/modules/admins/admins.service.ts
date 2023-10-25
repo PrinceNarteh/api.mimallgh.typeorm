@@ -9,6 +9,7 @@ import { AdminRepository } from './admins.repository';
 import { CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
 import { RolesService } from '../roles/roles.service';
+import { deleteFile } from 'src/utils/deleteFile';
 
 @Injectable()
 export class AdminsService {
@@ -52,6 +53,7 @@ export class AdminsService {
 
     const role = await this.rolesService.getRoleById(createAdminDto.role);
     if (!role) {
+      deleteFile(createAdminDto.profile_image, 'admins');
       throw new BadRequestException('role not found');
     }
 
@@ -60,9 +62,26 @@ export class AdminsService {
 
   async updateAdmin(
     adminId: string,
-    admin: Partial<CreateAdminDto>,
+    updateAdminDto: Partial<CreateAdminDto>,
+    profile_image: string,
   ): Promise<AdminDocument> {
-    return await this.adminRepo.findByIdAndUpdate(adminId, admin);
+    const admin = await this.getAdmin(adminId);
+    if (!admin && profile_image) {
+      deleteFile(profile_image, 'admins');
+    }
+
+    if (!admin) {
+      throw new NotFoundException('admin not found');
+    }
+
+    if (updateAdminDto.profile_image && profile_image) {
+      deleteFile(updateAdminDto.profile_image, 'admins');
+    }
+
+    return await this.adminRepo.findByIdAndUpdate(adminId, {
+      ...updateAdminDto,
+      ...(profile_image && { profile_image }),
+    });
   }
 
   async deleteAdmin(adminId: string): Promise<AdminDocument> {

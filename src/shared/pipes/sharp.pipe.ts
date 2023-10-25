@@ -26,6 +26,8 @@ export class SharpFileInterceptorPipe
   }
 
   async transform(image: Express.Multer.File): Promise<string> {
+    if (!image) return;
+
     checkForFolder(this._directory);
     const genName = createId();
     const filename = `${genName}.webp`;
@@ -35,7 +37,7 @@ export class SharpFileInterceptorPipe
       .webp({ effort: 3 })
       .toFile(join('uploads', this._directory, filename));
 
-    return filename; 
+    return filename;
   }
 }
 

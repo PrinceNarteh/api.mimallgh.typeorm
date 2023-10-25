@@ -1,18 +1,20 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   Param,
-  Post,
-  Body,
   Patch,
+  Post,
   Query,
-  Delete,
+  UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './users.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { CreateUserDto } from './dto/userDto';
 import { UserDocument } from './schema/user.schema';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { UserService } from './users.service';
 
 @Controller('users')
 export class UserController {
@@ -32,17 +34,24 @@ export class UserController {
   @Post('/register')
   async createUser(
     @Body() createUserDto: CreateUserDto,
+    @UploadedFile(new SharpFileInterceptorPipe('profile_image'))
+    profile_image?: string,
   ): Promise<UserDocument> {
-    return this.userService.createUser(createUserDto);
+    return this.userService.createUser({
+      ...createUserDto,
+      profile_image,
+    });
   }
 
   @UseInterceptors(FileInterceptor('profile_image'))
   @Patch(':userId')
   async updateUser(
     @Param('userId') userId: string,
-    @Body() data: Partial<CreateUserDto>,
+    @Body() updateUserDto: Partial<CreateUserDto>,
+    @UploadedFile(new SharpFileInterceptorPipe('profile_image'))
+    profile_image?: string,
   ) {
-    return this.userService.updateUser(userId, data);
+    return this.userService.updateUser(userId, updateUserDto, profile_image);
   }
 
   @Delete(':userId')

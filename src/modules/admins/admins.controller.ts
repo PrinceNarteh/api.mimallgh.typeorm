@@ -1,18 +1,19 @@
 import {
+  Body,
   Controller,
   Get,
-  Body,
   Param,
+  Patch,
   Post,
-  UseInterceptors,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { AdminDocument } from './schemas/admin.schema';
-import { AdminsService } from './admins.service';
-import { ParseMongoIdPipe } from 'src/common/validate-id';
-import { CreateAdminDto } from './dto/admin.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ParseMongoIdPipe } from 'src/common/validate-id';
 import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
+import { AdminsService } from './admins.service';
+import { CreateAdminDto } from './dto/admin.dto';
+import { AdminDocument } from './schemas/admin.schema';
 
 @Controller('admins')
 export class AdminsController {
@@ -33,12 +34,27 @@ export class AdminsController {
   @Post('register')
   async createAdmin(
     @Body() createAdminDto: CreateAdminDto,
-    @UploadedFile(new SharpFileInterceptorPipe('profile_image'))
+    @UploadedFile(new SharpFileInterceptorPipe('admins'))
     profile_image?: string,
   ) {
     return this.adminsService.createAdmin({
       ...createAdminDto,
       profile_image,
     });
+  }
+
+  @UseInterceptors(FileInterceptor('profile_image'))
+  @Patch(':adminId')
+  async updateAdmin(
+    @Param('adminId', ParseMongoIdPipe) adminId: string,
+    @Body() updateAdminDto: Partial<CreateAdminDto>,
+    @UploadedFile(new SharpFileInterceptorPipe('admins'))
+    profile_image?: string,
+  ) {
+    return this.adminsService.updateAdmin(
+      adminId,
+      updateAdminDto,
+      profile_image,
+    );
   }
 }

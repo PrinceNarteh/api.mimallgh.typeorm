@@ -7,6 +7,7 @@ import { FilterQuery } from 'mongoose';
 import { CreateUserDto } from './dto/userDto';
 import { UserDocument } from './schema/user.schema';
 import { UserRepository } from './users.repository';
+import { deleteFile } from 'src/utils/deleteFile';
 
 @Injectable()
 export class UserService {
@@ -49,10 +50,22 @@ export class UserService {
 
   async updateUser(
     userId: string,
-    user: Partial<CreateUserDto>,
+    updateUserDto: Partial<CreateUserDto>,
+    profile_image?: string,
   ): Promise<UserDocument> {
-    const updatedUser = await this.userRepo.findByIdAndUpdate(userId, user);
-    return updatedUser;
+    const user = await this.getUser(userId);
+    if (!user && profile_image) {
+      deleteFile(profile_image, 'users');
+    }
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    return await this.userRepo.findByIdAndUpdate(userId, {
+      ...updateUserDto,
+      ...(profile_image && { profile_image }),
+    });
   }
 
   async deleteUser(userId: string): Promise<UserDocument> {
