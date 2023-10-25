@@ -39,13 +39,18 @@ export class UserService {
     return user;
   }
 
-  async createUser(user: CreateUserDto): Promise<UserDocument> {
-    const userExists = await this.userRepo.findOne({ email: user.email });
+  async createUser(createUserDto: CreateUserDto): Promise<UserDocument> {
+    const userExists = await this.userRepo.findOne({
+      email: createUserDto.email,
+    });
 
     if (userExists) {
+      createUserDto.profile_image &&
+        deleteFile(createUserDto.profile_image, 'users');
       throw new ConflictException('User already exists');
     }
-    return this.userRepo.create(user);
+
+    return this.userRepo.create(createUserDto);
   }
 
   async updateUser(

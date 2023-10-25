@@ -1,15 +1,15 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
+import { deleteFile } from 'src/utils/deleteFile';
+import { RolesService } from '../roles/roles.service';
 import { AdminRepository } from './admins.repository';
 import { CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
-import { RolesService } from '../roles/roles.service';
-import { deleteFile } from 'src/utils/deleteFile';
 
 @Injectable()
 export class AdminsService {
@@ -48,12 +48,15 @@ export class AdminsService {
     });
 
     if (adminExists) {
+      createAdminDto.profile_image &&
+        deleteFile(createAdminDto.profile_image, 'admins');
       throw new ConflictException('admin already exists');
     }
 
     const role = await this.rolesService.getRoleById(createAdminDto.role);
     if (!role) {
-      deleteFile(createAdminDto.profile_image, 'admins');
+      createAdminDto.profile_image &&
+        deleteFile(createAdminDto.profile_image, 'admins');
       throw new BadRequestException('role not found');
     }
 
@@ -74,8 +77,8 @@ export class AdminsService {
       throw new NotFoundException('admin not found');
     }
 
-    if (updateAdminDto.profile_image && profile_image) {
-      deleteFile(updateAdminDto.profile_image, 'admins');
+    if (admin.profile_image && profile_image) {
+      deleteFile(admin.profile_image, 'admins');
     }
 
     return await this.adminRepo.findByIdAndUpdate(adminId, {
