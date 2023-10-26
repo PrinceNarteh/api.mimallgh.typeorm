@@ -59,5 +59,5 @@ export class CreateDeliveryCompanyDto {
   })
   role: string;
 
-  // images: Express.Multer.File[];
+  slide_images: Express.Multer.File[];
 }

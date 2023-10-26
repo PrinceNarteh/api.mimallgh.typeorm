@@ -61,7 +61,7 @@ export class DeliveryCompany {
   role: ROLE;
 
   @Prop([String])
-  images: string[];
+  slide_images: string[];
 }
 
 export type DeliveryCompanyDocument = DeliveryCompany & Document;
