@@ -45,7 +45,7 @@ export class Product {
   rating: number[];
 
   @Prop([String])
-  images: string[];
+  product_images: string[];
 
   @Prop({ type: Types.ObjectId, ref: 'Review' })
   reviews: Review[];

@@ -62,7 +62,7 @@ export class ProductService {
   async createProduct(
     shopId: string,
     createProductDto: CreateProductDto,
-    imageNames: Array<string>,
+    product_images: Array<string>,
   ): Promise<ProductDocument> {
     const shop = await this.shopService.getShop(shopId);
     if (!shop) {
@@ -71,12 +71,13 @@ export class ProductService {
     return this.productRepo.create({
       ...createProductDto,
       shop: shop._id,
+      product_images,
     });
   }
 
   async adminCreateProduct(
     createProductDto: Partial<AdminCreateProductDto>,
-    imageNames: Array<string>,
+    product_images: Array<string>,
   ): Promise<ProductDocument> {
     const shop = await this.shopService.getShop(createProductDto.shopId);
 
@@ -84,40 +85,43 @@ export class ProductService {
       throw new NotFoundException('Shop not found');
     }
 
-    return this.productRepo.create(createProductDto);
+    return this.productRepo.create({ ...createProductDto, product_images });
   }
 
   async updateProduct(
     productId: string,
     updateProductDto: UpdateProductDto,
-    imageNames?: Array<string>,
+    product_images?: Array<string>,
   ) {
-    const product = await this.productRepo.findById(productId);
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
-    return this.productRepo.findByIdAndUpdate(productId, updateProductDto);
+    const product = await this.getProduct(productId);
+
+    return this.productRepo.findByIdAndUpdate(productId, {
+      ...updateProductDto,
+      ...(product_images?.length > 0 && {
+        product_images: [...product.product_images, product_images],
+      }),
+    });
   }
 
   async adminUpdateProduct(
     productId: string,
     updateProductDto: Partial<AdminCreateProductDto>,
-    imageNames?: Array<string>,
+    product_images?: Array<string>,
   ) {
-    const product = await this.productRepo.findOne({
-      where: { id: productId },
-      relations: {
-        shop: true,
-      },
-    });
-    if (!product) {
-      throw new NotFoundException('Product not found');
-    }
+    const product = await this.getProduct(productId);
 
-    return this.productRepo.findByIdAndUpdate(product._id, updateProductDto);
+    return this.productRepo.findByIdAndUpdate(product._id, {
+      ...updateProductDto,
+      ...(product_images?.length > 0 && {
+        product_images: [...product.product_images, product_images],
+      }),
+    });
   }
 
-  async deleteProduct(shop: ShopDocument, productId: string) {
+  async deleteProduct(
+    shop: ShopDocument,
+    productId: string,
+  ): Promise<ProductDocument> {
     const product = await this.productRepo.findById(productId);
 
     if (!product) return null;
@@ -128,31 +132,28 @@ export class ProductService {
       );
     }
 
-    return 'Product deleted successfully';
-  }
-
-  async findProductImage(imageId: string) {
-    const img = this.productRepo.findById(imageId);
-
-    if (!img) {
-      throw new NotFoundException('Product Image Not Found');
+    for (let image of product.product_images) {
+      deleteFile(image, 'products');
     }
 
-    return img;
+    await this.productRepo.delete(productId);
   }
 
   async deleteProductImage({
     productId,
-    imageId,
+    imageName,
   }: {
     productId: string;
-    imageId: string;
+    imageName: string;
   }) {
-    const img = await this.findProductImage(imageId);
-    await this.productRepo.delete(imageId);
+    const product = await this.getProduct(productId);
 
-    if (img) deleteFile('img', 'products');
+    deleteFile(imageName, 'products');
 
-    return await this.getProduct(productId);
+    return await this.productRepo.findByIdAndUpdate(productId, {
+      product_image: product.product_images.filter(
+        (image) => image !== imageName,
+      ),
+    });
   }
 }

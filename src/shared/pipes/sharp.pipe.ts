@@ -55,6 +55,7 @@ export class SharpFilesInterceptorPipe
 
     if (!images || images.length === 0) return;
 
+    checkForFolder(this._directory);
     for (let image of images) {
       const genName = await nanoid(32);
       const filename = `${genName}.webp`;
@@ -82,7 +83,9 @@ export class SharpFieldFilesInterceptorPipe
   async transform(images: any): Promise<{ [key: string]: string }> {
     let filenames: { [key: string]: string } = {};
     const imagesArr = Object.keys(images);
+    if (!images || images.length === 0) return;
 
+    checkForFolder(this._directory);
     for (let img of imagesArr) {
       const image = images[img][0];
 
@@ -120,7 +123,9 @@ export class SharpUpdateFieldFilesInterceptorPipe
   async transform(images: any): Promise<{ [key: string]: string }> {
     let filenames: { [key: string]: string } = {};
     const imagesArr = Object.keys(images);
+    if (!images || images.length === 0) return;
 
+    checkForFolder(this._directory);
     for (let img of imagesArr) {
       const image = images[img][0];
 

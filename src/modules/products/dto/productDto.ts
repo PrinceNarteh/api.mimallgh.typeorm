@@ -1,6 +1,8 @@
 import { PartialType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
+  ArrayMinSize,
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -54,7 +56,8 @@ export class CreateProductDto {
   @IsEnum(ProductCategory, { always: true, each: true })
   category: ProductCategory;
 
-  images: Express.Multer.File[];
+  // @ArrayMinSize(1)
+  product_images: any;
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}

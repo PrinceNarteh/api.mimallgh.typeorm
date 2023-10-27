@@ -52,13 +52,13 @@ export class DeliveryCompaniesService {
       deliveryCompanyId,
     );
     if (!deliveryCompany) {
-      throw new NotFoundException('Delivery company not found');
+      throw new NotFoundException('delivery company not found');
     }
 
     return this.deliveryCompanyRepo.findByIdAndUpdate(deliveryCompanyId, {
       ...updateDeliveryCompanyDto,
       ...(imageNames?.length > 0 && {
-        images: [...deliveryCompany.images, ...imageNames],
+        images: [...deliveryCompany.slide_images, ...imageNames],
       }),
     });
   }
@@ -72,7 +72,7 @@ export class DeliveryCompaniesService {
 
     if (!deliveryCompany) return null;
 
-    deliveryCompany.images.forEach((image) => {
+    deliveryCompany.slide_images.forEach((image) => {
       deleteFile(image, 'slides');
     });
 

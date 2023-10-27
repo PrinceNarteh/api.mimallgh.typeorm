@@ -2,15 +2,16 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
   Param,
+  ParseFilePipe,
   Patch,
   Post,
   Query,
   Request,
   Res,
   UploadedFiles,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -20,7 +21,6 @@ import { SharpFilesInterceptorPipe } from '../../shared/pipes/sharp.pipe';
 import { AdminCreateProductDto, CreateProductDto } from './dto/productDto';
 import { TransformDtoPipe } from './pipe/createProduct.pipe';
 import { ProductService } from './product.service';
-import { ShopJwtGuard } from '../shops/auth/guards/jwt-auth.guard';
 
 @Controller('products')
 export class ProductController {
@@ -72,29 +72,42 @@ export class ProductController {
 
   @Post()
   // @UseGuards(ShopJwtGuard)
-  @UseInterceptors(TransformDtoPipe, FilesInterceptor('images', 4))
+  @UseInterceptors(TransformDtoPipe, FilesInterceptor('product_images', 4))
   async createProduct(
     @Request() req,
     @Body() createProductDto: CreateProductDto,
-    @UploadedFiles(new SharpFilesInterceptorPipe('products'))
-    imageNames: Array<string>,
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [new FileTypeValidator({ fileType: 'image/*' })],
+      }),
+      new SharpFilesInterceptorPipe('products'),
+    )
+    product_images: Array<string>,
   ) {
     return this.productService.createProduct(
       '6517e3822efbf310b15aef20',
       createProductDto,
-      imageNames,
+      product_images,
     );
   }
 
   @Post('admin')
   // @UseGuards(ShopJwtGuard)
-  @UseInterceptors(TransformDtoPipe, FilesInterceptor('images', 4))
+  @UseInterceptors(TransformDtoPipe, FilesInterceptor('product_images', 4))
   async adminCreateProduct(
     @Body() createProductDto: AdminCreateProductDto,
-    @UploadedFiles(new SharpFilesInterceptorPipe('products'))
-    imageNames: Array<string>,
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [new FileTypeValidator({ fileType: 'image/*' })],
+      }),
+      new SharpFilesInterceptorPipe('products'),
+    )
+    product_images: Array<string>,
   ) {
-    return this.productService.adminCreateProduct(createProductDto, imageNames);
+    return this.productService.adminCreateProduct(
+      createProductDto,
+      product_images,
+    );
   }
 
   @Patch(':productId')
@@ -103,7 +116,12 @@ export class ProductController {
   async updateProduct(
     @Param('productId') productId: string,
     @Body() updateProductDto: Partial<AdminCreateProductDto>,
-    @UploadedFiles(new SharpFilesInterceptorPipe('products'))
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [new FileTypeValidator({ fileType: 'image/*' })],
+      }),
+      new SharpFilesInterceptorPipe('products'),
+    )
     imageNames?: Array<string>,
   ) {
     return this.productService.updateProduct(
@@ -119,7 +137,12 @@ export class ProductController {
   async adminUpdateProduct(
     @Param('productId') productId: string,
     @Body() updateProductDto: Partial<CreateProductDto>,
-    @UploadedFiles(new SharpFilesInterceptorPipe('products'))
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [new FileTypeValidator({ fileType: 'image/*' })],
+      }),
+      new SharpFilesInterceptorPipe('products'),
+    )
     imageNames?: Array<string>,
   ) {
     return this.productService.updateProduct(
@@ -142,7 +165,7 @@ export class ProductController {
 
   @Delete('/:productId/image/:imageId')
   async deleteProductImage(
-    @Param() param: { productId: string; imageId: string },
+    @Param() param: { productId: string; imageName: string },
   ) {
     return this.productService.deleteProductImage(param);
   }

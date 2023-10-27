@@ -33,14 +33,14 @@ export class AbstractRepository<T extends Document> {
     });
   }
 
-  async create(createEntityData: unknown): Promise<T> {
+  async create<A>(createEntityData: A): Promise<T> {
     const entity = new this.entityModel(createEntityData);
     return entity.save();
   }
 
   async findByIdAndUpdate(
     entityId: string,
-    entityUpdateData: UpdateQuery<unknown>,
+    entityUpdateData: UpdateQuery<T>,
   ): Promise<T> {
     return this.entityModel.findByIdAndUpdate(entityId, entityUpdateData, {
       new: true,
