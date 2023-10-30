@@ -18,7 +18,11 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { createFindOptions } from 'src/utils/findManyOptions';
 import { SharpFilesInterceptorPipe } from '../../shared/pipes/sharp.pipe';
-import { AdminCreateProductDto, CreateProductDto } from './dto/productDto';
+import {
+  AdminCreateProductDto,
+  CreateProductDto,
+  DeleteProductImageDto,
+} from './dto/productDto';
 import { TransformDtoPipe } from './pipe/createProduct.pipe';
 import { ProductService } from './product.service';
 
@@ -159,14 +163,12 @@ export class ProductController {
   }
 
   @Get('/image/:imageName')
-  async findProductImage(@Param('imageName') imageName: string, @Res() res) {
+  async getProductImage(@Param('imageName') imageName: string, @Res() res) {
     res.sendFile(join(process.cwd(), 'uploads/products/' + imageName));
   }
 
-  @Delete('/:productId/image/:imageId')
-  async deleteProductImage(
-    @Param() param: { productId: string; imageName: string },
-  ) {
-    return this.productService.deleteProductImage(param);
+  @Post('/image/delete')
+  async deleteProductImage(@Body() body: DeleteProductImageDto) {
+    return this.productService.deleteProductImage(body);
   }
 }

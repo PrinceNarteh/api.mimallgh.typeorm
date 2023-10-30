@@ -67,3 +67,13 @@ export class AdminCreateProductDto extends CreateProductDto {
   @IsString()
   shopId: string;
 }
+
+export class DeleteProductImageDto {
+  @IsNotEmpty()
+  @IsString()
+  productId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  imageName: string;
+}

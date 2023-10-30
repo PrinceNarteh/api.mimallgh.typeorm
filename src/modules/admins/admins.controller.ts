@@ -5,11 +5,14 @@ import {
   Param,
   Patch,
   Post,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { join } from 'path';
 import { ParseMongoIdPipe } from 'src/common/validate-id';
+import { Response } from 'express';
 import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { AdminsService } from './admins.service';
 import { CreateAdminDto } from './dto/admin.dto';
@@ -56,5 +59,13 @@ export class AdminsController {
       updateAdminDto,
       profile_image,
     );
+  }
+
+  @Get('/image/:imageName')
+  async getProductImage(
+    @Param('imageName') imageName: string,
+    @Res() res: Response,
+  ) {
+    res.sendFile(join(process.cwd(), 'uploads/admins/' + imageName));
   }
 }

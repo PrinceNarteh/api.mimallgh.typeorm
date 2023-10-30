@@ -62,3 +62,11 @@ AdminSchema.pre('save', async function (next) {
   }
   next();
 });
+
+AdminSchema.set('toJSON', {
+  transform: function (doc, ret, opt) {
+    delete ret['password'];
+    delete ret['__v'];
+    return ret;
+  },
+});

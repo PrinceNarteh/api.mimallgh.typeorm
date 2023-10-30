@@ -151,7 +151,7 @@ export class ProductService {
     deleteFile(imageName, 'products');
 
     return await this.productRepo.findByIdAndUpdate(productId, {
-      product_image: product.product_images.filter(
+      product_images: product.product_images.filter(
         (image) => image !== imageName,
       ),
     });
