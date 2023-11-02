@@ -49,9 +49,9 @@ export class CreateAdminDto {
   @IsOptional()
   card_number?: string;
 
-  @IsBoolean({})
+
   @IsOptional()
-  active: boolean;
+  active?: boolean;
 
   @IsOptional()
   profile_image?: string;

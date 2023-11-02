@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { ROLE_MODEL, Role } from 'src/modules/roles/schema/role.schema';
 
 @Schema({ timestamps: true })
 export class Admin {
@@ -20,7 +21,7 @@ export class Admin {
   phone_number: string;
 
   @Prop()
-  alternate_number: string;
+  alternate_phone_number: string;
 
   @Prop()
   nationality: string;
@@ -48,8 +49,12 @@ export class Admin {
   })
   active: boolean;
 
-  @Prop()
-  role: string;
+  @Prop({
+    type: Types.ObjectId,
+    ref: ROLE_MODEL,
+    required: true,
+  })
+  role: Types.ObjectId | Role;
 }
 
 export const ADMIN_MODEL = Admin.name;
@@ -60,6 +65,11 @@ AdminSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12);
   }
+  next();
+});
+
+AdminSchema.pre('find', async function (next) {
+  this.populate('role');
   next();
 });
 

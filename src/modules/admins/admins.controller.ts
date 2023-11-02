@@ -28,7 +28,7 @@ export class AdminsController {
 
   @Get(':adminId')
   async getAdminById(
-    @Param(':adminId', ParseMongoIdPipe) adminId: string,
+    @Param('adminId', ParseMongoIdPipe) adminId: string,
   ): Promise<AdminDocument> {
     return this.adminsService.getAdmin(adminId);
   }
