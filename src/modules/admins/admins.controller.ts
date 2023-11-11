@@ -15,12 +15,21 @@ import { ParseMongoIdPipe } from 'src/common/validate-id';
 import { Response } from 'express';
 import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { AdminsService } from './admins.service';
-import { CreateAdminDto } from './dto/admin.dto';
+import { AdminLoginDto, CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
+import { LoginResponseType } from 'src/custom-types';
 
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
+
+  @Post('login')
+  async login(
+    @Body() adminLoginDto: AdminLoginDto,
+  ): Promise<LoginResponseType<AdminDocument>> {
+    return this.adminsService.login(adminLoginDto);
+  }
+
   @Get()
   async getAllAdmins(): Promise<AdminDocument[]> {
     return this.adminsService.getAllAdmins({});

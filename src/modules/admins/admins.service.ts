@@ -4,11 +4,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import bcrypt from 'bcrypt';
 import { FilterQuery } from 'mongoose';
+import { generateToken } from 'src/common/generate-token';
+import { LoginResponseType } from 'src/custom-types';
 import { deleteFile } from 'src/utils/deleteFile';
 import { RolesService } from '../roles/roles.service';
 import { AdminRepository } from './admins.repository';
-import { CreateAdminDto } from './dto/admin.dto';
+import { AdminLoginDto, CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
 
 @Injectable()
@@ -16,7 +20,28 @@ export class AdminsService {
   constructor(
     private readonly adminRepo: AdminRepository,
     private readonly rolesService: RolesService,
+    private readonly jwtService: JwtService,
   ) {}
+
+  async login(
+    adminLoginDto: AdminLoginDto,
+  ): Promise<LoginResponseType<AdminDocument>> {
+    const user = await this.adminRepo.findOne({ email: adminLoginDto.email });
+
+    if (!user || !bcrypt.compare(user.password, adminLoginDto.password)) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    const token = generateToken(
+      { id: user._id, role: user.role.toString() },
+      this.jwtService,
+    );
+
+    return {
+      token,
+      data: user,
+    };
+  }
 
   async getAllAdmins(
     filter: FilterQuery<AdminDocument>,

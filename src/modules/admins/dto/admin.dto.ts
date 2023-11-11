@@ -2,6 +2,7 @@ import { PartialType } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsEmail,
+  IsNotEmpty,
   IsNumberString,
   IsOptional,
   IsString,
@@ -49,7 +50,6 @@ export class CreateAdminDto {
   @IsOptional()
   card_number?: string;
 
-
   @IsOptional()
   active?: boolean;
 
@@ -61,3 +61,15 @@ export class CreateAdminDto {
 }
 
 export class UpdateAdminDto extends PartialType(CreateAdminDto) {}
+
+export class AdminLoginDto {
+  @IsEmail()
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @MinLength(6)
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
