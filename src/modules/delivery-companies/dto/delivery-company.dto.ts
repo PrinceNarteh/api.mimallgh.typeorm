@@ -1,13 +1,11 @@
 import {
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsNumberString,
   IsOptional,
   IsString,
   MinLength,
 } from 'class-validator';
-import { ROLE } from 'src/constants';
 
 export class CreateDeliveryCompanyDto {
   @IsString()
@@ -54,10 +52,7 @@ export class CreateDeliveryCompanyDto {
   @IsNotEmpty({ message: 'Whatsapp number is required' })
   whatsappNumber: string;
 
-  @IsEnum(Object.keys(ROLE), {
-    message: `role must be one of the following values: ${Object.keys(ROLE)}`,
-  })
-  role: string;
+  logo: Express.Multer.File;
 
   slide_images: Express.Multer.File[];
 }

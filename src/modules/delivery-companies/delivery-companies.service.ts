@@ -7,11 +7,13 @@ import { deleteFile } from 'src/utils/deleteFile';
 import { DeliveryCompanyRepository } from './delivery-companies.repository';
 import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
 import { DeliveryCompanyDocument } from './schema/delivery-company.schema';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class DeliveryCompaniesService {
   constructor(
     private readonly deliveryCompanyRepo: DeliveryCompanyRepository,
+    private readonly rolesService: RolesService,
   ) {}
 
   async getAllDeliveryCompanies(): Promise<DeliveryCompanyDocument[]> {
@@ -32,7 +34,8 @@ export class DeliveryCompaniesService {
 
   async createDeliveryCompany(
     createDeliveryCompanyDto: CreateDeliveryCompanyDto,
-    imageNames: Array<string>,
+    logo: string,
+    slide_images: Array<string>,
   ): Promise<DeliveryCompanyDocument> {
     const emailExists = await this.deliveryCompanyRepo.findOne({
       email: createDeliveryCompanyDto.email,
@@ -40,7 +43,12 @@ export class DeliveryCompaniesService {
     if (emailExists) {
       throw new ConflictException('Email already exists');
     }
-    return this.deliveryCompanyRepo.create(createDeliveryCompanyDto);
+    const roles = await this.rolesService.getRole({ name: 'Delivery Company' });
+    return this.deliveryCompanyRepo.create({
+      ...createDeliveryCompanyDto,
+      logo,
+      slide_images,
+    });
   }
 
   async updateDeliveryCompany(

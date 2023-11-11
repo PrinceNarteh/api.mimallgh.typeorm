@@ -1,10 +1,13 @@
-import { Document, Types } from 'mongoose';
-import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Delivery } from 'src/modules/deliveries/schema/delivery.schema';
-import { QuickOrder } from 'src/modules/quick-orders/schema/quick-order.schema';
-import slugify from 'slugify';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
-import { ROLE } from 'src/constants';
+import { Document, Types } from 'mongoose';
+import slugify from 'slugify';
+import { Delivery } from 'src/modules/deliveries/schema/delivery.schema';
+import {
+  QUICK_ORDER_MODEL,
+  QuickOrder,
+} from 'src/modules/quick-orders/schema/quick-order.schema';
+import { ROLE_MODEL, Role } from 'src/modules/roles/schema/role.schema';
 
 @Schema({ collection: 'delivery_companies' })
 export class DeliveryCompany {
@@ -49,16 +52,18 @@ export class DeliveryCompany {
   ])
   deliveries: Delivery[];
 
-  @Prop([{ type: Types.ObjectId, ref: 'QuickOrder' }])
+  @Prop([{ type: Types.ObjectId, ref: QUICK_ORDER_MODEL }])
   quickOrders: QuickOrder[];
 
   @Prop({
-    type: String,
-    enum: Object.keys(ROLE),
-    immutable: true,
+    type: Types.ObjectId,
+    ref: ROLE_MODEL,
     required: true,
   })
-  role: ROLE;
+  role: Role;
+
+  @Prop()
+  logo: string;
 
   @Prop([String])
   slide_images: string[];

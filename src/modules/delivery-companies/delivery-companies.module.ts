@@ -7,12 +7,14 @@ import {
   DeliveryCompanySchema,
 } from './schema/delivery-company.schema';
 import { DeliveryCompanyRepository } from './delivery-companies.repository';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: DELIVERY_COMPANY_MODEL, schema: DeliveryCompanySchema },
     ]),
+    RolesModule,
   ],
   controllers: [DeliveryCompaniesController],
   providers: [DeliveryCompaniesService, DeliveryCompanyRepository],
