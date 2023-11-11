@@ -15,10 +15,17 @@ import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { CreateUserDto } from './dto/userDto';
 import { UserDocument } from './schema/user.schema';
 import { UserService } from './users.service';
+import { LoginDto } from 'src/common/login-dto';
+import { LoginResponseType } from 'src/custom-types';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Post('login')
+  async login(loginDto: LoginDto): Promise<LoginResponseType<UserDocument>> {
+    return this.userService.login(loginDto);
+  }
 
   @Get()
   async getUsers(@Query() query: { [key: string]: string }) {

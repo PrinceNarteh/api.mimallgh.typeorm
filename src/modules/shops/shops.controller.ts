@@ -30,6 +30,7 @@ export class ShopController {
   ): Promise<LoginResponseType<ShopDocument>> {
     return this.shopService.login(loginDto);
   }
+  
   @Get(':shopId')
   async getShop(@Param('shopId') shopId: string) {
     return this.shopService.getShop(shopId);

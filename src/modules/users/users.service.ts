@@ -1,17 +1,39 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import bcrypt from 'bcrypt';
 import { FilterQuery } from 'mongoose';
+import { generateToken } from 'src/common/generate-token';
+import { LoginDto } from 'src/common/login-dto';
+import { LoginResponseType } from 'src/custom-types';
+import { deleteFile } from 'src/utils/deleteFile';
 import { CreateUserDto } from './dto/userDto';
 import { UserDocument } from './schema/user.schema';
 import { UserRepository } from './users.repository';
-import { deleteFile } from 'src/utils/deleteFile';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepo: UserRepository) {}
+
+  async login(loginDto: LoginDto): Promise<LoginResponseType<UserDocument>> {
+    const shop = await this.userRepo.findOne({
+      email: loginDto.email,
+    });
+
+    if (!shop || !bcrypt.compare(shop.password, loginDto.password)) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    const token = generateToken(shop);
+
+    return {
+      token,
+      data: shop,
+    };
+  }
 
   async getAllUsers(
     filter: FilterQuery<UserDocument>,
