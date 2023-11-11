@@ -43,22 +43,6 @@ export class DeliveryCompaniesService {
     };
   }
 
-  async getAllDeliveryCompanies(): Promise<DeliveryCompanyDocument[]> {
-    return this.deliveryCompanyRepo.find({});
-  }
-
-  async getDeliveryCompany(
-    id: string,
-  ): Promise<DeliveryCompanyDocument | null> {
-    return this.deliveryCompanyRepo.findById(id);
-  }
-
-  async getDeliveryCompanyBySlug(
-    slug: string,
-  ): Promise<DeliveryCompanyDocument | null> {
-    return this.deliveryCompanyRepo.findOneBySlug(slug);
-  }
-
   async createDeliveryCompany(
     createDeliveryCompanyDto: CreateDeliveryCompanyDto,
     logo: string,
@@ -76,6 +60,22 @@ export class DeliveryCompaniesService {
       logo,
       slide_images,
     });
+  }
+
+  async getAllDeliveryCompanies(): Promise<DeliveryCompanyDocument[]> {
+    return this.deliveryCompanyRepo.find({});
+  }
+
+  async getDeliveryCompany(
+    id: string,
+  ): Promise<DeliveryCompanyDocument | null> {
+    return this.deliveryCompanyRepo.findById(id);
+  }
+
+  async getDeliveryCompanyBySlug(
+    slug: string,
+  ): Promise<DeliveryCompanyDocument | null> {
+    return this.deliveryCompanyRepo.findOneBySlug(slug);
   }
 
   async updateDeliveryCompany(

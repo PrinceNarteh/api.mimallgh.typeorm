@@ -19,12 +19,19 @@ import { SharpFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { DeliveryCompaniesService } from './delivery-companies.service';
 import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
 import { join } from 'path';
+import { LoginDto } from 'src/common/login-dto';
+import { LoginResponseType } from 'src/custom-types';
 
 @Controller('delivery-companies')
 export class DeliveryCompaniesController {
   constructor(
     private readonly deliveryCompaniesService: DeliveryCompaniesService,
   ) {}
+
+  @Post('login')
+  async login(loginDto: LoginDto) {
+    return await this.deliveryCompaniesService.login(loginDto);
+  }
 
   @Get()
   async findAll() {

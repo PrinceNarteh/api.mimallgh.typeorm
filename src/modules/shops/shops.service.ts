@@ -1,13 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { chain } from 'lodash';
 import { FilterQuery } from 'mongoose';
 import { customAlphabet } from 'nanoid';
+import { LoginResponseType } from 'src/custom-types';
 import { deleteFile } from 'src/utils/deleteFile';
 import { pad } from 'src/utils/pad';
-import { CreateShopDto } from './dto/shopDto';
+import { CreateShopDto, ShopLoginDto } from './dto/shopDto';
 import { ShopDocument } from './schema/shop.schema';
 import { ShopRepository } from './shops.repository';
+import { generateToken } from 'src/common/generate-token';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -17,23 +22,23 @@ const nanoid = customAlphabet(
 export class ShopService {
   constructor(private readonly shopRepo: ShopRepository) {}
 
-  async getShop(id: string): Promise<ShopDocument> {
-    const shop = await this.shopRepo.findById(id);
-    if (!shop) {
-      throw new NotFoundException('shop not found');
+  async login(
+    loginDto: ShopLoginDto,
+  ): Promise<LoginResponseType<ShopDocument>> {
+    const shop = await this.shopRepo.findOne({
+      shopCode: loginDto.shopCode,
+    });
+
+    if (!shop || !bcrypt.compare(shop.password, loginDto.password)) {
+      throw new BadRequestException('Invalid credentials');
     }
-    return shop;
-  }
 
-  async getShopByShopCode(shopCode: string): Promise<ShopDocument> {
-    return this.shopRepo.findOne({ shopCode });
-  }
+    const token = generateToken(shop);
 
-  async getAllShops(
-    filter: FilterQuery<ShopDocument>,
-  ): Promise<ShopDocument[]> {
-    const shops = await this.shopRepo.find(filter);
-    return shops;
+    return {
+      token,
+      data: shop,
+    };
   }
 
   async createShop(
@@ -67,6 +72,25 @@ export class ShopService {
     });
 
     return shop;
+  }
+
+  async getShop(id: string): Promise<ShopDocument> {
+    const shop = await this.shopRepo.findById(id);
+    if (!shop) {
+      throw new NotFoundException('shop not found');
+    }
+    return shop;
+  }
+
+  async getShopByShopCode(shopCode: string): Promise<ShopDocument> {
+    return this.shopRepo.findOne({ shopCode });
+  }
+
+  async getAllShops(
+    filter: FilterQuery<ShopDocument>,
+  ): Promise<ShopDocument[]> {
+    const shops = await this.shopRepo.find(filter);
+    return shops;
   }
 
   async updateShop(

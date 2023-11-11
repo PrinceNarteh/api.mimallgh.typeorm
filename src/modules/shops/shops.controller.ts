@@ -14,8 +14,9 @@ import {
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
 import { join } from 'path';
+import { LoginResponseType } from 'src/custom-types';
 import { SharpUpdateFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
-import { CreateShopDto } from './dto/shopDto';
+import { CreateShopDto, ShopLoginDto } from './dto/shopDto';
 import { ShopDocument } from './schema/shop.schema';
 import { ShopService } from './shops.service';
 
@@ -23,6 +24,12 @@ import { ShopService } from './shops.service';
 export class ShopController {
   constructor(private readonly shopService: ShopService) {}
 
+  @Post('login')
+  async login(
+    loginDto: ShopLoginDto,
+  ): Promise<LoginResponseType<ShopDocument>> {
+    return this.shopService.login(loginDto);
+  }
   @Get(':shopId')
   async getShop(@Param('shopId') shopId: string) {
     return this.shopService.getShop(shopId);

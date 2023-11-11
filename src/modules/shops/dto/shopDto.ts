@@ -1,5 +1,11 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  MinLength,
+} from 'class-validator';
 
 export class CreateShopDto {
   @IsString()
@@ -57,3 +63,15 @@ export class CreateShopDto {
 }
 
 export class UpdateShopDto extends PartialType(CreateShopDto) {}
+
+export class ShopLoginDto {
+  @Length(12, 12, { message: 'Please enter a valid shop code' })
+  @IsString()
+  @IsNotEmpty()
+  shopCode: string;
+
+  @MinLength(6)
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
