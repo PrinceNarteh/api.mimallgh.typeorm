@@ -2,12 +2,17 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { deleteFile } from 'src/utils/deleteFile';
 import { DeliveryCompanyRepository } from './delivery-companies.repository';
 import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
 import { DeliveryCompanyDocument } from './schema/delivery-company.schema';
 import { RolesService } from '../roles/roles.service';
+import { LoginDto } from 'src/common/login-dto';
+import bcrypt from 'bcrypt';
+import { LoginResponseType } from 'src/custom-types';
+import { generateToken } from 'src/common/generate-token';
 
 @Injectable()
 export class DeliveryCompaniesService {
@@ -15,6 +20,28 @@ export class DeliveryCompaniesService {
     private readonly deliveryCompanyRepo: DeliveryCompanyRepository,
     private readonly rolesService: RolesService,
   ) {}
+
+  async login(
+    loginDto: LoginDto,
+  ): Promise<LoginResponseType<DeliveryCompanyDocument>> {
+    const deliveryCompany = await this.deliveryCompanyRepo.findOne({
+      email: loginDto.email,
+    });
+
+    if (
+      !deliveryCompany ||
+      !bcrypt.compare(deliveryCompany.password, loginDto.password)
+    ) {
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    const token = generateToken(deliveryCompany);
+
+    return {
+      token,
+      data: deliveryCompany,
+    };
+  }
 
   async getAllDeliveryCompanies(): Promise<DeliveryCompanyDocument[]> {
     return this.deliveryCompanyRepo.find({});

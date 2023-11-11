@@ -8,11 +8,12 @@ import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { FilterQuery } from 'mongoose';
 import { generateToken } from 'src/common/generate-token';
+import { LoginDto } from 'src/common/login-dto';
 import { LoginResponseType } from 'src/custom-types';
 import { deleteFile } from 'src/utils/deleteFile';
 import { RolesService } from '../roles/roles.service';
 import { AdminRepository } from './admins.repository';
-import { AdminLoginDto, CreateAdminDto } from './dto/admin.dto';
+import { CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
 
 @Injectable()
@@ -24,22 +25,19 @@ export class AdminsService {
   ) {}
 
   async login(
-    adminLoginDto: AdminLoginDto,
+    adminLoginDto: LoginDto,
   ): Promise<LoginResponseType<AdminDocument>> {
-    const user = await this.adminRepo.findOne({ email: adminLoginDto.email });
+    const admin = await this.adminRepo.findOne({ email: adminLoginDto.email });
 
-    if (!user || !bcrypt.compare(user.password, adminLoginDto.password)) {
+    if (!admin || !bcrypt.compare(admin.password, adminLoginDto.password)) {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(
-      { id: user._id, role: user.role.toString() },
-      this.jwtService,
-    );
+    const token = generateToken(admin);
 
     return {
       token,
-      data: user,
+      data: admin,
     };
   }
 

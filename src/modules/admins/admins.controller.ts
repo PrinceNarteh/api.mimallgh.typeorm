@@ -10,14 +10,15 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { join } from 'path';
-import { ParseMongoIdPipe } from 'src/common/validate-id';
 import { Response } from 'express';
+import { join } from 'path';
+import { LoginDto } from 'src/common/login-dto';
+import { ParseMongoIdPipe } from 'src/common/validate-id';
+import { LoginResponseType } from 'src/custom-types';
 import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { AdminsService } from './admins.service';
-import { AdminLoginDto, CreateAdminDto } from './dto/admin.dto';
+import { CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
-import { LoginResponseType } from 'src/custom-types';
 
 @Controller('admins')
 export class AdminsController {
@@ -25,7 +26,7 @@ export class AdminsController {
 
   @Post('login')
   async login(
-    @Body() adminLoginDto: AdminLoginDto,
+    @Body() adminLoginDto: LoginDto,
   ): Promise<LoginResponseType<AdminDocument>> {
     return this.adminsService.login(adminLoginDto);
   }

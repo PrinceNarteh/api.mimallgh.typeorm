@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { OrderItem } from 'src/modules/orders/schema/order-item.schema';
 import { Product } from 'src/modules/products/schema/product.schema';
 import { QuickOrderItem } from 'src/modules/quick-orders/schema/quick-order-item.schema';
+import { ROLE_MODEL, Role } from 'src/modules/roles/schema/role.schema';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -69,6 +70,13 @@ export class Shop {
 
   @Prop()
   banner: string;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: ROLE_MODEL,
+    required: true,
+  })
+  role: Role;
 
   @Prop([
     {
