@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -15,21 +16,34 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ShopModule } from './modules/shops/shops.module';
 import { UserModule } from './modules/users/users.module';
-import { JwtModule } from '@nestjs/jwt';
+import { validate } from './config/env.validation';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot('mongodb://localhost/mimall'),
+    ConfigModule.forRoot({ isGlobal: true, validate }),
+
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        global: true,
+        secret: configService.get<string>('JWT_SECRET_KEY'),
+        signOptions: {
+          expiresIn: configService.get<string | number>('JWT_EXPIRATION_TIME'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get('DB_URL'),
+      }),
+    }),
     MulterModule.register({
       // storage: memoryStorage(),
       storage: diskStorage({
         destination: './files',
       }),
-    }),
-    JwtModule.register({
-      global: true,
-      secret: 'secret',
     }),
     AuthModule,
     AdminsModule,

@@ -4,6 +4,7 @@ import { ValidationPipe, ForbiddenException } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express/interfaces';
 import { join } from 'path';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
+import { ConfigService } from '@nestjs/config';
 
 // const whitelist = [
 //   'https://mimallgh.com',
@@ -25,6 +26,9 @@ async function bootstrap() {
     origin: '*',
   });
   app.useStaticAssets(join(__dirname, '../uploads'));
-  await app.listen(parseInt(process.env.PORT) || 4000);
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('APP_PORT');
+  console.log({ port });
+  await app.listen(port);
 }
 bootstrap();

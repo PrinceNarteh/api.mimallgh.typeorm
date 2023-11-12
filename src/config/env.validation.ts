@@ -1,44 +1,22 @@
 import { plainToInstance } from 'class-transformer';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  validateSync,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, validateSync } from 'class-validator';
 
 class EnvironmentVariables {
-  @IsNotEmpty()
   @IsNumber()
+  @IsNotEmpty()
   APP_PORT: number;
 
-  @IsNotEmpty()
   @IsString()
-  DB_PASSWORD: string;
-
   @IsNotEmpty()
+  DB_URL: string;
+
   @IsString()
-  DB_USERNAME: string;
-
   @IsNotEmpty()
-  @IsString()
-  DB_NAME: string;
+  JWT_SECRET_KEY: string;
 
-  @IsNotEmpty()
   @IsNumber()
-  DB_PORT: number;
-
   @IsNotEmpty()
-  @IsString()
-  DB_HOST: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  DB_LOGGING: boolean;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  DB_SYNCHRONIZATION: boolean;
+  JWT_EXPIRATION_TIME: number;
 }
 
 export function validate(config: Record<string, unknown>) {
