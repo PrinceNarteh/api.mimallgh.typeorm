@@ -13,6 +13,7 @@ import { CreateShopDto, ShopLoginDto } from './dto/shopDto';
 import { ShopDocument } from './schema/shop.schema';
 import { ShopRepository } from './shops.repository';
 import { generateToken } from 'src/common/generate-token';
+import { JwtService } from '@nestjs/jwt';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -20,7 +21,10 @@ const nanoid = customAlphabet(
 
 @Injectable()
 export class ShopService {
-  constructor(private readonly shopRepo: ShopRepository) {}
+  constructor(
+    private readonly shopRepo: ShopRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async login(
     loginDto: ShopLoginDto,
@@ -33,7 +37,7 @@ export class ShopService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(shop);
+    const token = generateToken(shop, this.jwtService);
 
     return {
       token,

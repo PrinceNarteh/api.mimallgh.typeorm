@@ -4,8 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { FilterQuery } from 'mongoose';
 import { generateToken } from 'src/common/generate-token';
 import { LoginDto } from 'src/common/login-dto';
@@ -15,6 +14,7 @@ import { RolesService } from '../roles/roles.service';
 import { AdminRepository } from './admins.repository';
 import { CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AdminsService {
@@ -33,7 +33,7 @@ export class AdminsService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(admin);
+    const token = generateToken(admin, this.jwtService);
 
     return {
       token,

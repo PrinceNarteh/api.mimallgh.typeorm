@@ -13,10 +13,14 @@ import { deleteFile } from 'src/utils/deleteFile';
 import { CreateUserDto } from './dto/userDto';
 import { UserDocument } from './schema/user.schema';
 import { UserRepository } from './users.repository';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepo: UserRepository) {}
+  constructor(
+    private readonly userRepo: UserRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async login(loginDto: LoginDto): Promise<LoginResponseType<UserDocument>> {
     const shop = await this.userRepo.findOne({
@@ -27,7 +31,7 @@ export class UserService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(shop);
+    const token = generateToken(shop, this.jwtService);
 
     return {
       token,

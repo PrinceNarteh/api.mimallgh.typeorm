@@ -13,12 +13,14 @@ import { LoginDto } from 'src/common/login-dto';
 import bcrypt from 'bcrypt';
 import { LoginResponseType } from 'src/custom-types';
 import { generateToken } from 'src/common/generate-token';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class DeliveryCompaniesService {
   constructor(
     private readonly deliveryCompanyRepo: DeliveryCompanyRepository,
     private readonly rolesService: RolesService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async login(
@@ -35,7 +37,7 @@ export class DeliveryCompaniesService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(deliveryCompany);
+    const token = generateToken(deliveryCompany, this.jwtService);
 
     return {
       token,

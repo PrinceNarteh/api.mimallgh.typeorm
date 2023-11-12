@@ -10,7 +10,9 @@ type GenerateToken =
   | ShopDocument
   | UserDocument;
 
-export const generateToken = (payload: GenerateToken) => {
-  const jwtService = new JwtService();
+export const generateToken = (
+  payload: GenerateToken,
+  jwtService: JwtService,
+) => {
   return jwtService.sign({ id: payload._id, role: payload.role! });
 };

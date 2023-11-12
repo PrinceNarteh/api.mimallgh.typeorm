@@ -15,6 +15,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ShopModule } from './modules/shops/shops.module';
 import { UserModule } from './modules/users/users.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -25,6 +26,10 @@ import { UserModule } from './modules/users/users.module';
       storage: diskStorage({
         destination: './files',
       }),
+    }),
+    JwtModule.register({
+      global: true,
+      secret: 'secret',
     }),
     AuthModule,
     AdminsModule,
