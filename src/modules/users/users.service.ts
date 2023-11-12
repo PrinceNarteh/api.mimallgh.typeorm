@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { FilterQuery } from 'mongoose';
 import { generateToken } from 'src/common/generate-token';
 import { LoginDto } from 'src/common/login-dto';

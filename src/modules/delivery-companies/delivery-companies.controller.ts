@@ -29,7 +29,7 @@ export class DeliveryCompaniesController {
   ) {}
 
   @Post('login')
-  async login(loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto) {
     return await this.deliveryCompaniesService.login(loginDto);
   }
 

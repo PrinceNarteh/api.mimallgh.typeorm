@@ -10,7 +10,7 @@ import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
 import { DeliveryCompanyDocument } from './schema/delivery-company.schema';
 import { RolesService } from '../roles/roles.service';
 import { LoginDto } from 'src/common/login-dto';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { LoginResponseType } from 'src/custom-types';
 import { generateToken } from 'src/common/generate-token';
 import { JwtService } from '@nestjs/jwt';
