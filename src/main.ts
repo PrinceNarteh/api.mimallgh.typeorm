@@ -28,7 +28,6 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '../uploads'));
   const configService = app.get(ConfigService);
   const port = configService.get<number>('APP_PORT');
-  console.log({ port });
   await app.listen(port);
 }
 bootstrap();

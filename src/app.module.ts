@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { validate } from './config/env.validation';
 import { AdminsModule } from './modules/admins/admins.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DeliveriesModule } from './modules/deliveries/deliveries.module';
@@ -16,22 +17,20 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ShopModule } from './modules/shops/shops.module';
 import { UserModule } from './modules/users/users.module';
-import { validate } from './config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate }),
-
     JwtModule.registerAsync({
+      global: true,
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        global: true,
-        secret: configService.get<string>('JWT_SECRET_KEY'),
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET_KEY'),
         signOptions: {
-          expiresIn: configService.get<string | number>('JWT_EXPIRATION_TIME'),
+          expiresIn: config.get<string | number>('JWT_EXPIRATION_TIME'),
         },
       }),
-      inject: [ConfigService],
     }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
@@ -40,14 +39,12 @@ import { validate } from './config/env.validation';
       }),
     }),
     MulterModule.register({
-      // storage: memoryStorage(),
       storage: diskStorage({
         destination: './files',
       }),
     }),
-    AuthModule,
     AdminsModule,
-    UserModule,
+    AuthModule,
     ProductModule,
     ShopModule,
     OrdersModule,
@@ -57,6 +54,7 @@ import { validate } from './config/env.validation';
     QuickOrdersModule,
     RolesModule,
     PermissionsModule,
+    UserModule,
   ],
   providers: [],
 })
