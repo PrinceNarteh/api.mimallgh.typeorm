@@ -32,7 +32,7 @@ export class DeliveryCompaniesService {
 
     if (
       !deliveryCompany ||
-      !bcrypt.compare(deliveryCompany.password, loginDto.password)
+      !(await bcrypt.compare(loginDto.password, deliveryCompany.password))
     ) {
       throw new BadRequestException('Invalid credentials');
     }
