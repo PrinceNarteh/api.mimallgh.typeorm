@@ -32,7 +32,7 @@ export class Admin {
   })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, select: false })
   password: string;
 
   @Prop()

@@ -26,9 +26,12 @@ export class DeliveryCompaniesService {
   async login(
     loginDto: LoginDto,
   ): Promise<LoginResponseType<DeliveryCompanyDocument>> {
-    const deliveryCompany = await this.deliveryCompanyRepo.findOne({
-      email: loginDto.email,
-    });
+    const deliveryCompany = await this.deliveryCompanyRepo.findOne(
+      {
+        email: loginDto.email,
+      },
+      '+password',
+    );
 
     if (
       !deliveryCompany ||

@@ -23,19 +23,22 @@ export class UserService {
   ) {}
 
   async login(loginDto: LoginDto): Promise<LoginResponseType<UserDocument>> {
-    const shop = await this.userRepo.findOne({
-      email: loginDto.email,
-    });
+    const user = await this.userRepo.findOne(
+      {
+        email: loginDto.email,
+      },
+      '+password',
+    );
 
-    if (!shop || !bcrypt.compare(shop.password, loginDto.password)) {
+    if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(shop, this.jwtService);
+    const token = generateToken(user, this.jwtService);
 
     return {
       token,
-      data: shop,
+      data: user,
     };
   }
 

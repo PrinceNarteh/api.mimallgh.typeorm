@@ -20,7 +20,7 @@ export class DeliveryCompany {
   @Prop({ unique: true, lowercase: true, required: true })
   email: string;
 
-  @Prop({ required: true, minlength: 6 })
+  @Prop({ required: true, minlength: 6, select: false })
   password: string;
 
   @Prop({ name: 'phone_number', required: true })
