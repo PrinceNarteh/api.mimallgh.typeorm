@@ -27,7 +27,11 @@ export class AdminsService {
   async login(
     adminLoginDto: LoginDto,
   ): Promise<LoginResponseType<AdminDocument>> {
-    const admin = await this.adminRepo.findOne({ email: adminLoginDto.email });
+    const admin = await this.adminRepo.findOne({ email: adminLoginDto.email }, {
+      select: "+password"
+    });
+
+    console.log(admin)
 
     if (!admin || !bcrypt.compare(admin.password, adminLoginDto.password)) {
       throw new BadRequestException('Invalid credentials');

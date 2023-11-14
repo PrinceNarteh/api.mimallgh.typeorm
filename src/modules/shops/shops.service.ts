@@ -29,11 +29,14 @@ export class ShopService {
   async login(
     loginDto: ShopLoginDto,
   ): Promise<LoginResponseType<ShopDocument>> {
-    const shop = await this.shopRepo.findOne({
-      shopCode: loginDto.shopCode,
-    });
+    const shop = await this.shopRepo.findOne(
+      {
+        shopCode: loginDto.shopCode,
+      },
+      '+password',
+    );
 
-    if (!shop || !bcrypt.compare(shop.password, loginDto.password)) {
+    if (!shop || !(await bcrypt.compare(loginDto.password, shop.password))) {
       throw new BadRequestException('Invalid credentials');
     }
 

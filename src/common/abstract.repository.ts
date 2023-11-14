@@ -1,4 +1,11 @@
-import { Document, FilterQuery, Model, UpdateQuery } from 'mongoose';
+import {
+  Document,
+  FilterQuery,
+  Model,
+  UpdateQuery,
+  ProjectionType,
+  QueryOptions,
+} from 'mongoose';
 
 export class AbstractRepository<T extends Document> {
   constructor(protected readonly entityModel: Model<T>) {}
@@ -15,22 +22,18 @@ export class AbstractRepository<T extends Document> {
 
   async findOne(
     entityFilterQuery: FilterQuery<T>,
-    projection?: Record<string, unknown>,
+    projection?: ProjectionType<T>,
+    options?: QueryOptions<T>,
   ): Promise<T | null> {
-    return this.entityModel.findOne(entityFilterQuery, {
-      __v: 0,
-      ...projection,
-    });
+    return this.entityModel.findOne(entityFilterQuery, projection, options);
   }
 
   async findById(
     entityId: string,
-    projection?: Record<string, unknown>,
+    projection?: ProjectionType<T>,
+    options?: QueryOptions<T>,
   ): Promise<T | null> {
-    return this.entityModel.findById(entityId, {
-      __v: 0,
-      ...projection,
-    });
+    return this.entityModel.findById(entityId, projection, options);
   }
 
   async create<A>(createEntityData: A): Promise<T> {
@@ -41,15 +44,17 @@ export class AbstractRepository<T extends Document> {
   async findByIdAndUpdate(
     entityId: string,
     entityUpdateData: UpdateQuery<T>,
+    options?: QueryOptions<T>,
   ): Promise<T> {
     return this.entityModel.findByIdAndUpdate(entityId, entityUpdateData, {
       new: true,
       runValidators: true,
+      ...options,
     });
   }
 
-  async delete(id: string): Promise<T> {
-    return this.entityModel.findByIdAndDelete(id);
+  async delete(id: string, options?: QueryOptions<T>): Promise<T> {
+    return this.entityModel.findByIdAndDelete(id, options);
   }
 
   async deleteMany(entityFilterQuery: FilterQuery<T>): Promise<boolean> {

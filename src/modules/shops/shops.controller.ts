@@ -26,11 +26,11 @@ export class ShopController {
 
   @Post('login')
   async login(
-    loginDto: ShopLoginDto,
+    @Body() loginDto: ShopLoginDto,
   ): Promise<LoginResponseType<ShopDocument>> {
     return this.shopService.login(loginDto);
   }
-  
+
   @Get(':shopId')
   async getShop(@Param('shopId') shopId: string) {
     return this.shopService.getShop(shopId);
