@@ -26,21 +26,21 @@ class CreateQuickOrderItemDto {
 
   @IsNotEmpty()
   @IsString()
-  shopId: string;
+  shop_id: string;
 }
 
 export class CreateQuickOrderDto {
   @IsNotEmpty()
   @IsString()
-  fullName: string;
+  full_name: string;
 
   @IsNotEmpty()
   @IsString()
-  phoneNumber: string;
+  phone_number: string;
 
   @IsOptional()
   @IsString()
-  alternatePhoneNumber?: string;
+  alternate_phone_number?: string;
 
   @IsNotEmpty()
   @IsInt()
@@ -49,12 +49,12 @@ export class CreateQuickOrderDto {
 
   @IsNotEmpty()
   @IsString()
-  deliveryCompany: string;
+  delivery_company: string;
 
   @IsNotEmpty()
   @IsInt()
   @Transform(({ value }) => parseInt(value, 10))
-  deliveryCharge: number;
+  delivery_charge: number;
 
   @IsDefined()
   @IsArray()

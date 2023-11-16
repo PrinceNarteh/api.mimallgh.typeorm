@@ -27,7 +27,7 @@ export class Product {
   price: number;
 
   @Prop({ default: 0 })
-  discountPercentage: number;
+  discount_percentage: number;
 
   @Prop({
     default: 0,
@@ -51,7 +51,7 @@ export class Product {
   reviews: Review[];
 
   @Prop({ type: Types.ObjectId, ref: 'QuickOrderItem' })
-  quickOrderItems: QuickOrderItem[];
+  quick_order_items: QuickOrderItem[];
 
   @Prop({ type: Types.ObjectId, ref: 'Shop', required: true })
   shop: Shop;

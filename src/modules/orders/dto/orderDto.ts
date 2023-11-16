@@ -21,11 +21,11 @@ class CreateOrderItemDto {
 
   @IsNotEmpty()
   @IsString()
-  productId: string;
+  product_id: string;
 
   @IsNotEmpty()
   @IsString()
-  shopId: string;
+  shop_id: string;
 }
 
 export class CreateOrderDto {
@@ -34,15 +34,15 @@ export class CreateOrderDto {
 
   @IsNotEmpty()
   @IsString()
-  fullName: string;
+  full_name: string;
 
   @IsNotEmpty()
   @IsString()
-  phoneNumber: string;
+  phone_number: string;
 
   @IsNotEmpty()
   @IsString()
-  alternatePhoneNumber: string;
+  alternate_phone_number: string;
 
   @IsDefined()
   @IsArray()

@@ -13,7 +13,7 @@ export class QuickOrder {
     name: 'order_id',
     required: true,
   })
-  orderId: string;
+  order_id: string;
 
   @Prop({ required: true })
   amount: number;
@@ -24,19 +24,19 @@ export class QuickOrder {
     name: 'delivery_company',
     required: true,
   })
-  deliveryCompany: 'DeliveryCompany';
+  delivery_company: 'DeliveryCompany';
 
   @Prop({ required: true, name: 'delivery_charge' })
-  deliveryCharge: number;
+  delivery_charge: number;
 
   @Prop({ name: 'full_name', required: true })
-  fullName: string;
+  full_name: string;
 
   @Prop({ name: 'phone_number', required: true })
-  phoneNumber: string;
+  phone_number: string;
 
   @Prop({ name: 'alternate_phone_number' })
-  alternatePhoneNumber: string;
+  alternate_phone_number: string;
 
   @Prop({
     type: Types.ObjectId,

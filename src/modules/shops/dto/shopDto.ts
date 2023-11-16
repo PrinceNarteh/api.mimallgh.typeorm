@@ -16,7 +16,7 @@ export class CreateShopDto {
 
   @IsString()
   @IsOptional()
-  shopCode: string;
+  shop_code: string;
 
   @IsOptional()
   @IsString()
@@ -24,38 +24,38 @@ export class CreateShopDto {
 
   @IsString()
   @IsOptional()
-  plainPassword: string;
+  plain_password: string;
 
   @IsString()
   location: string;
 
   @IsString()
-  mapDirection: string;
+  map_direction: string;
 
   @IsString()
-  phoneNumber: string;
-
-  @IsString()
-  @IsOptional()
-  alternateNumber: string;
+  phone_number: string;
 
   @IsString()
   @IsOptional()
-  whatsappNumber: string;
+  alternate_number: string;
 
   @IsString()
   @IsOptional()
-  instagramHandle: string;
+  whatsapp_number: string;
 
   @IsString()
   @IsOptional()
-  facebookHandle: string;
+  instagram_handle: string;
 
   @IsString()
-  openingTime: string;
+  @IsOptional()
+  facebook_handle: string;
 
   @IsString()
-  closingTime: string;
+  opening_time: string;
+
+  @IsString()
+  closing_time: string;
 
   image: Express.Multer.File;
 

@@ -79,7 +79,7 @@ export class ProductService {
     createProductDto: Partial<AdminCreateProductDto>,
     product_images: Array<string>,
   ): Promise<ProductDocument> {
-    const shop = await this.shopService.getShop(createProductDto.shopId);
+    const shop = await this.shopService.getShop(createProductDto.shop_id);
 
     if (!shop) {
       throw new NotFoundException('Shop not found');

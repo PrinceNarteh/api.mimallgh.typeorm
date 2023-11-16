@@ -18,7 +18,7 @@ export class Shop {
     unique: true,
     required: true,
   })
-  shopCode: string;
+  shop_code: string;
 
   @Prop({ required: true })
   name: string;
@@ -27,7 +27,7 @@ export class Shop {
   password: string;
 
   @Prop({ required: true })
-  plainPassword: string;
+  plain_password: string;
 
   @Prop({ required: true })
   description: string;
@@ -36,35 +36,34 @@ export class Shop {
   location: string;
 
   @Prop()
-  mapDirection: string;
+  map_direction: string;
 
   @Prop({ required: true })
-  phoneNumber: string;
+  phone_number: string;
 
   @Prop()
-  alternateNumber: string;
+  alternate_phone_number: string;
 
   @Prop()
-  whatsappNumber: string;
+  whatsapp_number: string;
 
   @Prop()
-  instagramHandle: string;
+  instagram_handle: string;
 
   @Prop()
-  facebookHandle: string;
+  facebook_handle: string;
 
   @Prop()
-  twitterHandle: string;
+  twitter_handle: string;
 
   @Prop()
-  tiktokHandle: string;
+  tiktok_handle: string;
 
   @Prop({ required: true })
-  openingTime: string;
+  opening_time: string;
 
   @Prop({ required: true })
-  closingTime: string;
-
+  closing_time: string;
 
   @Prop({ required: true, default: true })
   active: boolean;
@@ -104,7 +103,7 @@ export class Shop {
       ref: 'QuickOrderItem',
     },
   ])
-  quickOrderItems: QuickOrderItem[];
+  quick_order_items: QuickOrderItem[];
 }
 
 export type ShopDocument = Shop & Document;
@@ -115,76 +114,69 @@ ShopSchema.pre('save', async function (next) {
   if (this.get('password')) {
     const genPassword = await nanoid(10);
     this.password = await bcrypt.hash(genPassword, 12);
-    this.plainPassword = genPassword;
+    this.plain_password = genPassword;
   }
 
-  if (this.get('facebookHandle')) {
-    this.facebookHandle =
-      'https://wwww.facebook.com/' + this.facebookHandle.trim();
+  if (this.get('facebook_handle')) {
+    this.facebook_handle =
+      'https://wwww.facebook.com/' + this.facebook_handle.trim();
   }
 
-  if (this.get('instagramHandle')) {
-    this.instagramHandle =
-      'https://www.instagram.com/' + this.instagramHandle.trim();
+  if (this.get('instagram_handle')) {
+    this.instagram_handle =
+      'https://www.instagram.com/' + this.instagram_handle.trim();
   }
 
-  if (this.get('whatsappNumber')) {
-    this.whatsappNumber = 'https://wa.me/' + this.whatsappNumber.trim();
+  if (this.get('whatsapp_number')) {
+    this.whatsapp_number = 'https://wa.me/' + this.whatsapp_number.trim();
   }
 
-  if (this.get('twitterHandle')) {
-    this.twitterHandle = 'https://twitter.com/' + this.twitterHandle.trim();
+  if (this.get('twitter_handle')) {
+    this.twitter_handle = 'https://twitter.com/' + this.twitter_handle.trim();
   }
 
-  if (this.get('tiktokHandle')) {
-    this.tiktokHandle = 'https://www.tiktok.com/' + this.tiktokHandle.trim();
+  if (this.get('tiktok_handle')) {
+    this.tiktok_handle = 'https://www.tiktok.com/' + this.tiktok_handle.trim();
   }
 
   next();
 });
 
 ShopSchema.pre('findOneAndUpdate', async function (next) {
-  if (this.get('facebookHandle')) {
+  if (this.get('facebook_handle')) {
     this.set(
-      'facebookHandle',
-      `https://wwww.facebook.com/${this.get('facebookHandle').trim()}`,
+      'facebook_handle',
+      `https://wwww.facebook.com/${this.get('facebook_handle').trim()}`,
     );
   }
 
-  if (this.get('instagramHandle')) {
+  if (this.get('instagram_handle')) {
     this.set(
-      'instagramHandle',
-      `https://www.instagram.com/${this.get('instagramHandle').trim()}`,
+      'instagram_handle',
+      `https://www.instagram.com/${this.get('instagram_handle').trim()}`,
     );
   }
 
-  if (this.get('whatsappNumber')) {
+  if (this.get('whatsapp_number')) {
     this.set(
-      'whatsappNumber',
-      `https://wa.me/${this.get('whatsappNumber').trim()}`,
+      'whatsapp_number',
+      `https://wa.me/${this.get('whatsapp_number').trim()}`,
     );
   }
 
-  if (this.get('twitterHandle')) {
+  if (this.get('twitter_handle')) {
     this.set(
-      'twitterHandle',
-      `https://twitter.com/${this.get('twitterHandle').trim()}`,
+      'twitter_handle',
+      `https://twitter.com/${this.get('twitter_handle').trim()}`,
     );
   }
 
-  if (this.get('tiktokHandle')) {
+  if (this.get('tiktok_handle')) {
     this.set(
-      'tiktokHandle',
-      `https://www.tiktok.com/${this.get('tiktokHandle').trim()}`,
+      'tiktok_handle',
+      `https://www.tiktok.com/${this.get('tiktok_handle').trim()}`,
     );
   }
 
   next();
-});
-
-ShopSchema.set('toJSON', {
-  transform: function (doc, ret, opt) {
-    delete ret['password'];
-    return ret;
-  },
 });

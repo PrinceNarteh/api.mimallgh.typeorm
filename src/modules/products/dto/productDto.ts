@@ -1,14 +1,11 @@
 import { PartialType } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import {
-  ArrayMinSize,
-  IsArray,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  ValidateNested,
 } from 'class-validator';
 
 export enum ProductCategory {
@@ -44,7 +41,7 @@ export class CreateProductDto {
   @IsNumber()
   @Transform(({ value }) => parseFloat(value))
   @IsOptional()
-  discountPercentage: number;
+  discount_percentage: number;
 
   @IsNumber()
   @Transform(({ value }) => parseFloat(value))
@@ -65,15 +62,15 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {}
 export class AdminCreateProductDto extends CreateProductDto {
   @IsNotEmpty()
   @IsString()
-  shopId: string;
+  shop_id: string;
 }
 
 export class DeleteProductImageDto {
   @IsNotEmpty()
   @IsString()
-  productId: string;
+  product_id: string;
 
   @IsNotEmpty()
   @IsString()
-  imageName: string;
+  image_name: string;
 }

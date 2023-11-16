@@ -34,7 +34,7 @@ export class QuickOrdersService {
   ): Promise<QuickOrderDocument> {
     const deliveryCompany =
       await this.deliveryCompaniesService.getDeliveryCompany(
-        order.deliveryCompany,
+        order.delivery_company,
       );
     if (!deliveryCompany) {
       throw new NotFoundException('Delivery company not found');
@@ -54,7 +54,7 @@ export class QuickOrdersService {
     await this.quickOrderRepo.create(quickOrder);
 
     for (const item of items) {
-      const shop = await this.shopService.getShop(item.shopId);
+      const shop = await this.shopService.getShop(item.shop_id);
       const product = await this.productService.getProduct(item.productId);
       const res = this.quickOrderItemRepo.create({
         ...item,

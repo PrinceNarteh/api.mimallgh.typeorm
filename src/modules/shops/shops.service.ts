@@ -64,7 +64,7 @@ export class ShopService {
     if (shops.length === 0) {
       shopCode = `CRCC${year}000001`;
     } else {
-      const lastItem = shops[0].shopCode.split(year)[1];
+      const lastItem = shops[0].shop_code.split(year)[1];
       const index = pad(lastItem);
       shopCode = `CRCC${year}${index}`;
     }
