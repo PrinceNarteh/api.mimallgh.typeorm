@@ -10,16 +10,16 @@ import {
 export class CreateDeliveryCompanyDto {
   @IsString()
   @IsNotEmpty({ message: "Owner's first name is required" })
-  ownerFirstName: string;
+  owner_first_name: string;
 
   @IsString()
   @IsNotEmpty({ message: "Owner's last name is required" })
-  ownerLastName: string;
+  owner_last_name: string;
 
   @MinLength(10, { message: 'Phone number is not valid' })
   @IsNumberString({}, { message: 'Please enter a valid phone number' })
   @IsNotEmpty()
-  ownerPhoneNumber: string;
+  owner_phone_number: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Company name is required' })
@@ -37,11 +37,11 @@ export class CreateDeliveryCompanyDto {
   @MinLength(10, { message: 'Phone number is not valid' })
   @IsNumberString({}, { message: 'Please enter a valid phone number' })
   @IsNotEmpty({ message: 'Company phone number is required' })
-  phoneNumber: string;
+  phone_number: string;
 
   @IsString()
   @IsOptional()
-  alternatePhoneNumber: string;
+  alternate_phone_number: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Location is required' })
@@ -50,7 +50,7 @@ export class CreateDeliveryCompanyDto {
   @MinLength(10, { message: 'Phone number is not valid' })
   @IsNumberString({}, { message: 'Please enter a valid phone number' })
   @IsNotEmpty({ message: 'Whatsapp number is required' })
-  whatsappNumber: string;
+  whatsapp_number: string;
 
   logo: Express.Multer.File;
 

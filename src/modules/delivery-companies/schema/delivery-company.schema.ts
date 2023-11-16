@@ -24,25 +24,25 @@ export class DeliveryCompany {
   password: string;
 
   @Prop({ name: 'phone_number', required: true })
-  phoneNumber: string;
+  phone_number: string;
 
   @Prop({ name: 'alternate_phone_number' })
-  alternatePhoneNumber: string;
+  alternate_phone_number: string;
 
   @Prop({ name: 'whatsapp_number', required: true })
-  whatsappNumber: string;
+  whatsapp_number: string;
 
   @Prop({ required: true })
   location: string;
 
   @Prop({ name: 'owner_first_name', required: true })
-  ownerFirstName: string;
+  owner_first_name: string;
 
   @Prop({ name: 'owner_last_name', required: true })
-  ownerLastName: string;
+  owner_last_name: string;
 
   @Prop({ name: 'owner_phone_name', required: true })
-  ownerPhoneNumber: string;
+  owner_phone_number: string;
 
   @Prop([
     {
@@ -53,7 +53,7 @@ export class DeliveryCompany {
   deliveries: Delivery[];
 
   @Prop([{ type: Types.ObjectId, ref: QUICK_ORDER_MODEL }])
-  quickOrders: QuickOrder[];
+  quick_orders: QuickOrder[];
 
   @Prop({
     type: Types.ObjectId,
