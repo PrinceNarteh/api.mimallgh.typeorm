@@ -140,19 +140,19 @@ export class ProductService {
   }
 
   async deleteProductImage({
-    productId,
-    imageName,
+    product_id,
+    image_name,
   }: {
-    productId: string;
-    imageName: string;
+    product_id: string;
+    image_name: string;
   }) {
-    const product = await this.getProduct(productId);
+    const product = await this.getProduct(product_id);
 
-    deleteFile(imageName, 'products');
+    deleteFile(image_name, 'products');
 
-    return await this.productRepo.findByIdAndUpdate(productId, {
+    return await this.productRepo.findByIdAndUpdate(product_id, {
       product_images: product.product_images.filter(
-        (image) => image !== imageName,
+        (image) => image !== image_name,
       ),
     });
   }

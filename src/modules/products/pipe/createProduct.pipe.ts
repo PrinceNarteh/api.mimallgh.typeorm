@@ -4,10 +4,10 @@ import { CreateProductDto } from '../dto/productDto';
 @Injectable()
 export class TransformDtoPipe implements PipeTransform {
   transform(createProduct: CreateProductDto): CreateProductDto {
-    const { discountPercentage, price, stock } = createProduct;
+    const { discount_percentage, price, stock } = createProduct;
 
-    if (typeof discountPercentage === 'string') {
-      createProduct.discountPercentage = Number(discountPercentage);
+    if (typeof discount_percentage === 'string') {
+      createProduct.discount_percentage = Number(discount_percentage);
     }
 
     if (typeof price === 'string') {

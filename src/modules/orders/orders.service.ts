@@ -192,8 +192,8 @@ export class OrdersService {
     let orderItems = [];
 
     for (let item of items) {
-      let product = await this.productService.getProduct(item.productId);
-      let shop = await this.shopService.getShop(item.shopId);
+      let product = await this.productService.getProduct(item.product_id);
+      let shop = await this.shopService.getShop(item.shop_id);
       const res = this.orderRepo.create({
         ...item,
         product,
