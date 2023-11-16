@@ -65,6 +65,10 @@ export class Shop {
   @Prop({ required: true })
   closingTime: string;
 
+
+  @Prop({ required: true, default: true })
+  active: boolean;
+
   @Prop()
   image: string;
 
