@@ -89,6 +89,8 @@ export class AdminsService {
       throw new BadRequestException('role not found');
     }
 
+    console.log(createAdminDto);
+
     return this.adminRepo.create(createAdminDto);
   }
 

@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsNotEmpty,
   IsNumberString,
   IsOptional,
   IsString,
@@ -8,9 +9,11 @@ import {
 } from 'class-validator';
 
 export class CreateAdminDto {
+  @IsNotEmpty()
   @IsString()
   first_name: string;
 
+  @IsNotEmpty()
   @IsString()
   last_name: string;
 
@@ -54,6 +57,7 @@ export class CreateAdminDto {
   @IsOptional()
   profile_image?: string;
 
+  @IsNotEmpty()
   @IsString()
   role: string;
 }
