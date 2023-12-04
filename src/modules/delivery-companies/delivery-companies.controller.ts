@@ -15,7 +15,10 @@ import {
   FileFieldsInterceptor,
   FilesInterceptor,
 } from '@nestjs/platform-express';
-import { SharpFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
+import {
+  SharpFileFieldsInterceptorPipe,
+  SharpFilesInterceptorPipe,
+} from 'src/shared/pipes/sharp.pipe';
 import { DeliveryCompaniesService } from './delivery-companies.service';
 import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
 import { join } from 'path';
@@ -62,7 +65,7 @@ export class DeliveryCompaniesController {
     return deliveryCompany;
   }
 
-  @Post()
+  @Post('/register')
   @UseInterceptors(
     FileFieldsInterceptor([
       {
@@ -74,12 +77,13 @@ export class DeliveryCompaniesController {
   )
   async createDeliveryCompany(
     @Body() createProductDto: CreateDeliveryCompanyDto,
-    @UploadedFiles(new SharpFilesInterceptorPipe('slides'))
+    @UploadedFiles(new SharpFileFieldsInterceptorPipe('slides'))
     images: {
       logo: Express.Multer.File[];
       slide_images: Express.Multer.File[];
     },
   ) {
+    console.log(createProductDto);
     return this.deliveryCompaniesService.createDeliveryCompany(
       createProductDto,
       'images.logo',
@@ -92,7 +96,7 @@ export class DeliveryCompaniesController {
   async updateDeliveryCompany(
     @Param('deliveryCompanyId') deliveryCompanyId: string,
     @Body() updateDeliveryCompanyDto: Partial<CreateDeliveryCompanyDto>,
-    @UploadedFiles(new SharpFilesInterceptorPipe('slides'))
+    @UploadedFiles(new SharpFileFieldsInterceptorPipe('slides'))
     imageNames?: Array<string>,
   ) {
     return this.deliveryCompaniesService.updateDeliveryCompany(

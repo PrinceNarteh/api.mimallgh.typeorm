@@ -9,6 +9,10 @@ import {
 
 export class CreateDeliveryCompanyDto {
   @IsString()
+  @IsNotEmpty({ message: 'Role is required' })
+  role: string;
+
+  @IsString()
   @IsNotEmpty({ message: "Owner's first name is required" })
   owner_first_name: string;
 

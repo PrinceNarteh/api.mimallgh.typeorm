@@ -150,3 +150,15 @@ export class SharpUpdateFieldFilesInterceptorPipe
     return filenames;
   }
 }
+
+@Injectable()
+export class SharpFileFieldsInterceptorPipe
+  implements PipeTransform<any, Promise<{ [key: string]: string }>>
+{
+  constructor(private directory: string) {}
+
+  async transform(slides: any): Promise<{ [key: string]: string }> {
+    console.log(slides);
+    return {};
+  }
+}
