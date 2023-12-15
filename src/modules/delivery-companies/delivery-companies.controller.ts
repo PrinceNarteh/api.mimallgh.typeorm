@@ -83,12 +83,13 @@ export class DeliveryCompaniesController {
       slide_images: Express.Multer.File[];
     },
   ) {
-    console.log(createProductDto);
-    return this.deliveryCompaniesService.createDeliveryCompany(
-      createProductDto,
-      'images.logo',
-      ['images.slide_images'],
-    );
+    console.log(images);
+    // return this.deliveryCompaniesService.createDeliveryCompany(
+    //   createProductDto,
+    //   'images.logo',
+    //   ['images.slide_images'],
+    // );
+    return 'created';
   }
 
   @Patch(':deliveryCompanyId')

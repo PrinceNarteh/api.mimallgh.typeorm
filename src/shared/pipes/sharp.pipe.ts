@@ -115,10 +115,7 @@ export class SharpFieldFilesInterceptorPipe
 export class SharpUpdateFieldFilesInterceptorPipe
   implements PipeTransform<any, Promise<{ [key: string]: string }>>
 {
-  _directory: string;
-  constructor(directory: string) {
-    this._directory = directory;
-  }
+  constructor(private _directory: string) {}
 
   async transform(images: any): Promise<{ [key: string]: string }> {
     let filenames: { [key: string]: string } = {};
