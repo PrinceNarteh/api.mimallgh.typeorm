@@ -69,7 +69,7 @@ export class Shop {
   active: boolean;
 
   @Prop()
-  image: string;
+  profile_image: string;
 
   @Prop()
   banner: string;

@@ -68,6 +68,11 @@ AdminSchema.pre('save', async function (next) {
   next();
 });
 
+AdminSchema.pre('find', async function (next) {
+  this.populate('role');
+  next();
+});
+
 AdminSchema.pre('findOne', async function (next) {
   this.populate('role');
   next();

@@ -117,7 +117,7 @@ export class ShopService {
       ...(newBanner && { banner: newBanner }),
     };
 
-    if (newImage && shop.image !== null)
+    if (newImage && shop.profile_image !== null)
       deleteFile(updateShopDto.image, 'shops');
     if (newBanner && shop.banner !== null)
       deleteFile(updateShopDto.banner, 'shops');
@@ -128,8 +128,8 @@ export class ShopService {
   async deleteShop(id: string) {
     const shop = await this.getShop(id);
     await this.shopRepo.delete(id);
-    if (shop.image) {
-      deleteFile(shop.image, 'products');
+    if (shop.profile_image) {
+      deleteFile(shop.profile_image, 'products');
     }
     if (shop.banner) {
       deleteFile(shop.banner, 'products');
@@ -139,7 +139,7 @@ export class ShopService {
 
   async deleteShopImage(id: string) {
     const shop = await this.getShop(id);
-    deleteFile(shop.image, 'shops');
+    deleteFile(shop.profile_image, 'shops');
     await this.shopRepo.findByIdAndUpdate(id, { image: null });
     return this.getShop(id);
   }
