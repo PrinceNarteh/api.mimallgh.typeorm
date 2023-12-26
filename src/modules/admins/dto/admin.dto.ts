@@ -30,7 +30,7 @@ export class CreateAdminDto {
 
   @IsNumberString()
   @IsOptional()
-  alternate_number: string;
+  alternate_phone_number: string;
 
   @IsString()
   @IsOptional()

@@ -68,10 +68,7 @@ export class DeliveryCompaniesController {
   @Post('/register')
   @UseInterceptors(
     FileFieldsInterceptor([
-      {
-        name: 'logo',
-        maxCount: 1,
-      },
+      { name: 'logo', maxCount: 1 },
       { name: 'slide_images', maxCount: 4 },
     ]),
   )

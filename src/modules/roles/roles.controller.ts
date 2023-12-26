@@ -49,7 +49,9 @@ export class RolesController {
   }
 
   @Delete('/:roleId')
-  async deleteRole(roleId: string): Promise<RoleDocument> {
+  async deleteRole(
+    @Param('roleId', ParseMongoIdPipe) roleId: string,
+  ): Promise<RoleDocument> {
     return this.roleService.deleteRole(roleId);
   }
 }

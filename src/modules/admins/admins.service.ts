@@ -89,9 +89,7 @@ export class AdminsService {
       throw new BadRequestException('role not found');
     }
 
-    console.log(createAdminDto);
-
-    return this.adminRepo.create(createAdminDto);
+    return (await this.adminRepo.create(createAdminDto)).populate('role');
   }
 
   async updateAdmin(
@@ -118,7 +116,16 @@ export class AdminsService {
     });
   }
 
-  async deleteAdmin(adminId: string): Promise<AdminDocument> {
-    return await this.adminRepo.delete(adminId);
+  async deleteAdmin(adminId: string): Promise<string> {
+    const admin = await this.getAdmin(adminId);
+
+    console.log(admin);
+
+    if (!admin) {
+      return 'Admin deleted successfully';
+    }
+    deleteFile(admin.profile_image, 'admins');
+    await this.adminRepo.delete(adminId);
+    return 'Admin deleted successfully';
   }
 }

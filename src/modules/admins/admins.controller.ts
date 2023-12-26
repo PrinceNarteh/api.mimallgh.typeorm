@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -69,6 +70,12 @@ export class AdminsController {
       updateAdminDto,
       profile_image,
     );
+  }
+
+  @Delete(':adminId')
+  async deleteAdmin(@Param('adminId', ParseMongoIdPipe) adminId: string) {
+    console.log(adminId);
+    return this.adminsService.deleteAdmin(adminId);
   }
 
   @Get('/image/:imageName')
