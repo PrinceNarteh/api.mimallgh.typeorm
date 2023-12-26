@@ -75,10 +75,7 @@ export class DeliveryCompaniesController {
   async createDeliveryCompany(
     @Body() createProductDto: CreateDeliveryCompanyDto,
     @UploadedFiles(new SharpFileFieldsInterceptorPipe('slides'))
-    images: {
-      logo: Express.Multer.File[];
-      slide_images: Express.Multer.File[];
-    },
+    images: { logo: string; slide_images: string[] },
   ) {
     console.log(images);
     // return this.deliveryCompaniesService.createDeliveryCompany(

@@ -16,28 +16,38 @@ const checkForFolder = (folderName: string) => {
   }
 };
 
+const transformImage = async ({
+  directory,
+  image,
+  resize = [800],
+}: {
+  image: Express.Multer.File;
+  directory: string;
+  resize?: number[];
+}): Promise<string> => {
+  const genName = await nanoid(32);
+  const filename = `${genName}.webp`;
+  await sharp(image.buffer)
+    .resize(...resize)
+    .webp({ effort: 3 })
+    .toFile(join('uploads', directory, filename));
+
+  return filename;
+};
+
 @Injectable()
 export class SharpFileInterceptorPipe
   implements PipeTransform<Express.Multer.File, Promise<string>>
 {
-  _directory: string;
-  constructor(directory: string) {
-    this._directory = directory;
-  }
+  constructor(private directory: string) {}
 
   async transform(image: Express.Multer.File): Promise<string> {
     if (!image) return;
-
-    checkForFolder(this._directory);
-    const genName = createId();
-    const filename = `${genName}.webp`;
-
-    await sharp(image.buffer)
-      .resize(800)
-      .webp({ effort: 3 })
-      .toFile(join('uploads', this._directory, filename));
-
-    return filename;
+    checkForFolder(this.directory);
+    return await transformImage({
+      image,
+      directory: this.directory,
+    });
   }
 }
 
@@ -45,28 +55,14 @@ export class SharpFileInterceptorPipe
 export class SharpFilesInterceptorPipe
   implements PipeTransform<Array<Express.Multer.File>, Promise<string[]>>
 {
-  _directory: string;
-  constructor(directory: string) {
-    this._directory = directory;
-  }
+  constructor(private directory: string) {}
 
   async transform(images: Array<Express.Multer.File>): Promise<string[]> {
-    let filenames: string[] = [];
-
     if (!images || images.length === 0) return;
+    checkForFolder(this.directory);
 
-    checkForFolder(this._directory);
-    for (let image of images) {
-      const genName = await nanoid(32);
-      const filename = `${genName}.webp`;
-
-      await sharp(image.buffer)
-        .resize(800)
-        .webp({ effort: 3 })
-        .toFile(join('uploads', this._directory, filename));
-
-      filenames.push(filename);
-    }
+    let filenames: string[] = [];
+    images.map((image) => transformImage({ image, directory: this.directory }));
     return filenames;
   }
 }
@@ -75,17 +71,15 @@ export class SharpFilesInterceptorPipe
 export class SharpFieldFilesInterceptorPipe
   implements PipeTransform<any, Promise<{ [key: string]: string }>>
 {
-  _directory: string;
-  constructor(directory: string) {
-    this._directory = directory;
-  }
+  constructor(private directory: string) {}
 
   async transform(images: any): Promise<{ [key: string]: string }> {
     let filenames: { [key: string]: string } = {};
     const imagesArr = Object.keys(images);
     if (!images || images.length === 0) return;
 
-    checkForFolder(this._directory);
+    checkForFolder(this.directory);
+
     for (let img of imagesArr) {
       const image = images[img][0];
 
@@ -96,12 +90,12 @@ export class SharpFieldFilesInterceptorPipe
         await sharp(image.buffer)
           .resize(1024, 750)
           .webp({ effort: 3 })
-          .toFile(join('uploads', this._directory, filename));
+          .toFile(join('uploads', this.directory, filename));
       } else {
         await sharp(image.buffer)
           .resize(800)
           .webp({ effort: 3 })
-          .toFile(join('uploads', this._directory, filename));
+          .toFile(join('uploads', this.directory, filename));
       }
 
       filenames[img] = filename;
@@ -115,14 +109,14 @@ export class SharpFieldFilesInterceptorPipe
 export class SharpUpdateFieldFilesInterceptorPipe
   implements PipeTransform<any, Promise<{ [key: string]: string }>>
 {
-  constructor(private _directory: string) {}
+  constructor(private directory: string) {}
 
   async transform(images: any): Promise<{ [key: string]: string }> {
     let filenames: { [key: string]: string } = {};
     const imagesArr = Object.keys(images);
     if (!images || images.length === 0) return;
 
-    checkForFolder(this._directory);
+    checkForFolder(this.directory);
     for (let img of imagesArr) {
       const image = images[img][0];
 
@@ -133,12 +127,12 @@ export class SharpUpdateFieldFilesInterceptorPipe
         await sharp(image.buffer)
           .resize(1024, 750)
           .webp({ effort: 3 })
-          .toFile(join('uploads', this._directory, filename));
+          .toFile(join('uploads', this.directory, filename));
       } else {
         await sharp(image.buffer)
           .resize(800)
           .webp({ effort: 3 })
-          .toFile(join('uploads', this._directory, filename));
+          .toFile(join('uploads', this.directory, filename));
       }
 
       filenames[img] = filename;
@@ -150,12 +144,47 @@ export class SharpUpdateFieldFilesInterceptorPipe
 
 @Injectable()
 export class SharpFileFieldsInterceptorPipe
-  implements PipeTransform<any, Promise<{ [key: string]: string }>>
+  implements
+    PipeTransform<any, Promise<{ logo: string; slide_images: string[] }>>
 {
   constructor(private directory: string) {}
 
-  async transform(slides: any): Promise<{ [key: string]: string }> {
+  async transform(
+    slides: any,
+  ): Promise<{ logo: string; slide_images: string[] }> {
+    checkForFolder('logo');
+    checkForFolder('slide_images');
+
     console.log(slides);
-    return {};
+    let images: {
+      logo: string;
+      slide_images: string[];
+    } = {
+      logo: '',
+      slide_images: [],
+    };
+
+    if (slides['logo']) {
+      const filename = await transformImage({
+        image: slides['logo'][0],
+        directory: 'logo',
+      });
+      images.logo = filename;
+    }
+
+    if (slides['slide_images']) {
+      let slide_images: string[] = [];
+      for (let image of slides['slide_images']) {
+        const filename = await transformImage({
+          image,
+          directory: 'slide_images',
+          resize: [1024, 750],
+        });
+        console.log(filename);
+        slide_images.push(filename);
+      }
+      images.slide_images = slide_images;
+    }
+    return images;
   }
 }

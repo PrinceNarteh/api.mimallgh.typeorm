@@ -55,8 +55,4 @@ export class CreateDeliveryCompanyDto {
   logo: Express.Multer.File;
 
   slide_images: Express.Multer.File[];
-
-  @IsString()
-  @IsNotEmpty({ message: 'Role is required' })
-  role: string;
 }
