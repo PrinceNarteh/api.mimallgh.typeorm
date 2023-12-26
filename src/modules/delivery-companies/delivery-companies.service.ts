@@ -59,9 +59,13 @@ export class DeliveryCompaniesService {
     if (emailExists) {
       throw new ConflictException('Email already exists');
     }
-    const roles = await this.rolesService.getRole({ name: 'Delivery Company' });
+    const role = await this.rolesService.getRole({ name: 'Delivery Company' });
+    if (!role) {
+      throw new BadRequestException('Role Not Found');
+    }
     return this.deliveryCompanyRepo.create({
       ...createDeliveryCompanyDto,
+      role: role._id,
       logo,
       slide_images,
     });
@@ -113,7 +117,7 @@ export class DeliveryCompaniesService {
     if (!deliveryCompany) return null;
 
     deliveryCompany.slide_images.forEach((image) => {
-      deleteFile(image, 'slides');
+      deleteFile(image, 'delivery-companies');
     });
 
     return this.deliveryCompanyRepo.delete(deliveryCompanyId);
@@ -126,7 +130,7 @@ export class DeliveryCompaniesService {
     deliveryCompanyId: string;
     imageName: string;
   }) {
-    deleteFile(imageName, 'slides');
+    deleteFile(imageName, 'delivery-companies');
 
     return await this.getDeliveryCompany(deliveryCompanyId);
   }

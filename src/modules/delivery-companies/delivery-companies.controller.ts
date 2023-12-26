@@ -74,16 +74,14 @@ export class DeliveryCompaniesController {
   )
   async createDeliveryCompany(
     @Body() createProductDto: CreateDeliveryCompanyDto,
-    @UploadedFiles(new SharpFileFieldsInterceptorPipe('slides'))
+    @UploadedFiles(new SharpFileFieldsInterceptorPipe('delivery-companies'))
     images: { logo: string; slide_images: string[] },
   ) {
-    console.log(images);
-    // return this.deliveryCompaniesService.createDeliveryCompany(
-    //   createProductDto,
-    //   'images.logo',
-    //   ['images.slide_images'],
-    // );
-    return 'created';
+    return this.deliveryCompaniesService.createDeliveryCompany(
+      createProductDto,
+      images.logo,
+      images.slide_images,
+    );
   }
 
   @Patch(':deliveryCompanyId')
@@ -91,7 +89,7 @@ export class DeliveryCompaniesController {
   async updateDeliveryCompany(
     @Param('deliveryCompanyId') deliveryCompanyId: string,
     @Body() updateDeliveryCompanyDto: Partial<CreateDeliveryCompanyDto>,
-    @UploadedFiles(new SharpFileFieldsInterceptorPipe('slides'))
+    @UploadedFiles(new SharpFileFieldsInterceptorPipe('delivery-companies'))
     imageNames?: Array<string>,
   ) {
     return this.deliveryCompaniesService.updateDeliveryCompany(
@@ -112,7 +110,9 @@ export class DeliveryCompaniesController {
 
   @Get('/image/:imageName')
   async findImage(@Param('imageName') imageName: string, @Res() res) {
-    res.sendFile(join(process.cwd(), 'uploads/slides/' + imageName));
+    res.sendFile(
+      join(process.cwd(), 'uploads/delivery-companies/' + imageName),
+    );
   }
 
   @Delete('/:deliveryCompanyId/image/:imageId')

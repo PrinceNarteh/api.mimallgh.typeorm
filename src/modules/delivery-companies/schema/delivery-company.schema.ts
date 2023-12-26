@@ -74,6 +74,11 @@ export const DeliveryCompanySchema =
   SchemaFactory.createForClass(DeliveryCompany);
 export const DELIVERY_COMPANY_MODEL = DeliveryCompany.name;
 
+DeliveryCompanySchema.pre('find', async function (next) {
+  this.populate('role');
+  next();
+});
+
 DeliveryCompanySchema.pre('save', async function (next: Function) {
   // hash password
   if (this.isModified('password')) {

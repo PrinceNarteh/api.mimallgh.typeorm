@@ -152,38 +152,35 @@ export class SharpFileFieldsInterceptorPipe
   async transform(
     slides: any,
   ): Promise<{ logo: string; slide_images: string[] }> {
-    checkForFolder('logo');
-    checkForFolder('slide_images');
+    checkForFolder(this.directory);
 
-    console.log(slides);
-    let images: {
-      logo: string;
-      slide_images: string[];
-    } = {
+    const slide_images = slides['slide_images'];
+    const logo = slides['logo'];
+    let images: { logo: string; slide_images: string[] } = {
       logo: '',
       slide_images: [],
     };
 
-    if (slides['logo']) {
+    if (logo.length > 0) {
       const filename = await transformImage({
-        image: slides['logo'][0],
-        directory: 'logo',
+        image: logo[0],
+        directory: this.directory,
       });
       images.logo = filename;
     }
 
-    if (slides['slide_images']) {
-      let slide_images: string[] = [];
-      for (let image of slides['slide_images']) {
-        const filename = await transformImage({
-          image,
-          directory: 'slide_images',
-          resize: [1024, 750],
-        });
-        console.log(filename);
-        slide_images.push(filename);
-      }
-      images.slide_images = slide_images;
+    if (slides['slide_images'].length > 0) {
+      let slideImages = await Promise.all<string[]>(
+        slide_images.map(
+          async (image: Express.Multer.File) =>
+            await transformImage({
+              image,
+              directory: this.directory,
+              resize: [1024, 750],
+            }),
+        ),
+      );
+      images.slide_images = slideImages;
     }
     return images;
   }
