@@ -15,6 +15,7 @@ import { AdminRepository } from './admins.repository';
 import { CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '../roles/schema/role.schema';
 
 @Injectable()
 export class AdminsService {
@@ -39,7 +40,10 @@ export class AdminsService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(admin, this.jwtService);
+    const token = generateToken(
+      { id: admin._id, role: (admin.role as Role).name },
+      this.jwtService,
+    );
 
     return {
       token,

@@ -43,7 +43,7 @@ export class ShopController {
     return this.shopService.getAllShops(query);
   }
 
-  @Post()
+  @Post('/register')
   async createShop(@Body() data: CreateShopDto): Promise<ShopDocument> {
     return this.shopService.createShop(data);
   }

@@ -14,17 +14,9 @@ export class CreateShopDto {
   @IsString()
   description: string;
 
-  @IsString()
-  @IsOptional()
-  shop_code: string;
-
   @IsOptional()
   @IsString()
   password: string;
-
-  @IsString()
-  @IsOptional()
-  plain_password: string;
 
   @IsString()
   location: string;

@@ -14,6 +14,7 @@ import { CreateUserDto } from './dto/userDto';
 import { UserDocument } from './schema/user.schema';
 import { UserRepository } from './users.repository';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '../roles/schema/role.schema';
 
 @Injectable()
 export class UserService {
@@ -34,7 +35,10 @@ export class UserService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(user, this.jwtService);
+    const token = generateToken(
+      { id: user._id, role: (user.role as Role).name },
+      this.jwtService,
+    );
 
     return {
       token,

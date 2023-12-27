@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { Document, Types } from 'mongoose';
 import { Order } from 'src/modules/orders/schema/order.schema';
 import { Review } from 'src/modules/reviews/schema/review.schema';
+import { Role } from 'src/modules/roles/schema/role.schema';
 
 @Schema({ timestamps: true })
 export class User {
@@ -50,8 +51,11 @@ export class User {
   })
   active: boolean;
 
-  @Prop()
-  role: string;
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'Role',
+  })
+  role: Types.ObjectId | Role;
 
   @Prop([
     {

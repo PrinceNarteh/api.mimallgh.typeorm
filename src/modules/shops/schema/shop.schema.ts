@@ -74,13 +74,6 @@ export class Shop {
   @Prop()
   banner: string;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: ROLE_MODEL,
-    required: true,
-  })
-  role: Role;
-
   @Prop([
     {
       type: Types.ObjectId,
@@ -96,6 +89,14 @@ export class Shop {
     },
   ])
   orders: OrderItem[];
+
+  @Prop([
+    {
+      type: Types.ObjectId,
+      ref: ROLE_MODEL,
+    },
+  ])
+  role: Types.ObjectId | Role;
 
   @Prop([
     {

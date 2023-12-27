@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/modules/users/users.service';
 import { UserDocument } from '../schema/user.schema';
+import { Role } from 'src/modules/roles/schema/role.schema';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,7 @@ export class AuthService {
     );
     if (
       user &&
-      user.role === 'admin' &&
+      (user.role as Role).name.toLowerCase().startsWith('admin') &&
       (await bcrypt.compare(password, user.password))
     ) {
       const { password, ...result } = user;

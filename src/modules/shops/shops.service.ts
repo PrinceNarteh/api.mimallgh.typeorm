@@ -14,6 +14,7 @@ import { ShopDocument } from './schema/shop.schema';
 import { ShopRepository } from './shops.repository';
 import { generateToken } from 'src/common/generate-token';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '../roles/schema/role.schema';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -40,7 +41,13 @@ export class ShopService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(shop, this.jwtService);
+    const token = generateToken(
+      {
+        id: shop._id,
+        role: (shop.role as Role).name,
+      },
+      this.jwtService,
+    );
 
     return {
       token,

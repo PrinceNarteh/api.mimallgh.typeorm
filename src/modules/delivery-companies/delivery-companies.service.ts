@@ -14,6 +14,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginResponseType } from 'src/custom-types';
 import { generateToken } from 'src/common/generate-token';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '../roles/schema/role.schema';
 
 @Injectable()
 export class DeliveryCompaniesService {
@@ -40,7 +41,10 @@ export class DeliveryCompaniesService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = generateToken(deliveryCompany, this.jwtService);
+    const token = generateToken(
+      { id: deliveryCompany._id, role: (deliveryCompany.role as Role).name },
+      this.jwtService,
+    );
 
     return {
       token,
