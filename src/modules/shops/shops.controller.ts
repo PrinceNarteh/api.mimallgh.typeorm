@@ -44,8 +44,28 @@ export class ShopController {
   }
 
   @Post('/register')
-  async createShop(@Body() data: CreateShopDto): Promise<ShopDocument> {
-    return this.shopService.createShop(data);
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      {
+        name: 'profile_image',
+        maxCount: 1,
+      },
+      {
+        name: 'banner',
+        maxCount: 1,
+      },
+    ]),
+  )
+  async createShop(
+    @Body() data: CreateShopDto,
+    @UploadedFiles(new SharpUpdateFieldFilesInterceptorPipe('shops'))
+    { profile_image, banner }: { profile_image?: string; banner?: string },
+  ): Promise<ShopDocument> {
+    return this.shopService.createShop({
+      ...data,
+      banner,
+      profile_image,
+    });
   }
 
   @Patch(':shopId')

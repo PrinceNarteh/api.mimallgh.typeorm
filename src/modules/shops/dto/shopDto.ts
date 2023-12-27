@@ -49,9 +49,11 @@ export class CreateShopDto {
   @IsString()
   closing_time: string;
 
-  profile_image: Express.Multer.File;
+  @IsOptional()
+  profile_image: string;
 
-  banner: Express.Multer.File;
+  @IsOptional()
+  banner: string;
 }
 
 export class UpdateShopDto extends PartialType(CreateShopDto) {}

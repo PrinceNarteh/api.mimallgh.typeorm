@@ -65,23 +65,23 @@ export class ShopService {
     const password = nanoid(10);
     const hashPassword = await bcrypt.hash(password, 12);
 
-    let shopCode: string;
+    let shop_code: string;
     const year = new Date().getFullYear().toString().substring(2);
 
     if (shops.length === 0) {
-      shopCode = `CRCC${year}000001`;
+      shop_code = `CRCC${year}000001`;
     } else {
       const lastItem = shops[0].shop_code.split(year)[1];
       const index = pad(lastItem);
-      shopCode = `CRCC${year}${index}`;
+      shop_code = `CRCC${year}${index}`;
     }
 
     const shop = this.shopRepo.create({
       ...data,
-      shopCode,
+      shop_code,
       image: image ? image : null,
       banner: banner ? banner : null,
-      plainPassword: password,
+      plain_password: password,
       password: hashPassword,
     });
 
