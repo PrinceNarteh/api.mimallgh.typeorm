@@ -20,6 +20,7 @@ import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { AdminsService } from './admins.service';
 import { CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
+import { AdminListInterceptor } from './interceptors/admin-list.interceptor';
 
 @Controller('admins')
 export class AdminsController {
@@ -33,6 +34,7 @@ export class AdminsController {
   }
 
   @Get()
+  @UseInterceptors(AdminListInterceptor)
   async getAllAdmins(): Promise<AdminDocument[]> {
     return this.adminsService.getAllAdmins({});
   }

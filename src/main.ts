@@ -1,19 +1,14 @@
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe, ForbiddenException } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express/interfaces';
 import { join } from 'path';
-import { AllExceptionsFilter } from './common/all-exceptions.filter';
-import { ConfigService } from '@nestjs/config';
+import { AppModule } from './app.module';
 
-// const whitelist = [
-//   'https://mimallgh.com',
-//   'https://admin.mimallgh.com',
-//   'https://shop.mimallgh.com',
-// ];
+export let app: NestExpressApplication;
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
