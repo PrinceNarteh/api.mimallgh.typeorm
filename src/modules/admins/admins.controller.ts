@@ -21,6 +21,7 @@ import { AdminsService } from './admins.service';
 import { CreateAdminDto } from './dto/admin.dto';
 import { AdminDocument } from './schemas/admin.schema';
 import { AdminListInterceptor } from './interceptors/admin-list.interceptor';
+import { AdminInterceptor } from './interceptors/admin.interceptor';
 
 @Controller('admins')
 export class AdminsController {
@@ -39,6 +40,7 @@ export class AdminsController {
     return this.adminsService.getAllAdmins({});
   }
 
+  @UseInterceptors(AdminInterceptor)
   @Get(':adminId')
   async getAdminById(
     @Param('adminId', ParseMongoIdPipe) adminId: string,
