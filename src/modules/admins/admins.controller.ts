@@ -19,7 +19,7 @@ import { LoginResponseType } from 'src/custom-types';
 import { SharpFileInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { AdminsService } from './admins.service';
 import { CreateAdminDto } from './dto/admin.dto';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { AdminResInterceptor } from './interceptors/admin-response.interceptor';
 import { AdminDocument } from './schemas/admin.schema';
 
 @Controller('admins')
@@ -34,7 +34,7 @@ export class AdminsController {
   }
 
   @Get()
-  @UseInterceptors(ResponseInterceptor)
+  @UseInterceptors(AdminResInterceptor)
   async getAllAdmins(): Promise<AdminDocument[]> {
     return this.adminsService.getAllAdmins({});
   }

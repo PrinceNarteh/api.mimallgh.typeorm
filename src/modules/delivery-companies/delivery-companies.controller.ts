@@ -1,12 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
-  Post,
   Patch,
-  Delete,
+  Post,
   Res,
   UploadedFiles,
   UseInterceptors,
@@ -15,15 +15,12 @@ import {
   FileFieldsInterceptor,
   FilesInterceptor,
 } from '@nestjs/platform-express';
-import {
-  SharpFileFieldsInterceptorPipe,
-  SharpFilesInterceptorPipe,
-} from 'src/shared/pipes/sharp.pipe';
-import { DeliveryCompaniesService } from './delivery-companies.service';
-import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
 import { join } from 'path';
 import { LoginDto } from 'src/common/login-dto';
-import { LoginResponseType } from 'src/custom-types';
+import { SharpFileFieldsInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
+import { DeliveryCompaniesService } from './delivery-companies.service';
+import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
+import { DCResInterceptor } from './interceptors/response.interceptor';
 
 @Controller('delivery-companies')
 export class DeliveryCompaniesController {
@@ -37,6 +34,7 @@ export class DeliveryCompaniesController {
   }
 
   @Get()
+  @UseInterceptors(DCResInterceptor)
   async findAll() {
     return this.deliveryCompaniesService.getAllDeliveryCompanies();
   }
