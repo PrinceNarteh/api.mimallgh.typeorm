@@ -20,7 +20,7 @@ import { LoginDto } from 'src/common/login-dto';
 import { SharpFileFieldsInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { DeliveryCompaniesService } from './delivery-companies.service';
 import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
-import { DCResInterceptor } from './interceptors/response.interceptor';
+import { DCResInterceptor } from './interceptors/delivery-company-response.interceptor';
 
 @Controller('delivery-companies')
 export class DeliveryCompaniesController {
