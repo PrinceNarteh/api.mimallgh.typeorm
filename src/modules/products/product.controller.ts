@@ -25,12 +25,14 @@ import {
 } from './dto/productDto';
 import { TransformDtoPipe } from './pipe/createProduct.pipe';
 import { ProductService } from './product.service';
+import { ProductResInterceptor } from './interceptors/product-response.response';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
+  @UseInterceptors(ProductResInterceptor)
   async getAllProducts(@Query() query?: { [key: string]: string }) {
     return this.productService.getAllProducts(query);
   }

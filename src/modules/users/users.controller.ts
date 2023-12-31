@@ -17,6 +17,7 @@ import { UserDocument } from './schema/user.schema';
 import { UserService } from './users.service';
 import { LoginDto } from 'src/common/login-dto';
 import { LoginResponseType } from 'src/custom-types';
+import { UserResInterceptor } from './interceptors/user-response.interceptor';
 
 @Controller('users')
 export class UserController {
@@ -28,11 +29,13 @@ export class UserController {
   }
 
   @Get()
+  @UseInterceptors(UserResInterceptor)
   async getUsers(@Query() query: { [key: string]: string }) {
     return this.userService.getAllUsers(query);
   }
 
   @Get(':userId')
+  @UseInterceptors(UserResInterceptor)
   async getUser(@Param('userId') userId: string) {
     return this.userService.getUser(userId);
   }
