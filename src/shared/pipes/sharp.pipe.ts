@@ -62,7 +62,12 @@ export class SharpFilesInterceptorPipe
     checkForFolder(this.directory);
 
     let filenames: string[] = [];
-    images.map((image) => transformImage({ image, directory: this.directory }));
+    await Promise.all(
+      images.map(async (image) => {
+        const res = await transformImage({ image, directory: this.directory });
+        filenames.push(res);
+      }),
+    );
     return filenames;
   }
 }

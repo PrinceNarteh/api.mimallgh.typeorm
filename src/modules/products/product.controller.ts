@@ -18,14 +18,10 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { createFindOptions } from 'src/utils/findManyOptions';
 import { SharpFilesInterceptorPipe } from '../../shared/pipes/sharp.pipe';
-import {
-  AdminCreateProductDto,
-  CreateProductDto,
-  DeleteProductImageDto,
-} from './dto/productDto';
+import { AdminCreateProductDto, CreateProductDto } from './dto/productDto';
+import { ProductResInterceptor } from './interceptors/product-response.response';
 import { TransformDtoPipe } from './pipe/createProduct.pipe';
 import { ProductService } from './product.service';
-import { ProductResInterceptor } from './interceptors/product-response.response';
 
 @Controller('products')
 export class ProductController {
@@ -89,6 +85,7 @@ export class ProductController {
     )
     product_images: Array<string>,
   ) {
+    console.log(product_images);
     return this.productService.createProduct(createProductDto, product_images);
   }
 
