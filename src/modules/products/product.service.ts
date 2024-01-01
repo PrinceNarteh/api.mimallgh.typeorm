@@ -60,11 +60,10 @@ export class ProductService {
   }
 
   async createProduct(
-    shopId: string,
     createProductDto: CreateProductDto,
     product_images: Array<string>,
   ): Promise<ProductDocument> {
-    const shop = await this.shopService.getShop(shopId);
+    const shop = await this.shopService.getShop(createProductDto.shopId);
     if (!shop) {
       throw new NotFoundException('Shop not found');
     }

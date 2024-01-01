@@ -26,6 +26,10 @@ class ProductImageDto {
 
 export class CreateProductDto {
   @IsString()
+  @IsNotEmpty({ message: 'Shop ID is required' })
+  shopId: string;
+
+  @IsString()
   @IsNotEmpty({ message: 'Title is required' })
   title: string;
 

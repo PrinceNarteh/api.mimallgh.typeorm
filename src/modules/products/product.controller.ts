@@ -80,7 +80,6 @@ export class ProductController {
   // @UseGuards(ShopJwtGuard)
   @UseInterceptors(TransformDtoPipe, FilesInterceptor('product_images', 4))
   async createProduct(
-    @Request() req,
     @Body() createProductDto: CreateProductDto,
     @UploadedFiles(
       new ParseFilePipe({
@@ -90,11 +89,7 @@ export class ProductController {
     )
     product_images: Array<string>,
   ) {
-    return this.productService.createProduct(
-      '6517e3822efbf310b15aef20',
-      createProductDto,
-      product_images,
-    );
+    return this.productService.createProduct(createProductDto, product_images);
   }
 
   @Post('admin')
