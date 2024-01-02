@@ -131,8 +131,6 @@ export class AdminsService {
   async deleteAdmin(adminId: string): Promise<string> {
     const admin = await this.getAdmin(adminId);
 
-    console.log(admin);
-
     if (!admin) {
       return 'Admin deleted successfully';
     }
