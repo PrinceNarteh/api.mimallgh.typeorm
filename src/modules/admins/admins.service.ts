@@ -114,9 +114,17 @@ export class AdminsService {
       deleteFile(admin.profile_image, 'admins');
     }
 
+    const save_profile = profile_image
+      ? profile_image
+      : admin.profile_image
+      ? admin.profile_image.split('/')[
+          admin.profile_image.split('/').length - 1
+        ]
+      : undefined;
+
     return await this.adminRepo.findByIdAndUpdate(adminId, {
       ...updateAdminDto,
-      ...(profile_image && { profile_image }),
+      profile_image: save_profile,
     });
   }
 

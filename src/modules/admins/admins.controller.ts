@@ -40,13 +40,14 @@ export class AdminsController {
   }
 
   @Get(':adminId')
+  @UseInterceptors(AdminResInterceptor)
   async getAdminById(
     @Param('adminId', ParseMongoIdPipe) adminId: string,
   ): Promise<AdminDocument> {
     return this.adminsService.getAdmin(adminId);
   }
 
-  @UseInterceptors(FileInterceptor('profile_image'))
+  @UseInterceptors(FileInterceptor('profile_image'), AdminResInterceptor)
   @Post('register')
   async createAdmin(
     @Body() createAdminDto: CreateAdminDto,
@@ -59,7 +60,7 @@ export class AdminsController {
     });
   }
 
-  @UseInterceptors(FileInterceptor('profile_image'))
+  @UseInterceptors(FileInterceptor('profile_image'), AdminResInterceptor)
   @Patch(':adminId')
   async updateAdmin(
     @Param('adminId', ParseMongoIdPipe) adminId: string,

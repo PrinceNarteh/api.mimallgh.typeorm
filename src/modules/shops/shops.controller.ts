@@ -15,10 +15,10 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
 import { join } from 'path';
 import { LoginResponseType } from 'src/custom-types';
-import { SharpUpdateFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 import { CreateShopDto, ShopLoginDto } from './dto/shopDto';
 import { ShopDocument } from './schema/shop.schema';
 import { ShopService } from './shops.service';
+import { SharpFieldFilesInterceptorPipe } from 'src/shared/pipes/sharp.pipe';
 
 @Controller('shops')
 export class ShopController {
@@ -58,7 +58,7 @@ export class ShopController {
   )
   async createShop(
     @Body() data: CreateShopDto,
-    @UploadedFiles(new SharpUpdateFieldFilesInterceptorPipe('shops'))
+    @UploadedFiles(new SharpFieldFilesInterceptorPipe('shops'))
     { profile_image, banner }: { profile_image?: string; banner?: string },
   ): Promise<ShopDocument> {
     return this.shopService.createShop({
@@ -84,7 +84,7 @@ export class ShopController {
   async updateShop(
     @Param('shopId') shopId: string,
     @Body() data: Partial<CreateShopDto>,
-    @UploadedFiles(new SharpUpdateFieldFilesInterceptorPipe('shops'))
+    @UploadedFiles(new SharpFieldFilesInterceptorPipe('shops'))
     { newImage, newBanner }: { newImage?: string; newBanner?: string },
   ): Promise<ShopDocument> {
     return this.shopService.updateShop(shopId, data, newImage, newBanner);
