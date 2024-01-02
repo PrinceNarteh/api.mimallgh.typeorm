@@ -85,27 +85,7 @@ export class ProductController {
     )
     product_images: Array<string>,
   ) {
-    console.log(product_images);
     return this.productService.createProduct(createProductDto, product_images);
-  }
-
-  @Post('admin')
-  // @UseGuards(ShopJwtGuard)
-  @UseInterceptors(TransformDtoPipe, FilesInterceptor('product_images', 4))
-  async adminCreateProduct(
-    @Body() createProductDto: AdminCreateProductDto,
-    @UploadedFiles(
-      new ParseFilePipe({
-        validators: [new FileTypeValidator({ fileType: 'image/*' })],
-      }),
-      new SharpFilesInterceptorPipe('products'),
-    )
-    product_images: Array<string>,
-  ) {
-    return this.productService.adminCreateProduct(
-      createProductDto,
-      product_images,
-    );
   }
 
   @Patch(':productId')

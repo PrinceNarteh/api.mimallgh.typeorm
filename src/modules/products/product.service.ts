@@ -7,11 +7,7 @@ import { FilterQuery } from 'mongoose';
 import { ShopService } from 'src/modules/shops/shops.service';
 import { deleteFile } from 'src/utils/deleteFile';
 import { ShopDocument } from '../shops/schema/shop.schema';
-import {
-  AdminCreateProductDto,
-  CreateProductDto,
-  UpdateProductDto,
-} from './dto/productDto';
+import { CreateProductDto, UpdateProductDto } from './dto/productDto';
 import { ProductRepository } from './product.repository';
 import { ProductDocument } from './schema/product.schema';
 
@@ -74,19 +70,6 @@ export class ProductService {
     });
   }
 
-  async adminCreateProduct(
-    createProductDto: Partial<AdminCreateProductDto>,
-    product_images: Array<string>,
-  ): Promise<ProductDocument> {
-    const shop = await this.shopService.getShop(createProductDto.shop_id);
-
-    if (!shop) {
-      throw new NotFoundException('Shop not found');
-    }
-
-    return this.productRepo.create({ ...createProductDto, product_images });
-  }
-
   async updateProduct(
     productId: string,
     updateProductDto: UpdateProductDto,
@@ -95,21 +78,6 @@ export class ProductService {
     const product = await this.getProduct(productId);
 
     return this.productRepo.findByIdAndUpdate(productId, {
-      ...updateProductDto,
-      ...(product_images?.length > 0 && {
-        product_images: [...product.product_images, product_images],
-      }),
-    });
-  }
-
-  async adminUpdateProduct(
-    productId: string,
-    updateProductDto: Partial<AdminCreateProductDto>,
-    product_images?: Array<string>,
-  ) {
-    const product = await this.getProduct(productId);
-
-    return this.productRepo.findByIdAndUpdate(product._id, {
       ...updateProductDto,
       ...(product_images?.length > 0 && {
         product_images: [...product.product_images, product_images],

@@ -1,10 +1,9 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
-import { createId } from '@paralleldrive/cuid2';
-import * as sharp from 'sharp';
-import { join } from 'path';
 import * as fs from 'fs';
-import * as path from 'path';
 import { customAlphabet } from 'nanoid/async';
+import * as path from 'path';
+import { join } from 'path';
+import * as sharp from 'sharp';
 
 const nanoid = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -92,43 +91,6 @@ export class SharpFieldFilesInterceptorPipe
       const filename = `${genName}.webp`;
 
       if (img === 'banner') {
-        await sharp(image.buffer)
-          .resize(1024, 750)
-          .webp({ effort: 3 })
-          .toFile(join('uploads', this.directory, filename));
-      } else {
-        await sharp(image.buffer)
-          .resize(800)
-          .webp({ effort: 3 })
-          .toFile(join('uploads', this.directory, filename));
-      }
-
-      filenames[img] = filename;
-    }
-
-    return filenames;
-  }
-}
-
-@Injectable()
-export class SharpUpdateFieldFilesInterceptorPipe
-  implements PipeTransform<any, Promise<{ [key: string]: string }>>
-{
-  constructor(private directory: string) {}
-
-  async transform(images: any): Promise<{ [key: string]: string }> {
-    let filenames: { [key: string]: string } = {};
-    const imagesArr = Object.keys(images);
-    if (!images || images.length === 0) return;
-
-    checkForFolder(this.directory);
-    for (let img of imagesArr) {
-      const image = images[img][0];
-
-      const genName = await nanoid(32);
-      const filename = `${genName}.webp`;
-
-      if (img === 'newBanner') {
         await sharp(image.buffer)
           .resize(1024, 750)
           .webp({ effort: 3 })
