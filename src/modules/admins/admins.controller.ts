@@ -23,6 +23,7 @@ import { AdminResInterceptor } from './interceptors/admin-response.interceptor';
 import { AdminDocument } from './schemas/admin.schema';
 
 @Controller('admins')
+@UseInterceptors(AdminResInterceptor)
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
 
@@ -34,20 +35,18 @@ export class AdminsController {
   }
 
   @Get()
-  @UseInterceptors(AdminResInterceptor)
   async getAllAdmins(): Promise<AdminDocument[]> {
     return this.adminsService.getAllAdmins({});
   }
 
   @Get(':adminId')
-  @UseInterceptors(AdminResInterceptor)
   async getAdminById(
     @Param('adminId', ParseMongoIdPipe) adminId: string,
   ): Promise<AdminDocument> {
     return this.adminsService.getAdmin(adminId);
   }
 
-  @UseInterceptors(FileInterceptor('profile_image'), AdminResInterceptor)
+  @UseInterceptors(FileInterceptor('profile_image'))
   @Post('register')
   async createAdmin(
     @Body() createAdminDto: CreateAdminDto,
@@ -77,15 +76,6 @@ export class AdminsController {
 
   @Delete(':adminId')
   async deleteAdmin(@Param('adminId', ParseMongoIdPipe) adminId: string) {
-    console.log(adminId);
     return this.adminsService.deleteAdmin(adminId);
-  }
-
-  @Get('/image/:imageName')
-  async getProductImage(
-    @Param('imageName') imageName: string,
-    @Res() res: Response,
-  ) {
-    res.sendFile(join(process.cwd(), 'uploads/admins/' + imageName));
   }
 }

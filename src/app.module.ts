@@ -17,6 +17,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ShopModule } from './modules/shops/shops.module';
 import { UserModule } from './modules/users/users.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { UserModule } from './modules/users/users.module';
     PermissionsModule,
     UserModule,
   ],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
