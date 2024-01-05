@@ -55,6 +55,9 @@ export class Admin {
     required: true,
   })
   role: Types.ObjectId | Role;
+
+  @Prop()
+  token: string;
 }
 
 export const ADMIN_MODEL = Admin.name;

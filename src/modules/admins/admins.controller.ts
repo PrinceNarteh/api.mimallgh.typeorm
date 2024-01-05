@@ -6,13 +6,10 @@ import {
   Param,
   Patch,
   Post,
-  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
-import { join } from 'path';
 import { LoginDto } from 'src/common/login-dto';
 import { ParseMongoIdPipe } from 'src/common/validate-id';
 import { LoginResponseType } from 'src/custom-types';
@@ -59,7 +56,7 @@ export class AdminsController {
     });
   }
 
-  @UseInterceptors(FileInterceptor('profile_image'), AdminResInterceptor)
+  @UseInterceptors(FileInterceptor('profile_image'))
   @Patch(':adminId')
   async updateAdmin(
     @Param('adminId', ParseMongoIdPipe) adminId: string,

@@ -1,20 +1,20 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { generateToken } from 'src/common/generate-token';
+import { LoginDto } from 'src/common/login-dto';
+import { LoginResponseType } from 'src/custom-types';
 import { deleteFile } from 'src/utils/deleteFile';
+import { RolesService } from '../roles/roles.service';
+import { Role } from '../roles/schema/role.schema';
 import { DeliveryCompanyRepository } from './delivery-companies.repository';
 import { CreateDeliveryCompanyDto } from './dto/delivery-company.dto';
 import { DeliveryCompanyDocument } from './schema/delivery-company.schema';
-import { RolesService } from '../roles/roles.service';
-import { LoginDto } from 'src/common/login-dto';
-import * as bcrypt from 'bcrypt';
-import { LoginResponseType } from 'src/custom-types';
-import { generateToken } from 'src/common/generate-token';
-import { JwtService } from '@nestjs/jwt';
-import { Role } from '../roles/schema/role.schema';
 
 @Injectable()
 export class DeliveryCompaniesService {
@@ -24,9 +24,7 @@ export class DeliveryCompaniesService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(
-    loginDto: LoginDto,
-  ): Promise<LoginResponseType<DeliveryCompanyDocument>> {
+  async login(loginDto: LoginDto): Promise<LoginResponseType<any>> {
     const deliveryCompany = await this.deliveryCompanyRepo.findOne(
       {
         email: loginDto.email,
@@ -46,10 +44,7 @@ export class DeliveryCompaniesService {
       this.jwtService,
     );
 
-    return {
-      token,
-      data: deliveryCompany,
-    };
+    return deliveryCompany.set({ token });
   }
 
   async createDeliveryCompany(

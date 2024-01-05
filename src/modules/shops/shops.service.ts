@@ -27,9 +27,7 @@ export class ShopService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(
-    loginDto: ShopLoginDto,
-  ): Promise<LoginResponseType<ShopDocument>> {
+  async login(loginDto: ShopLoginDto): Promise<LoginResponseType<any>> {
     const shop = await this.shopRepo.findOne(
       {
         shopCode: loginDto.shopCode,
@@ -50,8 +48,8 @@ export class ShopService {
     );
 
     return {
+      ...shop,
       token,
-      data: shop,
     };
   }
 

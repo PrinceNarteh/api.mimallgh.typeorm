@@ -25,9 +25,7 @@ export class AdminsService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(
-    adminLoginDto: LoginDto,
-  ): Promise<LoginResponseType<AdminDocument>> {
+  async login(adminLoginDto: LoginDto): Promise<AdminDocument> {
     const admin = await this.adminRepo.findOne(
       { email: adminLoginDto.email },
       '+password',
@@ -45,10 +43,7 @@ export class AdminsService {
       this.jwtService,
     );
 
-    return {
-      token,
-      data: admin,
-    };
+    return admin.set({ token });
   }
 
   async getAllAdmins(

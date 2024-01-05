@@ -23,7 +23,7 @@ export class UserService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<LoginResponseType<UserDocument>> {
+  async login(loginDto: LoginDto): Promise<LoginResponseType<any>> {
     const user = await this.userRepo.findOne(
       {
         email: loginDto.email,
@@ -40,10 +40,7 @@ export class UserService {
       this.jwtService,
     );
 
-    return {
-      token,
-      data: user,
-    };
+    return user.set({ token });
   }
 
   async getAllUsers(

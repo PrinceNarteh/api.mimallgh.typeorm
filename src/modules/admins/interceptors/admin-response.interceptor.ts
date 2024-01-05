@@ -25,7 +25,7 @@ export class AdminResInterceptor implements NestInterceptor {
     return {
       ...data.toObject(),
       ...(data.profile_image && {
-        profile_image: `${domain}/admins/image/${data.profile_image}`,
+        profile_image: `${domain}/uploads/admins/${data.profile_image}`,
       }),
     };
   }

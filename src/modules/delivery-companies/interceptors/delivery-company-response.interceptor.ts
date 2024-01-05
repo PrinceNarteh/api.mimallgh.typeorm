@@ -24,10 +24,10 @@ export class DCResInterceptor implements NestInterceptor {
     return {
       ...data.toObject(),
       ...(data.logo && {
-        logo: `${domain}/delivery-companies/image/${data.logo}`,
+        logo: `${domain}/uploads/delivery-companies/${data.logo}`,
       }),
       slide_images: data.slide_images.map(
-        (image) => `${domain}/delivery-companies/image/${image}`,
+        (image) => `${domain}/uploads/delivery-companies/${image}`,
       ),
     };
   }

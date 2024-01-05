@@ -1,4 +1,3 @@
-export type LoginResponseType<T> = {
+export type LoginResponseType<T> = T & {
   token: string;
-  data: T;
 };
