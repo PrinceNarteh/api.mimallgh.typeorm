@@ -61,6 +61,7 @@ export class ShopService {
     banner?: string,
   ): Promise<ShopDocument> {
     const shops = (await this.shopRepo.find({})).slice(-1);
+    console.log(shops);
 
     const password = nanoid(10);
     const hashPassword = await bcrypt.hash(password, 12);
@@ -71,7 +72,7 @@ export class ShopService {
     if (shops.length === 0) {
       shop_code = `CRCC${year}000001`;
     } else {
-      const lastItem = shops[0].shop_code.split(year)[1];
+      const lastItem = shops[0].shop_code.split(year)[1] || '000000';
       const index = pad(lastItem);
       shop_code = `CRCC${year}${index}`;
     }
